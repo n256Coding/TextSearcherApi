@@ -1,6 +1,15 @@
 package com.n256coding.Actors;
 
+import java.util.HashSet;
+
 public class UrlFilter {
+    HashSet<String> videoSites;
+    public UrlFilter() {
+        videoSites = new HashSet<>();
+        videoSites.add("http://www.acfun.cn");
+        videoSites.add("");
+    }
+
     static String fixUrlEncoding(String url) {
         return url
                 .toLowerCase()
@@ -16,5 +25,14 @@ public class UrlFilter {
 
     static String extractUrl(String url){
         return url.substring(url.indexOf("?q=") + 3, url.indexOf("&"));
+    }
+
+    boolean isValidUrl(String url, int version){
+        for (String videoSite : videoSites) {
+            if(url.contains(videoSite)){
+                return false;
+            }
+        }
+        return true;
     }
 }

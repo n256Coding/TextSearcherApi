@@ -156,7 +156,7 @@ public class TextAnalyzer {
     public List<String> nlpGetLemmas(String text){
         List<String> lemmas = new ArrayList<>();
         Properties props = new Properties();
-        props.setProperty("annotators", "tokenize, lemma");
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma");
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         Annotation annotation = new Annotation(text);

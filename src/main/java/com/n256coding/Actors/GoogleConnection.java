@@ -66,10 +66,14 @@ public class GoogleConnection implements SearchEngineConnection {
 
             String description = descriptionElements.get(0).ownText();
 
-            //TODO: Newly added part. Needs a review (Reason: not all urls directs to pdf documents)
+            //TODO: Newly added part. Needs a review. SEE: Reason
+            //Reason: not all urls directs to pdf documents
             if(isPdf && !url.endsWith(".pdf")){
                 continue;
             }
+            //TODO: Newly added part. Needs to enhance the filter. SEE: Reason
+            //Reason: Some search queries provide non web content like pdf, ppt, doc like things.
+            //Needs to understand them and filter out them.
             if(!isPdf && url.endsWith(".pdf")){
                 continue;
             }
