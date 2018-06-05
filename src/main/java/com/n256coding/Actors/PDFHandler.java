@@ -29,4 +29,13 @@ public class PDFHandler {
         return parsedText;
     }
 
+    //TODO: Dev method
+    public void convertAllPdfsToTxt(String dir) throws IOException {
+        FileHandler fileHandler = new FileHandler();
+        File dirs = new File(dir);
+        for (File file : dirs.listFiles()) {
+            fileHandler.writeStringToFile(parseText(file), FileHandler.TEMP_DOWNLOAD_DIR, file.getName(), FileHandler.FileTypes.TXT);
+        }
+    }
+
 }

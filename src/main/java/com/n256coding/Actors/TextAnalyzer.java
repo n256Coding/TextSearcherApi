@@ -18,6 +18,10 @@ import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
+import org.languagetool.JLanguageTool;
+import org.languagetool.language.AmericanEnglish;
+import org.languagetool.rules.Rule;
+import org.languagetool.rules.RuleMatch;
 
 import java.io.File;
 import java.io.IOException;
@@ -129,6 +133,23 @@ public class TextAnalyzer {
         }
 
         return tokenizedWords;
+    }
+
+    public String correctSpellingsV2(String query) throws IOException {
+        JLanguageTool langTool = new JLanguageTool(new AmericanEnglish());
+        for (Rule rule : langTool.getAllRules()) {
+            if (!rule.isDictionaryBasedSpellingRule()) {
+                langTool.disableRule(rule.getId());
+            }
+        }
+        StringBuffer buff = new StringBuffer(query);
+        List<RuleMatch> matches = langTool.check(query);
+        for (RuleMatch match : matches) {
+            if(match.getSuggestedReplacements().size() > 0){
+                buff.replace(match.getFromPos(), match.getToPos(), match.getSuggestedReplacements().get(0));
+            }
+        }
+        return buff.toString();
     }
 
     public List<String> nlpGetNouns(String text){
