@@ -23,7 +23,7 @@ public class TextSearcher {
         results.setSpellCorrectedQuery(String.join(" ", spellCorrected));
         results.setOriginalQuery(keywords);
 
-        searchEngine.searchOnline(isPdf, spellCorrected.toArray(new String[spellCorrected.size()]));
+        searchEngine.searchOnline(null, isPdf, spellCorrected.toArray(new String[spellCorrected.size()]));
 
         List<WebSearchResult> searchResults = searchEngine.getSearchResults();
         List<Resource> localResources = database.getTextResourcesByKeywords(spellCorrected.toArray(new String[spellCorrected.size()]));

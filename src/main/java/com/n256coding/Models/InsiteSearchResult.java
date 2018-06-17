@@ -22,7 +22,7 @@ public class InsiteSearchResult {
     }
 
     public int getCount() {
-        return count;
+        return resultItems.size();
     }
 
     public String getSpellCorrectedQuery() {

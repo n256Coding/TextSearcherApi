@@ -1,66 +1,51 @@
-import com.n256coding.Actors.*;
+import com.n256coding.Actors.FileHandler;
+import com.n256coding.Actors.GoogleConnection;
+import com.n256coding.Actors.PDFHandler;
+import com.n256coding.Actors.TextAnalyzer;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
-import com.n256coding.Dev.NLPTest;
-import com.n256coding.Dev.Trainer;
+import com.n256coding.DatabaseModels.ResourceRating;
+import com.n256coding.DatabaseModels.User;
+import com.n256coding.Dev.*;
 import com.n256coding.Helpers.DateEx;
 import com.n256coding.Helpers.StopWord;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
+import com.n256coding.Models.InsiteSearchResult;
+import com.n256coding.Models.InsiteSearchResultItem;
+import org.apache.jena.ontology.OntModel;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.jsoup.HttpStatusException;
-import org.languagetool.JLanguageTool;
-import org.languagetool.language.AmericanEnglish;
-import org.languagetool.language.English;
-import org.languagetool.rules.Rule;
-import org.languagetool.rules.RuleMatch;
-import org.languagetool.rules.spelling.SpellingCheckRule;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class Console {
+
+    public Console() {
+    }
+
     public static void main(String[] args) throws IOException, ParseException, ClassNotFoundException {
-        Trainer trainer = new Trainer();
-        DateEx date = new DateEx();
-        StopWord stopWord = new StopWord();
-        SearchEngineConnection searchEngine = new GoogleConnection();
-        DatabaseConnection database = new MongoDbConnection();
-        FileHandler fileHandler = new FileHandler();
-        PDFHandler pdfHandler = new PDFHandler();
-        TextAnalyzer textAnalyzer = new TextAnalyzer();
-
-
-//        NLPTest nlpTest = new NLPTest();
-//        nlpTest.nlpTest3();
-        //////////////////////////////////////////////////////////////////////
-//        SpellChecker spellChecker = new SpellChecker();
-//        Scanner scanner = new Scanner(System.in);
-//        String userInput = scanner.nextLine();
-//        while (!userInput.equalsIgnoreCase("exit")){
-//            System.out.println(spellChecker.getCorrection(userInput));
-//            System.out.println();
-//            userInput = scanner.nextLine();
-//        }
-        /////////////////////////////////////////////////////////////////////////
-//        JLanguageTool langTool = new JLanguageTool(new AmericanEnglish());
-//// comment in to use statistical ngram data:
-////langTool.activateLanguageModelRules(new File("/data/google-ngram-data"));
-//        List<RuleMatch> matches = langTool.check("Java theding");
-//        for (RuleMatch match : matches) {
-//            System.out.println("Potential error at characters " +
-//                    match.getFromPos() + "-" + match.getToPos() + ": " +
-//                    match.getMessage());
-//            System.out.println("Suggested correction(s): " +
-//                    match.getSuggestedReplacements());
-//        }
-
-
-
+//        Trainer trainer = new Trainer();
+//        DateEx date = new DateEx();
+//        StopWord stopWord = new StopWord();
+//        SearchEngineConnection searchEngine = new GoogleConnection();
+//        DatabaseConnection database = new MongoDbConnection();
+//        FileHandler fileHandler = new FileHandler();
+//        PDFHandler pdfHandler = new PDFHandler();
+//        TextAnalyzer textAnalyzer = new TextAnalyzer();
+//
+//
+////        NLPTest nlpTest = new NLPTest();
+////        nlpTest.nlpTest3();
+//
+//
 //        //Get user keywords
 //        String keywords = "Java Threading";
 //        boolean isPdf = false;
@@ -68,6 +53,7 @@ public class Console {
 //        //Filter and Identify spell mistakes
 //        List<String> tokens = textAnalyzer.getTokenizedList(keywords, " ");
 //        tokens = textAnalyzer.correctSpellings(tokens.toArray(new String[tokens.size()]));
+//        String correctedKeywords = textAnalyzer.correctSpellingsV2(keywords);
 //
 //        //Identify related keywords
 //        List<String> relatives = textAnalyzer.identifyRelatives(tokens.toArray(new String[tokens.size()]));
@@ -118,7 +104,7 @@ public class Console {
 //                //Here the keyword frequencies are reduced with a limit
 //                for (int j = 0, k = 0; k < 20 && j < frequencies.size(); j++, k++) {
 //                    Map.Entry<String, Integer> frequency = frequencies.get(j);
-//                    if(stopWord.isStopWord(frequency.getKey())){
+//                    if (stopWord.isStopWord(frequency.getKey())) {
 //                        k--;
 //                        continue;
 //                    }
@@ -142,5 +128,25 @@ public class Console {
 //        //If the selected documents have ranks more than 10, make recommendation
 //
 //        //Send results to user
+//        InsiteSearchResult results = new InsiteSearchResult();
+//        results.setOriginalQuery(keywords);
+//        results.setSpellCorrectedQuery(correctedKeywords);
+//        for (Resource localResource : localResources) {
+//            results.addResultItem(new InsiteSearchResultItem(
+//                    localResource.getUrl(),
+//                    localResource.getDescription(),
+//                    ResourceRating.getRatingOfResource(localResource.getId()).getRating()
+//            ));
+//        }
+
+//        JSoupSessionTester tester = new JSoupSessionTester();
+//        tester.viewSite();
+//        Tester.testNLP("Java threading and object oriented concepts.");
+//        Tester.googleTester();
+        OntModel ontologyModel = OntologyTester.getOntologyModel("D:\\SLIIT\\Year 4 Sem 1\\CDAP\\Research Project\\Resources\\Ontologies\\My_Programming.owl");
+
+        String test = "sdfsdf";
     }
+
+
 }

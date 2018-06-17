@@ -14,7 +14,8 @@ public class InsiteSearchResultItemAdapter extends InsiteSearchResultItem {
     }
 
     public InsiteSearchResultItemAdapter(Resource resource){
-        url = resource.url;
-        description = resource.url;
+        _id = resource.getId();
+        url = resource.getUrl();
+        description = resource.getDescription();
     }
 }

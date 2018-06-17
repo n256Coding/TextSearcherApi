@@ -35,19 +35,19 @@ public class TextAnalyzer {
     }
 
     public List<String> identifyRelatives(String... keywords) {
-        List<String> synonyms = new ArrayList<>();
+        List<String> semanticallyRelatives = new ArrayList<>();
         File file = new File(fileHandler.WORD2VEC_MODEL_PATH);
         if (!file.exists()) {
-            return synonyms;
+            return semanticallyRelatives;
         }
 
         Word2Vec vec = WordVectorSerializer.readWord2VecModel(fileHandler.WORD2VEC_MODEL_PATH);
         for (String keyword : keywords) {
-            Collection<String> synonymCollection = vec.wordsNearest(keyword, 5);
-            synonyms.addAll(synonymCollection);
+            Collection<String> wordsNearest = vec.wordsNearest(keyword, 5);
+            semanticallyRelatives.addAll(wordsNearest);
         }
 
-        return synonyms;
+        return semanticallyRelatives;
     }
 
     public void trainWord2VecModel(String textCorpus) throws IOException {
@@ -150,47 +150,6 @@ public class TextAnalyzer {
             }
         }
         return buff.toString();
-    }
-
-    public List<String> nlpGetNouns(String text){
-        List<String> nouns = new ArrayList<>();
-        Properties props = new Properties();
-        props.setProperty("annotators","tokenize, ssplit, pos");
-
-        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        Annotation annotation = new Annotation(text);
-        pipeline.annotate(annotation);
-        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-        for (CoreMap sentence : sentences) {
-            for (CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-                String word = token.get(CoreAnnotations.TextAnnotation.class);
-                // this is the POS tag of the token
-                String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
-                if(pos.startsWith("N")){
-                    nouns.add(word);
-                }
-            }
-        }
-        return nouns;
-    }
-
-    public List<String> nlpGetLemmas(String text){
-        List<String> lemmas = new ArrayList<>();
-        Properties props = new Properties();
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma");
-
-        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        Annotation annotation = new Annotation(text);
-        pipeline.annotate(annotation);
-        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-        for (CoreMap sentence : sentences) {
-            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-                String word = token.get(CoreAnnotations.TextAnnotation.class);
-                String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
-                lemmas.add(lemma);
-            }
-        }
-        return lemmas;
     }
 
     public List<String> getTokenizedList(String sentence, String delim){

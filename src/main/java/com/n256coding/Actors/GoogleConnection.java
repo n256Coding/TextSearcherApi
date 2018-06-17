@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,18 +15,32 @@ import java.util.List;
 public class GoogleConnection implements SearchEngineConnection {
     private Document googlePage;
     private List<WebSearchResult> searchResults;
-    private int paginationIndex;
+    private boolean isPdf;
+    private int resultCursor;
+    private int currentPaginationIndex;
+    private List<String> paginationUrls;
+
 
     public GoogleConnection() {
-        paginationIndex = 0;
+        currentPaginationIndex = 0;
+        resultCursor = -1;
+        paginationUrls = new ArrayList<>();
         searchResults = new ArrayList<>();
     }
 
     @Override
-    public void searchOnline(boolean isPdf, String... keywords) throws IOException {
+    public void searchOnline(@Nullable String site, boolean isPdf, String... keywords) throws IOException {
         searchResults.clear();
+        paginationUrls.clear();
+        resultCursor = -1;
+        currentPaginationIndex = 0;
+
         String searchKey = "";
-        if(isPdf){
+        if (site != null) {
+            searchKey = "site:" + site + " ";
+        }
+        this.isPdf = isPdf;
+        if (isPdf) {
             searchKey = "filetype:pdf ";
         }
         for (String keyword : keywords) {
@@ -33,10 +48,19 @@ public class GoogleConnection implements SearchEngineConnection {
         }
         googlePage = Jsoup.connect("https://www.google.com/search?q=" + searchKey)
                 .userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
-                //TODO: Remove this when fixed .userAgent("Mozilla")
                 .timeout(5000)
                 .get();
+        paginationUrls.add("https://www.google.com/search?q=" + searchKey);
 
+        Elements paginations = googlePage.select("a.fl[href]");
+        for (Element pagination : paginations) {
+            paginationUrls.add("https://www.google.com" + pagination.attr("href"));
+        }
+        setResults();
+    }
+
+
+    private void setResults() {
         Elements searchResultElements = googlePage.select("div.g");
         for (Element searchResultElement : searchResultElements) {
             Elements urlElements = searchResultElement.select("h3.r > a[href]:not(.sla)");
@@ -44,20 +68,20 @@ public class GoogleConnection implements SearchEngineConnection {
             Elements descriptionElements = searchResultElement.select("span.st");
             Elements slkTableElements = searchResultElement.select("table.slk");
 
-            if(urlElements.size() == 0){
+            if (urlElements.size() == 0) {
                 continue;
             }
 
             String url = urlElements.get(0).attr("href");
             url = UrlFilter.fixUrlEncoding(url);
             url = UrlFilter.extractUrl(url);
-            if(!UrlFilter.isValidUrl(url)){
+            if (!UrlFilter.isValidUrl(url)) {
                 continue;
             }
 
             String webCacheUrl = null;
             for (Element cacheUrlElement : cacheUrlElements) {
-                if(cacheUrlElement.ownText().equalsIgnoreCase("cached")){
+                if (cacheUrlElement.ownText().equalsIgnoreCase("cached")) {
                     webCacheUrl = cacheUrlElement.attr("href");
                     webCacheUrl = UrlFilter.fixUrlEncoding(webCacheUrl);
                     webCacheUrl = UrlFilter.extractUrl(webCacheUrl);
@@ -68,19 +92,19 @@ public class GoogleConnection implements SearchEngineConnection {
 
             //TODO: Newly added part. Needs a review. SEE: Reason
             //Reason: not all urls directs to pdf documents
-            if(isPdf && !url.endsWith(".pdf")){
+            if (isPdf && !url.endsWith(".pdf")) {
                 continue;
             }
             //TODO: Newly added part. Needs to enhance the filter. SEE: Reason
             //Reason: Some search queries provide non web content like pdf, ppt, doc like things.
             //Needs to understand them and filter out them.
-            if(!isPdf && url.endsWith(".pdf")){
+            if (!isPdf && url.endsWith(".pdf")) {
                 continue;
             }
 
             searchResults.add(new WebSearchResult(url, webCacheUrl, description, isPdf));
 
-            if(slkTableElements.size() > 0){
+            if (slkTableElements.size() > 0) {
                 Elements slkUrlElements = slkTableElements.get(0).select("h3.r > a.sla");
                 Elements slkDescriptions = slkTableElements.get(0).select("div.s.st");
 
@@ -88,7 +112,7 @@ public class GoogleConnection implements SearchEngineConnection {
                     String slkUrl = slkUrlElements.get(i).attr("href");
                     slkUrl = UrlFilter.fixUrlEncoding(slkUrl);
                     slkUrl = UrlFilter.extractUrl(slkUrl);
-                    if(!UrlFilter.isValidUrl(slkUrl)){
+                    if (!UrlFilter.isValidUrl(slkUrl)) {
                         continue;
                     }
 
@@ -144,14 +168,46 @@ public class GoogleConnection implements SearchEngineConnection {
     }
 
     @Override
-    public void navigateToNextResultList() {
-        //TODO: Implement functionality to navigate next pagination
+    public void navigateToNextPagination() throws IOException {
+        if ((currentPaginationIndex + 1) >= (paginationUrls.size())) {
+            return;
+        }
+        String paginationUrl = paginationUrls.get(currentPaginationIndex + 1);
+        searchResults.clear();
+        googlePage = Jsoup.connect(paginationUrl)
+                .userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
+                .timeout(5000)
+                .get();
+        setResults();
+        currentPaginationIndex++;
+        resultCursor = -1;
     }
 
     @Override
-    public int getPaginationIndex() {
-        return paginationIndex;
+    public int getCurrentPaginationIndex() {
+        return currentPaginationIndex;
     }
 
+    @Override
+    public boolean hasMoreResults() {
+        if (((currentPaginationIndex + 1) >= paginationUrls.size()) && ((resultCursor + 1) >= searchResults.size())) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public WebSearchResult nextResult() throws IOException {
+        if (hasMoreResults()) {
+            if ((resultCursor + 1) < searchResults.size()) {
+                return searchResults.get(++resultCursor);
+            } else {
+                navigateToNextPagination();
+                return searchResults.get(++resultCursor);
+            }
+        }
+        return null;
+    }
 
 }

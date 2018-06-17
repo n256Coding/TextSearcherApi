@@ -13,10 +13,10 @@ public class Trainer {
 
         for (int i = 0; i < documents.length; i++) {
             File document = documents[i];
-            System.out.println("Reading: "+document.getName());
-            try{
+            System.out.println("Reading: " + document.getName());
+            try {
                 textAnalyzer.trainWord2VecModel(document.getAbsolutePath());
-            }catch (OutOfMemoryError err){
+            } catch (OutOfMemoryError err) {
                 System.out.println("Out of Memory -----");
             }
             System.out.println(document.getName() + " train completed");

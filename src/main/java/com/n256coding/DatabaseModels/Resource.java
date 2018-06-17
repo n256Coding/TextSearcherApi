@@ -17,16 +17,18 @@ public class Resource {
     public KeywordData[] keywords;
     public boolean isPdf;
     public Date lastModified;
+    public String description;
 
     public Resource() {
     }
 
     @PersistenceConstructor
-    public Resource(String url, KeywordData[] keywords, boolean isPdf, Date lastModified) {
+    public Resource(String url, KeywordData[] keywords, boolean isPdf, Date lastModified, String description) {
         this.url = url;
         this.keywords = keywords;
         this.isPdf = isPdf;
         this.lastModified = lastModified;
+        this.description = description;
     }
 
     public String getId() {
@@ -67,5 +69,13 @@ public class Resource {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -2,9 +2,13 @@ package com.n256coding.Database;
 
 import com.mongodb.MongoClient;
 import com.n256coding.DatabaseModels.Resource;
+import com.n256coding.DatabaseModels.ResourceRating;
+import com.n256coding.DatabaseModels.User;
 import com.n256coding.Interfaces.DatabaseConnection;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.List;
 
@@ -19,14 +23,23 @@ public class MongoDbConnection implements DatabaseConnection {
         mongoOperations = new MongoTemplate(new MongoClient(), "ResourceDB");
     }
 
+    public MongoDbConnection(String hostname) {
+        mongoOperations = new MongoTemplate(new MongoClient(hostname), "ResourceDB");
+    }
+
     @Override
     public void connectToDatabase() {
 
     }
 
     @Override
-    public void checkIsDatabaseWorking() {
-
+    public boolean checkIsDatabaseWorking() {
+        if (mongoOperations.exists(null, Resource.class) &&
+                mongoOperations.exists(null, ResourceRating.class)
+                ) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -41,7 +54,7 @@ public class MongoDbConnection implements DatabaseConnection {
 
     @Override
     public void RemoveResource(String resourceId) {
-
+        mongoOperations.remove(query(where("id").in(resourceId)), Resource.class);
     }
 
     @Override
@@ -71,5 +84,72 @@ public class MongoDbConnection implements DatabaseConnection {
         return null;
     }
 
+    @Override
+    public ResourceRating getRatingOfResource(String resourceId) {
+        List<ResourceRating> results = mongoOperations.find(query(where("resourceId").in(resourceId)), ResourceRating.class);
+        if (results.size() == 1) {
+            return results.get(0);
+        } else {
+            return null;
+        }
+    }
 
+    @Override
+    public void upsertResourceRating(String resourceId, String userId, int rating) {
+        Query query = new Query();
+        query.addCriteria(where("resourceId").is(resourceId).and("userId").is(userId));
+        Update update = new Update();
+        update.set("rating", rating);
+
+        mongoOperations.upsert(query, update, ResourceRating.class);
+    }
+
+
+    @Override
+    public void addUser(User user) {
+        mongoOperations.insert(user);
+    }
+
+    @Override
+    public void updateUserPassword(String userId, String password) {
+        Query query = new Query();
+        query.addCriteria(where("_id").is(userId));
+        Update update = new Update();
+        update.set("password", password);
+
+        mongoOperations.updateFirst(query, update, User.class);
+    }
+
+    @Override
+    public void removeUser(String userId) {
+        Query query = new Query();
+        query.addCriteria(where("_id").is(userId));
+
+        mongoOperations.remove(query, User.class);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return mongoOperations.findAll(User.class);
+    }
+
+    @Override
+    public void addSubjectsToUser(String userId, String... subjects) {
+        Query query = new Query();
+        query.addCriteria(where("_id").is(userId));
+        Update update = new Update();
+        update.pushAll("subjects", subjects);
+
+        mongoOperations.updateFirst(query, update, User.class);
+    }
+
+    @Override
+    public void removeSubjectsOfUser(String userId, String... subjects) {
+        Query query = new Query();
+        query.addCriteria(where("_id").is(userId));
+        Update update = new Update();
+        update.pullAll("subjects", subjects);
+
+        mongoOperations.updateFirst(query, update, User.class);
+    }
 }
