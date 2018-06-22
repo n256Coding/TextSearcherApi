@@ -43,8 +43,9 @@ public class MongoDbConnection implements DatabaseConnection {
     }
 
     @Override
-    public void addResource(Resource resource) {
+    public String addResource(Resource resource) {
         mongoOperations.insert(resource);
+        return resource.getId();
     }
 
     @Override
@@ -53,8 +54,14 @@ public class MongoDbConnection implements DatabaseConnection {
     }
 
     @Override
-    public void RemoveResource(String resourceId) {
+    public void removeResource(String resourceId) {
         mongoOperations.remove(query(where("id").in(resourceId)), Resource.class);
+    }
+
+    @Override
+    public long countResources(){
+        Query query = new Query(where("_id").exists(true));
+        return mongoOperations.count(query, Resource.class);
     }
 
     @Override
@@ -64,6 +71,7 @@ public class MongoDbConnection implements DatabaseConnection {
 
     @Override
     public List<Resource> getTextResourcesByKeywords(String... keywords) {
+        //TODO: Could be better to replace with like operator, See other relevant places also
         List<Resource> result = mongoOperations.find(query(where("keywords.word").in(keywords)), Resource.class);
         return result;
     }
@@ -71,6 +79,12 @@ public class MongoDbConnection implements DatabaseConnection {
     @Override
     public List<Resource> getTextResourcesByUrl(String url) {
         return mongoOperations.find(query(where("url").in(url)), Resource.class);
+    }
+
+    @Override
+    public Resource getResourceById(String resourceId){
+        Query query = new Query(where("_id").is(resourceId));
+        return mongoOperations.findOne(query, Resource.class);
     }
 
     @Override

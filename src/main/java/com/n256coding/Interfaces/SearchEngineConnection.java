@@ -1,6 +1,7 @@
 package com.n256coding.Interfaces;
 
 import com.n256coding.Models.WebSearchResult;
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -21,9 +22,9 @@ public interface SearchEngineConnection {
 
     List<String> getWebCacheUrls();
 
-    String getResultPageAt(int index) throws IOException;
+    String getResultPageAt(int index) throws IOException, BoilerpipeProcessingException;
 
-    String getWebCacheAt(int index) throws IOException;
+    String getWebCacheAt(int index) throws IOException, BoilerpipeProcessingException;
 
     String getDescriptionAt(int index);
 

@@ -2,6 +2,7 @@ package com.n256coding.Actors;
 
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.WebSearchResult;
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -48,11 +49,12 @@ public class GoogleConnection implements SearchEngineConnection {
         }
         googlePage = Jsoup.connect("https://www.google.com/search?q=" + searchKey)
                 .userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
+//                .ignoreHttpErrors(true)
                 .timeout(5000)
                 .get();
         paginationUrls.add("https://www.google.com/search?q=" + searchKey);
 
-        Elements paginations = googlePage.select("a.fl[href]");
+        Elements paginations = googlePage.select("td > a.fl[href]");
         for (Element pagination : paginations) {
             paginationUrls.add("https://www.google.com" + pagination.attr("href"));
         }
@@ -148,12 +150,12 @@ public class GoogleConnection implements SearchEngineConnection {
     }
 
     @Override
-    public String getResultPageAt(int index) throws IOException {
+    public String getResultPageAt(int index) throws IOException, BoilerpipeProcessingException {
         return searchResults.get(index).getUrlContent();
     }
 
     @Override
-    public String getWebCacheAt(int index) throws IOException {
+    public String getWebCacheAt(int index) throws IOException, BoilerpipeProcessingException {
         return searchResults.get(index).getWebCacheContent();
     }
 
@@ -176,6 +178,7 @@ public class GoogleConnection implements SearchEngineConnection {
         searchResults.clear();
         googlePage = Jsoup.connect(paginationUrl)
                 .userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
+//                .ignoreHttpErrors(true)
                 .timeout(5000)
                 .get();
         setResults();

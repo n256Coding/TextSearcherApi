@@ -1,10 +1,6 @@
 package com.n256coding.Actors;
 
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.util.CoreMap;
+import com.n256coding.DatabaseModels.Resource;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.deeplearning4j.models.embeddings.WeightLookupTable;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
@@ -36,12 +32,12 @@ public class TextAnalyzer {
 
     public List<String> identifyRelatives(String... keywords) {
         List<String> semanticallyRelatives = new ArrayList<>();
-        File file = new File(fileHandler.WORD2VEC_MODEL_PATH);
+        File file = new File(FileHandler.WORD2VEC_MODEL_PATH);
         if (!file.exists()) {
             return semanticallyRelatives;
         }
 
-        Word2Vec vec = WordVectorSerializer.readWord2VecModel(fileHandler.WORD2VEC_MODEL_PATH);
+        Word2Vec vec = WordVectorSerializer.readWord2VecModel(FileHandler.WORD2VEC_MODEL_PATH);
         for (String keyword : keywords) {
             Collection<String> wordsNearest = vec.wordsNearest(keyword, 5);
             semanticallyRelatives.addAll(wordsNearest);
@@ -52,7 +48,7 @@ public class TextAnalyzer {
 
     public void trainWord2VecModel(String textCorpus) throws IOException {
         Word2Vec vec;
-        File word2vecFile = new File(fileHandler.WORD2VEC_MODEL_PATH);
+        File word2vecFile = new File(FileHandler.WORD2VEC_MODEL_PATH);
         String tempFilePath = fileHandler.createNewCorpusFile(textCorpus);
         SentenceIterator iterator = new BasicLineIterator(tempFilePath);
         //TODO: fileHandler.removeCorpusFile(tempFilePath);
@@ -66,7 +62,7 @@ public class TextAnalyzer {
                 .cache(cache).build();
 
         if (word2vecFile.exists()) {
-            vec = WordVectorSerializer.readWord2VecModel(fileHandler.WORD2VEC_MODEL_PATH);
+            vec = WordVectorSerializer.readWord2VecModel(FileHandler.WORD2VEC_MODEL_PATH);
             vec.setTokenizerFactory(tokenizerFactory);
             vec.setSentenceIterator(iterator);
         } else {
@@ -85,7 +81,7 @@ public class TextAnalyzer {
                     .build();
         }
         vec.fit();
-        WordVectorSerializer.writeWord2VecModel(vec, fileHandler.WORD2VEC_MODEL_PATH);
+        WordVectorSerializer.writeWord2VecModel(vec, FileHandler.WORD2VEC_MODEL_PATH);
     }
 
     public List<Map.Entry<String, Integer>> getWordFrequency(String corpus) {
@@ -118,6 +114,7 @@ public class TextAnalyzer {
         return list;
     }
 
+    @Deprecated
     public List<String> correctSpellings(String... keywords) throws IOException, ParseException, ClassNotFoundException {
         String correctedKeyword = "";
         SpellChecker spellChecker = new SpellChecker();
@@ -145,17 +142,34 @@ public class TextAnalyzer {
         StringBuffer buff = new StringBuffer(query);
         List<RuleMatch> matches = langTool.check(query);
         for (RuleMatch match : matches) {
-            if(match.getSuggestedReplacements().size() > 0){
+            if (match.getSuggestedReplacements().size() > 0) {
                 buff.replace(match.getFromPos(), match.getToPos(), match.getSuggestedReplacements().get(0));
             }
         }
         return buff.toString();
     }
 
-    public List<String> getTokenizedList(String sentence, String delim){
+    public int getWordCount(String document) {
+        return getTokenizedList(document, " ").size();
+    }
+
+    public double getTFIDFWeightOfWords(long totalNumberOfDocuments,
+                                        int matchingNoOfDocuments,
+                                        Resource resource,
+                                        String... words) {
+        return resource.getTfOf(words) * Math.log((double) totalNumberOfDocuments / (double) matchingNoOfDocuments);
+    }
+
+    public double getTFIDFWeight(long totalNumberOfDocuments,
+                                 int matchingNoOfDocuments,
+                                 double termFrequency) {
+        return termFrequency * Math.log(((double) totalNumberOfDocuments) / ((double) matchingNoOfDocuments));
+    }
+
+    public List<String> getTokenizedList(String sentence, String delim) {
         List<String> tokens = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(sentence, delim);
-        while (tokenizer.hasMoreTokens()){
+        while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken());
         }
 

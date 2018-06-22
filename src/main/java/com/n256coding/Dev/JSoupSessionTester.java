@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class JSoupSessionTester {
-    public void viewSite() throws IOException {
+    public static void viewSite() throws IOException {
         //Secure Page
         //https://www.safaribooksonline.com/library/view/java-language-features/9781484233481/A323070_2_En_2_Chapter.html
         //csrfsafari=iKVftV8nkEvU4nUaPcSDW7KHFzikensM;
@@ -95,14 +95,13 @@ public class JSoupSessionTester {
 
         Connection.Response login = Jsoup.connect("https://www.safaribooksonline.com/accounts/login/")
                 .data("csrfmiddlewaretoken", csrefToken)
-                .data("dontchange", "http://")
                 .data("email", "pijag@fxprix.com")
-                .data("is_login_form", "true")
-                .data("leaveblank", "")
+                .data("login", "Sign+In")
+                .data("next", "")
                 .data("password1", "abc#321")
                 .method(Connection.Method.POST)
                 .ignoreContentType(true)
-                .cookies(cookies)
+                //.cookies(cookies)
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0")
                 .header("Host", "www.safaribooksonline.com")
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0")
@@ -112,6 +111,7 @@ public class JSoupSessionTester {
                 .header("Referer", "https://www.safaribooksonline.com/")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("Content-Length", "174")
+                .cookie("sessionid", "ibvpvvjk3z1wklhx31bcqei1n0wr51vh")
 //                .header("Cookie", "csrfsafari=iKVftV8nkEvU4nUaPcSDW7KHFzikensM; BrowserCookie=4a1b25e3-7870-4848-a498-bcd04acea363; corp_sessionid=p37x9dkmc5oczgf33bb8xclskdqa36uk; _ga=GA1.2.1167325580.1529093162; _gid=GA1.2.227569139.1529093162; _vwo_uuid_v2=D758DD8172138E6D4A1202C95F2D997D1|82db3a12aece6f72f480e9cbd880e7ba; kampyle_userid=d5e3-50bb-b92f-f3de-1044-be80-8d49-00d6; kampyleUserSession=1529141579299; kampyleSessionPageCounter=2; kampyleUserSessionsCount=6; cd_user_id=164050e0fec10e-095c3b9feb372e-4c312a7a-100200-164050e0fee191; salesforce_id=203789876130cb1c8557a20fffc72b23; recently-viewed=%5B%220596007124%22%2C%229781484233481%3AA323070_2_En_2_Chapter.html%22%2C%221565924185%22%5D; original_referer=\"https://www.google.com/\"; timezoneoffset=-19800; liveagent_oref=https://www.safaribooksonline.com/; liveagent_vc=1; sessionid=5qdqj9wh3t7e82lxzot3byeg3wgwgba4; optimizelyEndUserId=oeu1529141576092r0.4152480509173647; optimizelySegments=%7B%22757067938%22%3A%22direct%22%2C%22778703350%22%3A%22false%22%2C%22781081607%22%3A%22ff%22%2C%22949601412%22%3A%22none%22%7D; optimizelyBuckets=%7B%7D; _gat=1; _uetsid=_uet18e50cb2; _gali=id_email")
                 .header("DNT", "1")
                 .header("Connection", "keep-alive")
@@ -126,7 +126,11 @@ public class JSoupSessionTester {
 //                .timeout(10000)
 //                .execute();
 
-        Document doc = Jsoup.connect("https://www.safaribooksonline.com/home/")
+        String[] testUrls = new String[]{
+                "https://www.safaribooksonline.com/home/",
+                "https://www.safaribooksonline.com/search/?query=java threading"
+        };
+        Document doc = Jsoup.connect(testUrls[1])
                 .cookies(login.cookies())
                 .timeout(10000)
                 .get();

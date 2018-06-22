@@ -1,5 +1,8 @@
 package com.n256coding.DatabaseModels;
 
+import com.n256coding.Common.Enviorenments;
+import com.n256coding.Database.MongoDbConnection;
+import com.n256coding.Interfaces.DatabaseConnection;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,11 +16,11 @@ public class Resource {
     @Id
     public String id;
 
-    public String url;
-    public KeywordData[] keywords;
-    public boolean isPdf;
-    public Date lastModified;
-    public String description;
+    private String url;
+    private KeywordData[] keywords;
+    private boolean isPdf;
+    private Date lastModified;
+    private String description;
 
     public Resource() {
     }
@@ -77,5 +80,30 @@ public class Resource {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public double getTfOf(String... words){
+        for (KeywordData keyword : keywords) {
+            for (String word : words) {
+                if(keyword.getWord().contains(word)){
+                    return keyword.getTf();
+                }
+            }
+        }
+        return 0.0;
+    }
+
+    public double getTfOf(String word){
+        for (KeywordData keyword : keywords) {
+            if(keyword.getWord().equalsIgnoreCase(word.trim())){
+                return keyword.getTf();
+            }
+        }
+        return 0.0;
+    }
+
+    public static Resource getResourceById(String resourceId){
+        DatabaseConnection database = new MongoDbConnection(Enviorenments.MONGO_DB_HOSTNAME);
+        return database.getResourceById(resourceId);
     }
 }

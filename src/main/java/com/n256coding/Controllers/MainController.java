@@ -6,12 +6,13 @@ import com.n256coding.Common.Enviorenments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
-import com.n256coding.Dev.ApiAlgorithms.Algorithm1;
-import com.n256coding.Dev.ApiAlgorithms.Algorithm2;
+import com.n256coding.Dev.ApiAlgorithms.Algorithm3;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
-import org.springframework.http.ResponseEntity;
+import com.n256coding.Models.OperationStatus;
+import com.n256coding.Models.Rating;
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -34,9 +35,9 @@ public class MainController {
     }
 
     @PutMapping("/rating")
-    public String addRating(@RequestBody String resourceId, @RequestBody String userId, @RequestBody int rating){
-        db.upsertResourceRating(resourceId, userId, rating);
-        return ResponseEntity.ok().toString();
+    public OperationStatus addRating(@RequestBody Rating rating){
+        db.upsertResourceRating(rating.getResourceId(), rating.getUserId(), rating.getRating());
+        return new OperationStatus("ok");
     }
 
     @GetMapping
@@ -67,7 +68,7 @@ public class MainController {
 //        }
 //
 //        return results;
-        Algorithm2 algorithm = new Algorithm2();
+        Algorithm3 algorithm = new Algorithm3();
         try {
             return algorithm.api(query);
         } catch (IOException e) {
@@ -76,7 +77,7 @@ public class MainController {
         return new InsiteSearchResult();
     }
 
-    public void recordSearchResults(String keyword, boolean isPdf) throws IOException {
+    public void recordSearchResults(String keyword, boolean isPdf) throws IOException, BoilerpipeProcessingException {
         searchEngine.searchOnline(null, isPdf, keyword);
 
         for (int i = 0; i < searchEngine.getResultedUrls().size(); i++) {
@@ -107,7 +108,7 @@ public class MainController {
         List<Resource> resources = db.getTextResourcesByKeywords(keyword);
 
         for (Resource resource : resources) {
-            stringBuilder.append("<a href='" + resource.url + "'>" + resource.url + "</a><br>");
+            stringBuilder.append("<a href='" + resource.getUrl() + "'>" + resource.getUrl() + "</a><br>");
         }
         return stringBuilder.toString();
     }

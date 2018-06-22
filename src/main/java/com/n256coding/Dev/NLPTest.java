@@ -92,4 +92,31 @@ public String content = "John Smith only eats an apple and a banana for lunch. H
             recursiveRelation(tree, indexedWord);
         }
     }
+
+    @SuppressWarnings("Duplicates")
+    public void getSpecificNodeExample(){
+        // set up properties
+        Properties props = new Properties();
+        props.setProperty("ssplit.eolonly","true");
+        props.setProperty("annotators",
+                "tokenize, ssplit, pos, depparse");
+        // set up pipeline
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        // get contents from file
+
+        //System.out.println(content);
+        // read in a product review per line
+        Annotation annotation = new Annotation("Draw an angular web page with material design.");
+        pipeline.annotate(annotation);
+
+        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+        for (CoreMap sentence : sentences) {
+            System.out.println("---");
+            System.out.println("sentence: "+sentence);
+            SemanticGraph tree = sentence.get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
+            IndexedWord word = tree.getNodeByWordPattern("web");
+            List<IndexedWord> childList = tree.getChildList(word);
+            String asdfasdf = "Hello World";
+        }
+    }
 }

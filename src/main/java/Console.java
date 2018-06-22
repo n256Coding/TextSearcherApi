@@ -1,7 +1,4 @@
-import com.n256coding.Actors.FileHandler;
-import com.n256coding.Actors.GoogleConnection;
-import com.n256coding.Actors.PDFHandler;
-import com.n256coding.Actors.TextAnalyzer;
+import com.n256coding.Actors.*;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
@@ -139,11 +136,17 @@ public class Console {
 //            ));
 //        }
 
-//        JSoupSessionTester tester = new JSoupSessionTester();
-//        tester.viewSite();
+//        JSoupSessionTester.viewSite();
 //        Tester.testNLP("Java threading and object oriented concepts.");
 //        Tester.googleTester();
-        OntModel ontologyModel = OntologyTester.getOntologyModel("D:\\SLIIT\\Year 4 Sem 1\\CDAP\\Research Project\\Resources\\Ontologies\\My_Programming.owl");
+
+//        OntologyHandler ontology = new OntologyHandler("D:\\SLIIT\\Year 4 Sem 1\\CDAP\\Research Project\\Resources\\Ontologies\\My_Programming.owl",
+//                "http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#");
+//        NLPTest nlpTest = new NLPTest();
+//        nlpTest.getSpecificNodeExample();
+
+        GoogleCustomSearchTester tester = new GoogleCustomSearchTester();
+        tester.getContent("angular 6 basics");
 
         String test = "sdfsdf";
     }

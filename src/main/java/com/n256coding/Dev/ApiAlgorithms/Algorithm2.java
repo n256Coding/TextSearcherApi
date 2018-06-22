@@ -7,12 +7,14 @@ import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.ResourceRating;
 import com.n256coding.Dev.Trainer;
 import com.n256coding.Helpers.DateEx;
+import com.n256coding.Helpers.SortHelper;
 import com.n256coding.Helpers.StopWord;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
 import com.n256coding.Models.InsiteSearchResultItem;
 import com.n256coding.Models.WebSearchResult;
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.jsoup.HttpStatusException;
 
 import java.io.FileNotFoundException;
@@ -23,11 +25,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class Algorithm2 {
     @SuppressWarnings("Duplicates")
     public InsiteSearchResult api(String query) throws IOException {
         Trainer trainer = new Trainer();
         DateEx date = new DateEx();
+        SortHelper sort = new SortHelper();
+        OntologyHandler ontology = new OntologyHandler(
+                "D:\\SLIIT\\Year 4 Sem 1\\CDAP\\Research Project\\Resources\\Ontologies\\My_Programming.owl",
+                "http://www.semanticweb.org/nishan/ontologies/2018/5/Programming");
         StopWord stopWord = new StopWord();
         SearchEngineConnection searchEngine = new GoogleConnection();
         DatabaseConnection database = new MongoDbConnection();
@@ -44,24 +51,30 @@ public class Algorithm2 {
         //Filter and Identify spell mistakes
         List<String> tokens = new ArrayList<>();
 
+        //Correct spellings
         String spellCorrectedQuery = textAnalyzer.correctSpellingsV2(query);
-        List<String> nouns = nlpProcessor.get(NLPProcessor.WordType.NOUN, spellCorrectedQuery);
-        List<String> verbs = nlpProcessor.get(NLPProcessor.WordType.VERB, spellCorrectedQuery);
-        List<String> questions = nlpProcessor.get(NLPProcessor.WordType.QUESTION, spellCorrectedQuery);
-        List<String> adjectives = nlpProcessor.get(NLPProcessor.WordType.ADJECTIVE, spellCorrectedQuery);
-        List<String> lemmas = nlpProcessor.get(NLPProcessor.WordType.LEMMA, spellCorrectedQuery);
+
+        //Use NLP to identify most important words
+        List<String> nouns = nlpProcessor.get(NLPProcessor.WordType.NOUN, query);
+        List<String> verbs = nlpProcessor.get(NLPProcessor.WordType.VERB, query);
+        List<String> questions = nlpProcessor.get(NLPProcessor.WordType.QUESTION, query);
+        List<String> adjectives = nlpProcessor.get(NLPProcessor.WordType.ADJECTIVE, query);
+        List<String> lemmas = nlpProcessor.get(NLPProcessor.WordType.LEMMA, query);
 
         tokens.addAll(nouns);
+        tokens.addAll(verbs);
         tokens.addAll(adjectives);
         for (String lemma : lemmas) {
-            if(!tokens.contains(lemma) && !lemma.equalsIgnoreCase("be")){
+            if (!tokens.contains(lemma) && !lemma.equalsIgnoreCase("be")) {
                 tokens.add(lemma);
             }
         }
 
-
         //Identify related keywords
         List<String> relatives = textAnalyzer.identifyRelatives(tokens.toArray(new String[tokens.size()]));
+        for (String token : tokens) {
+            relatives.addAll(ontology.getSubWordsOf(token, 3));
+        }
 
         //Search in the web
         List<String> webSearchKeywords = new ArrayList<>();
@@ -69,7 +82,25 @@ public class Algorithm2 {
         webSearchKeywords.addAll(relatives);
 
         for (String tutorialSite : SearchEngineConnection.TUTORIAL_SITES) {
-            searchEngine.searchOnline(tutorialSite, isPdf, query);
+
+            try {
+                searchEngine.searchOnline(tutorialSite, isPdf, query);
+            } catch (HttpStatusException ex) {
+                if (ex.getStatusCode() == 503) {
+                    //TODO: Replace with logger
+                    System.out.println("Google block detected!");
+                    try {
+                        Thread.sleep(5000);
+                        searchEngine.searchOnline(tutorialSite, isPdf, query);
+                    } catch (InterruptedException e) {
+                        //TODO: Replace with logger
+                        e.printStackTrace();
+                    } catch (HttpStatusException e) {
+                        //TODO: Place info in a logger
+                        System.out.println("Google block in second time");
+                    }
+                }
+            }
 
             //Get web search results
             while (searchEngine.hasMoreResults()) {
@@ -91,8 +122,11 @@ public class Algorithm2 {
                     resource.setDescription(result.getDescription());
 
                     List<Map.Entry<String, Integer>> frequencies = new ArrayList<>();
+                    int wordCount = 0;
                     try {
-                        frequencies = textAnalyzer.getWordFrequency(result.getUrlContent());
+                        String tempPage = result.getUrlContent();
+                        wordCount = textAnalyzer.getWordCount(tempPage);
+                        frequencies = textAnalyzer.getWordFrequency(tempPage);
                     } catch (HttpStatusException httpErr) {
                         //TODO: Replace with logger
                         System.out.println("Error status: " + httpErr.getStatusCode());
@@ -108,6 +142,9 @@ public class Algorithm2 {
                     } catch (IOException unknownErr) {
                         //TODO: Replace with logger
                         System.out.println("Invalid File: " + unknownErr.getMessage());
+                    } catch (BoilerpipeProcessingException e) {
+                        //TODO: Replace with logger
+                        continue;
                     }
 
                     //Here the keyword frequencies are reduced with a limit
@@ -117,7 +154,7 @@ public class Algorithm2 {
                             k--;
                             continue;
                         }
-                        KeywordData keywordData = new KeywordData(frequency.getKey(), frequency.getValue(), 0);
+                        KeywordData keywordData = new KeywordData(frequency.getKey(), frequency.getValue(), ((double) frequency.getValue() / (double) wordCount));
                         keywordDataList.add(keywordData);
                     }
                     resource.setKeywords(keywordDataList.toArray(new KeywordData[keywordDataList.size()]));
@@ -128,16 +165,21 @@ public class Algorithm2 {
 
         }
 
-
         //Search in the database
-        List<Resource> localResources = database.getTextResourcesByKeywords(webSearchKeywords.toArray(new String[webSearchKeywords.size()]));
+        String[] searchKeywords = webSearchKeywords.toArray(new String[webSearchKeywords.size()]);
+        List<Resource> localResources = database.getTextResourcesByKeywords(searchKeywords);
+        long totalNumberOfDocuments = database.countResources();
 
         //Collect all relevant information from database
         String test = "asdfasdf";
 
         //Calculate TF-IDF values for each information to rank them.
+        for (Resource localResource : localResources) {
+            localResource.getTfOf(webSearchKeywords.toArray(new String[webSearchKeywords.size()]));
+        }
 
         //If the selected documents have ranks more than 10, make recommendation
+        //TODO: implement recommendation part
 
         //Send results to user
         InsiteSearchResult results = new InsiteSearchResult();
@@ -152,9 +194,16 @@ public class Algorithm2 {
                     localResource.getId(),
                     localResource.getUrl(),
                     localResource.getDescription(),
-                    rating
+                    rating,
+                    textAnalyzer.getTFIDFWeightOfWords(totalNumberOfDocuments,
+                            localResources.size(),
+                            localResource,
+                            searchKeywords)
             ));
         }
+        //Sort results with TF-IDF weights
+        results.sort();
+
         return results;
     }
 }

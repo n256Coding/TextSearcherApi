@@ -16,6 +16,7 @@ import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
 import com.n256coding.Models.InsiteSearchResultItem;
 import com.n256coding.Models.WebSearchResult;
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.jsoup.HttpStatusException;
 
 import java.io.FileNotFoundException;
@@ -26,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
+@Deprecated
 public class Algorithm1 {
     public InsiteSearchResult api(String keywords) throws IOException {
         Trainer trainer = new Trainer();
@@ -95,6 +96,8 @@ public class Algorithm1 {
                     } catch (IOException unknownErr) {
                         //TODO: Replace with logger
                         System.out.println("Invalid File: " + unknownErr.getMessage());
+                    } catch (BoilerpipeProcessingException e) {
+                        e.printStackTrace();
                     }
 
                     //Here the keyword frequencies are reduced with a limit
@@ -136,10 +139,10 @@ public class Algorithm1 {
                 rating = ResourceRating.getRatingOfResource(localResource.getId()).getRating();
             }
             results.addResultItem(new InsiteSearchResultItem(
-                    localResource.getId(),
-                    localResource.getUrl(),
-                    localResource.getDescription(),
-                    rating
+//                    localResource.getId(),
+//                    localResource.getUrl(),
+//                    localResource.getDescription(),
+//                    rating
             ));
         }
         return results;

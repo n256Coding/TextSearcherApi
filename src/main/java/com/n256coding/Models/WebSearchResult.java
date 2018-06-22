@@ -2,6 +2,8 @@ package com.n256coding.Models;
 
 import com.n256coding.Actors.FileHandler;
 import com.n256coding.Actors.PDFHandler;
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,6 +11,7 @@ import org.jsoup.nodes.Document;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.net.UnknownHostException;
 
 public class WebSearchResult {
@@ -60,7 +63,7 @@ public class WebSearchResult {
         this.description = description;
     }
 
-    public String getUrlContent() throws IOException{
+    public String getUrlContent() throws IOException, BoilerpipeProcessingException {
         if(url == null) {
             return "";
         }
@@ -75,13 +78,15 @@ public class WebSearchResult {
             return textContent;
         }
 
-        Document pageResult = Jsoup.connect(url)
-                .userAgent("Mozilla")
-                .get();
-        return pageResult.text();
+        //Replaced with boilerpipe code
+//        Document pageResult = Jsoup.connect(url)
+//                .userAgent("Mozilla")
+//                .get();
+//        return pageResult.text();
+        return ArticleExtractor.INSTANCE.getText(new URL(url));
     }
 
-    public String getWebCacheContent() throws IOException {
+    public String getWebCacheContent() throws IOException, BoilerpipeProcessingException {
         if(webCacheUrl == null){
             return "";
         }
@@ -96,11 +101,12 @@ public class WebSearchResult {
             return textContent;
         }
 
-        Document pageResult = Jsoup.connect(url)
-                .userAgent("Mozilla")
-                .get();
-
-        return pageResult.text();
+//        Document pageResult = Jsoup.connect(url)
+//                .userAgent("Mozilla")
+//                .get();
+//
+//        return pageResult.text();
+        return ArticleExtractor.INSTANCE.getText(new URL(url));
     }
 
     public boolean isPdf() {

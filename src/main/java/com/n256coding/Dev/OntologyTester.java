@@ -36,14 +36,18 @@ public class OntologyTester {
     }
 
     public static void queryOntology(){
-        String queryString = "";
+        String queryString = "select (str(?z) as ?output) {?x ?y ?z}";
         Query query = QueryFactory.create(queryString);
         QueryExecution queryExecution = QueryExecutionFactory.create(query, getOntologyModel("D:\\SLIIT\\Year 4 Sem 1\\CDAP\\Research Project\\Resources\\Ontologies\\My_Programming.owl"));
         ResultSet resultSet = queryExecution.execSelect();
 
         while (resultSet.hasNext()){
             QuerySolution querySolution = resultSet.nextSolution();
-            System.out.println(querySolution.getLiteral("definedvalue").getString());
+            System.out.println(querySolution.getLiteral("output").getString());
         }
+    }
+
+    public static void getSubClassesOf(String word){
+
     }
 }
