@@ -16,6 +16,7 @@ import com.n256coding.Models.InsiteSearchResultItem;
 import com.n256coding.Models.WebSearchResult;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.jsoup.HttpStatusException;
+import org.xml.sax.SAXException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -145,6 +146,8 @@ public class Algorithm2 {
                     } catch (BoilerpipeProcessingException e) {
                         //TODO: Replace with logger
                         continue;
+                    } catch (SAXException e) {
+                        e.printStackTrace();
                     }
 
                     //Here the keyword frequencies are reduced with a limit

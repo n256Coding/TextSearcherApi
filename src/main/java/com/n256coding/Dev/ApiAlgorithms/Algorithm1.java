@@ -18,6 +18,7 @@ import com.n256coding.Models.InsiteSearchResultItem;
 import com.n256coding.Models.WebSearchResult;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.jsoup.HttpStatusException;
+import org.xml.sax.SAXException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -97,6 +98,8 @@ public class Algorithm1 {
                         //TODO: Replace with logger
                         System.out.println("Invalid File: " + unknownErr.getMessage());
                     } catch (BoilerpipeProcessingException e) {
+                        e.printStackTrace();
+                    } catch (SAXException e) {
                         e.printStackTrace();
                     }
 

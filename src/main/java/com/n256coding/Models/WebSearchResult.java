@@ -3,10 +3,16 @@ package com.n256coding.Models;
 import com.n256coding.Actors.FileHandler;
 import com.n256coding.Actors.PDFHandler;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import de.l3s.boilerpipe.document.TextDocument;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
+import de.l3s.boilerpipe.extractors.CommonExtractors;
+import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
+import de.l3s.boilerpipe.sax.HTMLDocument;
+import de.l3s.boilerpipe.sax.HTMLFetcher;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.xml.sax.SAXException;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -63,7 +69,7 @@ public class WebSearchResult {
         this.description = description;
     }
 
-    public String getUrlContent() throws IOException, BoilerpipeProcessingException {
+    public String getUrlContent() throws IOException, BoilerpipeProcessingException, SAXException {
         if(url == null) {
             return "";
         }
@@ -79,11 +85,13 @@ public class WebSearchResult {
         }
 
         //Replaced with boilerpipe code
-//        Document pageResult = Jsoup.connect(url)
-//                .userAgent("Mozilla")
-//                .get();
-//        return pageResult.text();
-        return ArticleExtractor.INSTANCE.getText(new URL(url));
+        Document pageResult = Jsoup.connect(url)
+                .userAgent("Mozilla")
+                .get();
+//        final HTMLDocument htmlDoc = HTMLFetcher.fetch(new URL(url));
+//        final TextDocument doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
+//        return CommonExtractors.ARTICLE_EXTRACTOR.getText();
+        return ArticleExtractor.INSTANCE.getText(pageResult.html());
     }
 
     public String getWebCacheContent() throws IOException, BoilerpipeProcessingException {
@@ -101,12 +109,12 @@ public class WebSearchResult {
             return textContent;
         }
 
-//        Document pageResult = Jsoup.connect(url)
-//                .userAgent("Mozilla")
-//                .get();
+        Document pageResult = Jsoup.connect(url)
+                .userAgent("Mozilla")
+                .get();
 //
 //        return pageResult.text();
-        return ArticleExtractor.INSTANCE.getText(new URL(url));
+        return ArticleExtractor.INSTANCE.getText(pageResult.html());
     }
 
     public boolean isPdf() {

@@ -5,15 +5,20 @@ import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.ResourceRating;
 import com.n256coding.DatabaseModels.User;
 import com.n256coding.Dev.*;
+import com.n256coding.Dev.ApiAlgorithms.Algorithm3;
+import com.n256coding.Dev.ApiAlgorithms.Algorithm4;
 import com.n256coding.Helpers.DateEx;
 import com.n256coding.Helpers.StopWord;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
 import com.n256coding.Models.InsiteSearchResultItem;
+import com.n256coding.Models.WebSearchResult;
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.apache.jena.ontology.OntModel;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.jsoup.HttpStatusException;
+import org.xml.sax.SAXException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -145,8 +150,15 @@ public class Console {
 //        NLPTest nlpTest = new NLPTest();
 //        nlpTest.getSpecificNodeExample();
 
-        GoogleCustomSearchTester tester = new GoogleCustomSearchTester();
-        tester.getContent("angular 6 basics");
+
+//        GoogleCustomSearchTester tester = new GoogleCustomSearchTester();
+//        tester.getContent("angular 6 basics");
+
+        Algorithm4 algorithm = new Algorithm4();
+        algorithm.api("object oriented concepts");
+
+
+
 
         String test = "sdfsdf";
     }

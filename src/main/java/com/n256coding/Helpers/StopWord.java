@@ -538,8 +538,23 @@ public class StopWord {
         add("{");
         add("}");
         add("+");
-        add("1");
         add("?");
+        add("`");
+        add("~");
+        add("!");
+        add("@");
+        add("#");
+        add("$");
+        add("%");
+        add("^");
+        add("&");
+        add("*");
+        add("(");
+        add(")");
+        add("-");
+        add("_");
+        add("=");
+        add("/");
     }
 
     public void add(String word){

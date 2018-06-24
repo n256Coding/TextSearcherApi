@@ -1,6 +1,7 @@
 package com.n256coding.Dev.ApiAlgorithms;
 
 import com.n256coding.Actors.*;
+import com.n256coding.Actors.Filters.TextFilter;
 import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
@@ -23,13 +24,15 @@ import org.xml.sax.SAXException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.averagingDouble;
 import static java.util.stream.Collectors.groupingBy;
 
-@Deprecated
-public class Algorithm3 {
+public class Algorithm4 {
     Trainer trainer = new Trainer();
     DateEx date = new DateEx();
     SortHelper sort = new SortHelper();
@@ -43,6 +46,7 @@ public class Algorithm3 {
     PDFHandler pdfHandler = new PDFHandler();
     TextAnalyzer textAnalyzer = new TextAnalyzer();
     NLPProcessor nlpProcessor = new NLPProcessor();
+    TextFilter textFilter = new TextFilter();
 
     @SuppressWarnings("Duplicates")
     public InsiteSearchResult api(String query) throws IOException {
@@ -123,11 +127,11 @@ public class Algorithm3 {
                 rating = ResourceRating.getRatingOfResource(localResource.getId()).getRating();
             }
             results.addResultItem(new InsiteSearchResultItem(
-                    localResource.getId(),
-                    localResource.getUrl(),
-                    localResource.getDescription(),
-                    rating,
-                    weightedTfIdf.get(localResource.getId())
+                            localResource.getId(),
+                            localResource.getUrl(),
+                            localResource.getDescription(),
+                            rating,
+                            weightedTfIdf.get(localResource.getId())
                     )
             );
         }
@@ -195,8 +199,14 @@ public class Algorithm3 {
                     int wordCount = 0;
                     try {
                         String tempPage = result.getUrlContent();
+                        tempPage = textFilter.replaceLemmas(tempPage);
                         wordCount = textAnalyzer.getWordCount(tempPage);
                         frequencies = textAnalyzer.getWordFrequency(tempPage);
+
+                        //Skip web pages that not qualify with given conditions
+                        if(!textFilter.isValidWebPage(tempPage, frequencies)){
+                            continue;
+                        }
                     } catch (HttpStatusException httpErr) {
                         //TODO: Replace with logger
                         System.out.println("Error status: " + httpErr.getStatusCode());
@@ -242,6 +252,7 @@ public class Algorithm3 {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     public Map<String, Double> calculateWeightedTfIdf(List<String> webSearchKeywords, List<String> originalQueryTokens, List<Resource> matchingDocuments){
         //Experimenting code segment - Start////////////////////////////////////////////////////////////////////////////////////
 

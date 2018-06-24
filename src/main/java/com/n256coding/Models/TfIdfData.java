@@ -1,6 +1,6 @@
 package com.n256coding.Models;
 
-import com.n256coding.Common.Enviorenments;
+import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Interfaces.DatabaseConnection;
@@ -48,7 +48,7 @@ public class TfIdfData {
     }
 
     public Resource getDbResource(){
-        database = new MongoDbConnection(Enviorenments.MONGO_DB_HOSTNAME);
+        database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
         return database.getResourceById(this.documentId);
     }
 }

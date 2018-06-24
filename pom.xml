@@ -24,6 +24,13 @@
         <java.version>1.8</java.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>boilerpipe-m2-repo</id>
+            <url>http://boilerpipe.googlecode.com/svn/repo/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -155,7 +162,11 @@
             <artifactId>boilerpipe</artifactId>
             <version>1.1.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.robbypond</groupId>
+            <artifactId>boilerpipe</artifactId>
+            <version>1.2.3</version>
+        </dependency>
     </dependencies>
 
     <build>

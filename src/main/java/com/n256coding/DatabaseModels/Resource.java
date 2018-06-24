@@ -1,13 +1,12 @@
 package com.n256coding.DatabaseModels;
 
-import com.n256coding.Common.Enviorenments;
+import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.Interfaces.DatabaseConnection;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.annotation.Nullable;
 import java.util.Date;
 
 @Document(collection = "Resource")
@@ -103,7 +102,7 @@ public class Resource {
     }
 
     public static Resource getResourceById(String resourceId){
-        DatabaseConnection database = new MongoDbConnection(Enviorenments.MONGO_DB_HOSTNAME);
+        DatabaseConnection database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
         return database.getResourceById(resourceId);
     }
 }

@@ -7,14 +7,12 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.model.Result;
 import com.google.api.services.customsearch.model.Search;
+import com.n256coding.Common.Environments;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GoogleCustomSearchTester {
-    private final String GOOGLE_API_KEY = "AIzaSyCdvDUeg6kR2tQhSoLXfEVAXiHz_wwHtPc";
-    private final String SEARCH_ENGINE_ID = "018198584361994989762:zdl9lg_zqrk";
-
 
     public List<Result> search(String keyword){
         Customsearch customsearch= null;
@@ -37,8 +35,8 @@ public class GoogleCustomSearchTester {
         List<Result> resultList=null;
         try {
             Customsearch.Cse.List list=customsearch.cse().list(keyword);
-            list.setKey(GOOGLE_API_KEY);
-            list.setCx(SEARCH_ENGINE_ID);
+            list.setKey(Environments.GOOGLE_API_KEY);
+            list.setCx(Environments.SEARCH_ENGINE_ID);
             Search results=list.execute();
             resultList=results.getItems();
         }

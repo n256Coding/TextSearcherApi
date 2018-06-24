@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.xml.sax.SAXException;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -150,7 +151,7 @@ public class GoogleConnection implements SearchEngineConnection {
     }
 
     @Override
-    public String getResultPageAt(int index) throws IOException, BoilerpipeProcessingException {
+    public String getResultPageAt(int index) throws IOException, BoilerpipeProcessingException, SAXException {
         return searchResults.get(index).getUrlContent();
     }
 
@@ -193,7 +194,9 @@ public class GoogleConnection implements SearchEngineConnection {
 
     @Override
     public boolean hasMoreResults() {
-        if (((currentPaginationIndex + 1) >= paginationUrls.size()) && ((resultCursor + 1) >= searchResults.size())) {
+        //TODO: Change commented code
+//        if (((currentPaginationIndex + 1) >= paginationUrls.size()) && ((resultCursor + 1) >= searchResults.size())) {
+        if (((currentPaginationIndex + 1) >= 2) && ((resultCursor + 1) >= searchResults.size())) {
             return false;
         } else {
             return true;

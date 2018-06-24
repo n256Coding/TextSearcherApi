@@ -10,6 +10,7 @@ import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -86,6 +87,26 @@ public class NLPProcessor {
             }
         }
         return results;
+    }
+
+    public String replaceWithLemma(String text){
+        StringBuilder stringBuilder = new StringBuilder(text);
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma");
+
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        Annotation annotation = new Annotation(text);
+        pipeline.annotate(annotation);
+        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+        for (CoreMap sentence : sentences) {
+            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+                String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
+                if(!token.originalText().equalsIgnoreCase(lemma)){
+                    stringBuilder.replace(token.beginPosition(), token.endPosition(), lemma);
+                }
+            }
+        }
+        return stringBuilder.toString();
     }
 
 //    public List<String> getNouns(String text){

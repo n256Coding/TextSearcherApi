@@ -1,5 +1,6 @@
 package com.n256coding.DatabaseModels;
 
+import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.Interfaces.DatabaseConnection;
 import org.springframework.data.annotation.Id;
@@ -70,7 +71,7 @@ public class ResourceRating {
     }
 
     public static ResourceRating getRatingOfResource(String resourceId){
-        DatabaseConnection database = new MongoDbConnection("localhost");
+        DatabaseConnection database = new MongoDbConnection("localhost", Environments.MONGO_DB_PORT);
         return database.getRatingOfResource(resourceId);
     }
 }

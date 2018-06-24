@@ -1,6 +1,7 @@
 package com.n256coding.Database;
 
 import com.mongodb.MongoClient;
+import com.n256coding.Common.Environments;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.ResourceRating;
 import com.n256coding.DatabaseModels.User;
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -20,11 +22,11 @@ public class MongoDbConnection implements DatabaseConnection {
     private MongoOperations mongoOperations;
 
     public MongoDbConnection() {
-        mongoOperations = new MongoTemplate(new MongoClient(), "ResourceDB");
+        mongoOperations = new MongoTemplate(new MongoClient(), Environments.MONGO_DB_NAME);
     }
 
-    public MongoDbConnection(String hostname) {
-        mongoOperations = new MongoTemplate(new MongoClient(hostname), "ResourceDB");
+    public MongoDbConnection(String hostname, int port) {
+        mongoOperations = new MongoTemplate(new MongoClient(hostname, port), Environments.MONGO_DB_NAME);
     }
 
     @Override
@@ -44,7 +46,14 @@ public class MongoDbConnection implements DatabaseConnection {
 
     @Override
     public String addResource(Resource resource) {
-        mongoOperations.insert(resource);
+        Query query = new Query(where("url").is(resource.getUrl()));
+        Update update = new Update();
+        update.set("keywords", resource.getKeywords());
+        update.set("lastModified", resource.getLastModified());
+        update.set("isPdf", resource.isPdf());
+        update.set("url", resource.getUrl());
+        update.set("description", resource.getDescription());
+        mongoOperations.upsert(query, update, Resource.class);
         return resource.getId();
     }
 
@@ -72,7 +81,13 @@ public class MongoDbConnection implements DatabaseConnection {
     @Override
     public List<Resource> getTextResourcesByKeywords(String... keywords) {
         //TODO: Could be better to replace with like operator, See other relevant places also
-        List<Resource> result = mongoOperations.find(query(where("keywords.word").in(keywords)), Resource.class);
+        //TODO: Match elements
+//        List<Resource> result = mongoOperations.find(query(where("keywords.word").all(keywords)), Resource.class);
+        Query query = new Query();
+        query.addCriteria(where("keywords.word")
+                .in(keywords)
+        );
+        List<Resource> result = mongoOperations.find(query, Resource.class);
         return result;
     }
 

@@ -2,11 +2,12 @@ package com.n256coding.Controllers;
 
 import com.n256coding.Actors.GoogleConnection;
 import com.n256coding.Actors.TextAnalyzer;
-import com.n256coding.Common.Enviorenments;
+import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Dev.ApiAlgorithms.Algorithm3;
+import com.n256coding.Dev.ApiAlgorithms.Algorithm4;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
@@ -14,6 +15,7 @@ import com.n256coding.Models.OperationStatus;
 import com.n256coding.Models.Rating;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.springframework.web.bind.annotation.*;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.Date;
@@ -21,12 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 
-@CrossOrigin(origins = Enviorenments.CROSS_ORIGIN)
+@CrossOrigin(origins = Environments.CROSS_ORIGIN)
 @RestController
 @RequestMapping("/api/resource")
 public class MainController {
     private SearchEngineConnection searchEngine = new GoogleConnection();
-    private DatabaseConnection db = new MongoDbConnection(Enviorenments.MONGO_DB_HOSTNAME);
+    private DatabaseConnection db = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
     private TextAnalyzer textAnalyzer = new TextAnalyzer();
 
     @GetMapping("/check")
@@ -68,7 +70,7 @@ public class MainController {
 //        }
 //
 //        return results;
-        Algorithm3 algorithm = new Algorithm3();
+        Algorithm4 algorithm = new Algorithm4();
         try {
             return algorithm.api(query);
         } catch (IOException e) {
@@ -77,7 +79,7 @@ public class MainController {
         return new InsiteSearchResult();
     }
 
-    public void recordSearchResults(String keyword, boolean isPdf) throws IOException, BoilerpipeProcessingException {
+    public void recordSearchResults(String keyword, boolean isPdf) throws IOException, BoilerpipeProcessingException, SAXException {
         searchEngine.searchOnline(null, isPdf, keyword);
 
         for (int i = 0; i < searchEngine.getResultedUrls().size(); i++) {

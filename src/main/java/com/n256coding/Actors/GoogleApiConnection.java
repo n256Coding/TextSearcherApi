@@ -7,31 +7,35 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.model.Result;
 import com.google.api.services.customsearch.model.Search;
+import com.n256coding.Common.Environments;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.WebSearchResult;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import org.xml.sax.SAXException;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class GoogleApiConnection implements SearchEngineConnection {
-    private List<WebSearchResult> resultList;
+    private List<WebSearchResult> searchResults;
     private int paginationIndex;
     private int resultCursor;
+    private boolean isPdf;
     Customsearch customsearch;
     String searchQuery;
-    private final String GOOGLE_API_KEY = "AIzaSyCdvDUeg6kR2tQhSoLXfEVAXiHz_wwHtPc";
-    private final String SEARCH_ENGINE_ID = "018198584361994989762:zdl9lg_zqrk";
 
     public GoogleApiConnection() {
+        searchResults = new ArrayList<>();
         paginationIndex = 0;
         resultCursor = -1;
     }
 
     @Override
     public void searchOnline(@Nullable String site, boolean isPdf, String... keywords) throws IOException {
+        this.isPdf = isPdf;
         customsearch = new Customsearch(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
             public void initialize(HttpRequest httpRequest) {
                 // set connect and read timeouts
@@ -41,16 +45,16 @@ public class GoogleApiConnection implements SearchEngineConnection {
         });
         searchQuery = keywords[0];
         Customsearch.Cse.List list = customsearch.cse().list(keywords[0]);
-        list.setKey(GOOGLE_API_KEY);
-        list.setCx(SEARCH_ENGINE_ID);
+        list.setKey(Environments.GOOGLE_API_KEY);
+        list.setCx(Environments.SEARCH_ENGINE_ID);
         Search results = list.execute();
         addToWebSearchResult(results.getItems());
     }
 
-    private List<WebSearchResult> addToWebSearchResult(List<Result> list) {
-        List<WebSearchResult> resultList = new ArrayList<>();
+    private void addToWebSearchResult(List<Result> list) {
+        searchResults.clear();
         for (Result result : list) {
-            resultList.add(
+            searchResults.add(
                     new WebSearchResult(
                             result.getFormattedUrl(),
                             null,
@@ -59,18 +63,17 @@ public class GoogleApiConnection implements SearchEngineConnection {
                     )
             );
         }
-        return resultList;
     }
 
     @Override
     public List<WebSearchResult> getSearchResults() {
-        return resultList;
+        return searchResults;
     }
 
     @Override
     public List<String> getResultedUrls() {
         List<String> urls = new ArrayList<>();
-        for (WebSearchResult result : resultList) {
+        for (WebSearchResult result : searchResults) {
             urls.add(result.getUrl());
         }
         return urls;
@@ -82,8 +85,8 @@ public class GoogleApiConnection implements SearchEngineConnection {
     }
 
     @Override
-    public String getResultPageAt(int index) throws IOException, BoilerpipeProcessingException {
-        return resultList.get(index).getUrlContent();
+    public String getResultPageAt(int index) throws IOException, BoilerpipeProcessingException, SAXException {
+        return searchResults.get(index).getUrlContent();
     }
 
     @Override
@@ -93,19 +96,19 @@ public class GoogleApiConnection implements SearchEngineConnection {
 
     @Override
     public String getDescriptionAt(int index) {
-        return resultList.get(index).getDescription();
+        return searchResults.get(index).getDescription();
     }
 
     @Override
     public int getResultCount() {
-        return resultList.size();
+        return searchResults.size();
     }
 
     @Override
     public void navigateToNextPagination() throws IOException {
         Customsearch.Cse.List list = customsearch.cse().list(searchQuery);
-        list.setKey(GOOGLE_API_KEY);
-        list.setCx(SEARCH_ENGINE_ID);
+        list.setKey(Environments.GOOGLE_API_KEY);
+        list.setCx(Environments.SEARCH_ENGINE_ID);
         list.setStart((long) ((++paginationIndex) * 10));
         Search results = list.execute();
         addToWebSearchResult(results.getItems());
@@ -128,6 +131,14 @@ public class GoogleApiConnection implements SearchEngineConnection {
 
     @Override
     public WebSearchResult nextResult() throws IOException {
-        return resultList.get(++resultCursor);
+        if (hasMoreResults()) {
+            if ((resultCursor + 1) < 10) {
+                return searchResults.get(++resultCursor);
+            } else {
+                navigateToNextPagination();
+                return searchResults.get(++resultCursor);
+            }
+        }
+        return null;
     }
 }
