@@ -1,4 +1,5 @@
 import com.n256coding.Models.FreeEbook;
+import com.n256coding.Services.FileHandler;
 import com.n256coding.Services.Filters.TextFilter;
 import com.n256coding.Services.OntologyHandler;
 import com.n256coding.Services.Recommender;
@@ -8,6 +9,7 @@ import org.apache.mahout.cf.taste.common.TasteException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Console {
@@ -21,7 +23,7 @@ public class Console {
 //        StopWordHelper stopWord = new StopWordHelper();
 //        SearchEngineConnection searchEngine = new GoogleConnection();
 //        DatabaseConnection database = new MongoDbConnection();
-//        FileHandler fileHandler = new FileHandler();
+        FileHandler fileHandler = new FileHandler();
 //        PDFHandler pdfHandler = new PDFHandler();
 //        TextAnalyzer textAnalyzer = new TextAnalyzer();
 //
@@ -147,9 +149,13 @@ public class Console {
         TextAnalyzer textAnalyzer = new TextAnalyzer();
         TextFilter textFilter = new TextFilter();
         OntologyHandler ontologyHandler = new OntologyHandler(
-                "D:\\SLIIT\\Year 4 Sem 1\\CDAP\\Research Project\\Resources\\Ontologies\\My_Programming.owl",
+                FileHandler.ONTOLOGY_PATH,
                 "http://www.semanticweb.org/nishan/ontologies/2018/5/Programming");
         List<String> nGrams = textFilter.replaceString(textAnalyzer.getIterativeNGram("object oriented concept of programming concept", 1, 3), " ", "_");
+
+        List<String> newList = new ArrayList<>();
+//        newList.add("test string");
+        nGrams.addAll(newList);
 
         for (String nGram : nGrams) {
             List<String> subWordsOf = ontologyHandler.getSubWordsOf(nGram, 5);

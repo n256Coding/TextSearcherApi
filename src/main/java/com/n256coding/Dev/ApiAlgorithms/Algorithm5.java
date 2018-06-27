@@ -80,8 +80,12 @@ public class Algorithm5 {
         //Use pre-defined ontology to get relative words
         List<String> nGrams = textFilter.replaceString(textAnalyzer.getIterativeNGram(query, 1, 3), " ", "_");
         for (String token : nGrams) {
-            //TODO: What happen if subwords return empty list. Will it fill empty values to relatives
-            relatives.addAll(ontology.getSubWordsOf(token, 5));
+            List<String> subWords = ontology.getSubWordsOf(token, 5);
+            for (String subWord : subWords) {
+                if(!relatives.contains(subWord)){
+                    relatives.add(subWord);
+                }
+            }
         }
 
 

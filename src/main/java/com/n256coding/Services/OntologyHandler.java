@@ -40,14 +40,14 @@ public class OntologyHandler {
         QueryExecution queryExecution = QueryExecutionFactory.create(query, ontoModel);
         ResultSet resultSet = queryExecution.execSelect();
 
-        for (int i = 0; resultSet.hasNext(); i++) {
-            if (i == 0)
-                continue;
+        for (int i = 0; i < resultLimit && resultSet.hasNext(); i++) {
             String result = resultSet
                     .nextSolution()
                     .getLiteral("output")
                     .getString()
                     .replace(ontologyBaseUrl.concat("#"), "");
+            if (i == 0)
+                continue;
             subWordList.add(result);
         }
         return subWordList;
