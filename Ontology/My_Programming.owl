@@ -1,0 +1,243 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#"
+     xml:base="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming"/>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Type -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Type">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#abstraction -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#abstraction">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c-sharp -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c-sharp">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#encapsulation -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#encapsulation">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#functional_programming -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#functional_programming">
+        <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#procedural_programming"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#go -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#go">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#inheritance -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#inheritance">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#java -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#java">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#javascript -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#javascript">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_programming -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_programming">
+        <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#oop"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#oop -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#oop">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#polymorphism -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#polymorphism">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#procedural_programming -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#procedural_programming">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#python -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#python">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Control_Structures -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Control_Structures">
+        <rdf:type rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Data_Structures -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Data_Structures">
+        <rdf:type rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Java -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Java">
+        <rdf:type rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Python -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Python"/>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Syntax -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Syntax">
+        <rdf:type rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Tools -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Tools">
+        <rdf:type rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Variables -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Variables">
+        <rdf:type rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
+
