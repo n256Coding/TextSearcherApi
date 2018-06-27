@@ -1,4 +1,4 @@
-package com.n256coding.Actors;
+package com.n256coding.Services;
 
 import org.apache.commons.io.FileUtils;
 
@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.UUID;
 

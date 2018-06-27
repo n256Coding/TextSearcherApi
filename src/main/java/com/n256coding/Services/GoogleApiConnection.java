@@ -1,4 +1,4 @@
-package com.n256coding.Actors;
+package com.n256coding.Services;
 
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -105,14 +105,18 @@ public class GoogleApiConnection implements SearchEngineConnection {
     }
 
     @Override
-    public void navigateToNextPagination() throws IOException {
+    public boolean navigateToNextPagination() throws IOException {
         Customsearch.Cse.List list = customsearch.cse().list(searchQuery);
         list.setKey(Environments.GOOGLE_API_KEY);
         list.setCx(Environments.SEARCH_ENGINE_ID);
         list.setStart((long) ((++paginationIndex) * 10));
         Search results = list.execute();
-        addToWebSearchResult(results.getItems());
-        resultCursor = -1;
+        if(results.size() > 0){
+            addToWebSearchResult(results.getItems());
+            resultCursor = -1;
+            return true;
+        }
+        return false;
     }
 
     @Override

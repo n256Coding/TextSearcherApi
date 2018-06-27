@@ -1,16 +1,16 @@
 package com.n256coding.Dev.ApiAlgorithms;
 
-import com.n256coding.Actors.FileHandler;
-import com.n256coding.Actors.GoogleConnection;
-import com.n256coding.Actors.PDFHandler;
-import com.n256coding.Actors.TextAnalyzer;
+import com.n256coding.Services.FileHandler;
+import com.n256coding.Services.GoogleConnection;
+import com.n256coding.Services.PDFHandler;
+import com.n256coding.Services.TextAnalyzer;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.ResourceRating;
 import com.n256coding.Dev.Trainer;
 import com.n256coding.Helpers.DateEx;
-import com.n256coding.Helpers.StopWord;
+import com.n256coding.Helpers.StopWordHelper;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
@@ -33,7 +33,7 @@ public class Algorithm1 {
     public InsiteSearchResult api(String keywords) throws IOException {
         Trainer trainer = new Trainer();
         DateEx date = new DateEx();
-        StopWord stopWord = new StopWord();
+        StopWordHelper stopWordHelper = new StopWordHelper();
         SearchEngineConnection searchEngine = new GoogleConnection();
         DatabaseConnection database = new MongoDbConnection();
         FileHandler fileHandler = new FileHandler();
@@ -106,7 +106,7 @@ public class Algorithm1 {
                     //Here the keyword frequencies are reduced with a limit
                     for (int j = 0, k = 0; k < 20 && j < frequencies.size(); j++, k++) {
                         Map.Entry<String, Integer> frequency = frequencies.get(j);
-                        if (stopWord.isStopWord(frequency.getKey())) {
+                        if (stopWordHelper.isStopWord(frequency.getKey())) {
                             k--;
                             continue;
                         }

@@ -1,32 +1,14 @@
-import com.n256coding.Actors.*;
-import com.n256coding.Database.MongoDbConnection;
-import com.n256coding.DatabaseModels.KeywordData;
-import com.n256coding.DatabaseModels.Resource;
-import com.n256coding.DatabaseModels.ResourceRating;
-import com.n256coding.DatabaseModels.User;
-import com.n256coding.Dev.*;
-import com.n256coding.Dev.ApiAlgorithms.Algorithm3;
-import com.n256coding.Dev.ApiAlgorithms.Algorithm4;
-import com.n256coding.Helpers.DateEx;
-import com.n256coding.Helpers.StopWord;
-import com.n256coding.Interfaces.DatabaseConnection;
-import com.n256coding.Interfaces.SearchEngineConnection;
-import com.n256coding.Models.InsiteSearchResult;
-import com.n256coding.Models.InsiteSearchResultItem;
-import com.n256coding.Models.WebSearchResult;
-import de.l3s.boilerpipe.BoilerpipeProcessingException;
-import org.apache.jena.ontology.OntModel;
+import com.n256coding.Models.FreeEbook;
+import com.n256coding.Services.Filters.TextFilter;
+import com.n256coding.Services.OntologyHandler;
+import com.n256coding.Services.Recommender;
+import com.n256coding.Services.TextAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.jsoup.HttpStatusException;
-import org.xml.sax.SAXException;
+import org.apache.mahout.cf.taste.common.TasteException;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class Console {
 
@@ -36,7 +18,7 @@ public class Console {
     public static void main(String[] args) throws IOException, ParseException, ClassNotFoundException {
 //        Trainer trainer = new Trainer();
 //        DateEx date = new DateEx();
-//        StopWord stopWord = new StopWord();
+//        StopWordHelper stopWord = new StopWordHelper();
 //        SearchEngineConnection searchEngine = new GoogleConnection();
 //        DatabaseConnection database = new MongoDbConnection();
 //        FileHandler fileHandler = new FileHandler();
@@ -154,11 +136,25 @@ public class Console {
 //        GoogleCustomSearchTester tester = new GoogleCustomSearchTester();
 //        tester.getContent("angular 6 basics");
 
-        Algorithm4 algorithm = new Algorithm4();
-        algorithm.api("object oriented concepts");
+//        DatabaseConnection database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
+//        System.out.println(database.getTextResourcesByUrl("https://www.javaworld.com/article/3033958/open-source-tools/open-source-career-maker-or-wipeout.html").size());
 
 
 
+
+//        Algorithm4 algorithm = new Algorithm4();
+//        algorithm.api("object oriented concepts");
+        TextAnalyzer textAnalyzer = new TextAnalyzer();
+        TextFilter textFilter = new TextFilter();
+        OntologyHandler ontologyHandler = new OntologyHandler(
+                "D:\\SLIIT\\Year 4 Sem 1\\CDAP\\Research Project\\Resources\\Ontologies\\My_Programming.owl",
+                "http://www.semanticweb.org/nishan/ontologies/2018/5/Programming");
+        List<String> nGrams = textFilter.replaceString(textAnalyzer.getIterativeNGram("object oriented concept of programming concept", 1, 3), " ", "_");
+
+        for (String nGram : nGrams) {
+            List<String> subWordsOf = ontologyHandler.getSubWordsOf(nGram, 5);
+            String test = "Hello World";
+        }
 
         String test = "sdfsdf";
     }

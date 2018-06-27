@@ -2,10 +2,10 @@ package com.n256coding.Helpers;
 
 import java.util.HashSet;
 
-public class StopWord {
-    HashSet<String> m_Words;
+public class StopWordHelper {
+    private HashSet<String> m_Words;
 
-    public StopWord() {
+    public StopWordHelper() {
         m_Words = new HashSet<String>();
 
         // Stopwords list from Rainbow

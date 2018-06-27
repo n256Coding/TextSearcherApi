@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 public interface SearchEngineConnection {
@@ -14,6 +15,7 @@ public interface SearchEngineConnection {
             "javatpoint.com",
             "javaworld.com"
     };
+    HashMap<String, String> SITES = new HashMap<>();
 
     void searchOnline(@Nullable String site, boolean isPdf, String... keywords) throws IOException;
 
@@ -31,7 +33,7 @@ public interface SearchEngineConnection {
 
     int getResultCount();
 
-    void navigateToNextPagination() throws IOException;
+    boolean navigateToNextPagination() throws IOException;
 
     int getCurrentPaginationIndex();
 

@@ -1,4 +1,4 @@
-package com.n256coding.Actors;
+package com.n256coding.Services;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -10,7 +10,6 @@ import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -90,7 +89,6 @@ public class NLPProcessor {
     }
 
     public String replaceWithLemma(String text){
-        StringBuilder stringBuilder = new StringBuilder(text);
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize,ssplit,pos,lemma");
 
@@ -102,50 +100,10 @@ public class NLPProcessor {
             for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
                 String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
                 if(!token.originalText().equalsIgnoreCase(lemma)){
-                    stringBuilder.replace(token.beginPosition(), token.endPosition(), lemma);
+                    text = text.replace(token.originalText(), lemma);
                 }
             }
         }
-        return stringBuilder.toString();
+        return text;
     }
-
-//    public List<String> getNouns(String text){
-//        List<String> nouns = new ArrayList<>();
-//        Properties props = new Properties();
-//        props.setProperty("annotators","tokenize, ssplit, pos");
-//
-//        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-//        Annotation annotation = new Annotation(text);
-//        pipeline.annotate(annotation);
-//        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-//        for (CoreMap sentence : sentences) {
-//            for (CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-//                String word = token.get(CoreAnnotations.TextAnnotation.class);
-//                // this is the POS tag of the token
-//                String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
-//                if(pos.startsWith("N")){
-//                    nouns.add(word);
-//                }
-//            }
-//        }
-//        return nouns;
-//    }
-//
-//    public List<String> getLemmas(String text){
-//        List<String> lemmas = new ArrayList<>();
-//        Properties props = new Properties();
-//        props.setProperty("annotators", "tokenize,ssplit,pos,lemma");
-//
-//        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-//        Annotation annotation = new Annotation(text);
-//        pipeline.annotate(annotation);
-//        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-//        for (CoreMap sentence : sentences) {
-//            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-//                String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
-//                lemmas.add(lemma);
-//            }
-//        }
-//        return lemmas;
-//    }
 }

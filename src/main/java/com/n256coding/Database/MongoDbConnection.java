@@ -85,7 +85,7 @@ public class MongoDbConnection implements DatabaseConnection {
 //        List<Resource> result = mongoOperations.find(query(where("keywords.word").all(keywords)), Resource.class);
         Query query = new Query();
         query.addCriteria(where("keywords.word")
-                .in(keywords)
+                .in(keywords).and("isPdf").is(false)
         );
         List<Resource> result = mongoOperations.find(query, Resource.class);
         return result;
@@ -93,7 +93,7 @@ public class MongoDbConnection implements DatabaseConnection {
 
     @Override
     public List<Resource> getTextResourcesByUrl(String url) {
-        return mongoOperations.find(query(where("url").in(url)), Resource.class);
+        return mongoOperations.find(query(where("url").is(url)), Resource.class);
     }
 
     @Override
@@ -104,8 +104,8 @@ public class MongoDbConnection implements DatabaseConnection {
 
     @Override
     public List<Resource> getPdfResourcesByKeywords(String... keywords) {
-        //TODO: Not tested
-        return mongoOperations.find(query(where("keywords.word").in(keywords).andOperator(where("isPdf").in("true"))), Resource.class);
+        Query query = new Query(where("keywords.word").in(keywords).and("isPdf").is(true));
+        return mongoOperations.find(query(where("keywords.word").in(keywords).andOperator(where("isPdf").is(true))), Resource.class);
     }
 
     @Override

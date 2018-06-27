@@ -1,4 +1,4 @@
-package com.n256coding.Actors;
+package com.n256coding.Services;
 
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
@@ -29,7 +29,7 @@ public class OntologyHandler {
     public List<String> getSubWordsOf(String word, int resultLimit) {
         word = word.toLowerCase();
         List<String> subWordList = new ArrayList<>();
-        String queryString = "PREFIX progonto: <" + ontologyBaseUrl + ">\n" +
+        String queryString = "PREFIX progonto: <" + ontologyBaseUrl + "#>\n" +
                 "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
                 "\n" +
                 "select (str(?subclass) as ?output) where {\n" +
@@ -40,12 +40,14 @@ public class OntologyHandler {
         QueryExecution queryExecution = QueryExecutionFactory.create(query, ontoModel);
         ResultSet resultSet = queryExecution.execSelect();
 
-        while (resultSet.hasNext()) {
+        for (int i = 0; resultSet.hasNext(); i++) {
+            if (i == 0)
+                continue;
             String result = resultSet
                     .nextSolution()
                     .getLiteral("output")
                     .getString()
-                    .replace(ontologyBaseUrl, "");
+                    .replace(ontologyBaseUrl.concat("#"), "");
             subWordList.add(result);
         }
         return subWordList;

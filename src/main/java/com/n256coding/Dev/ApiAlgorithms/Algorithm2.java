@@ -1,6 +1,7 @@
 package com.n256coding.Dev.ApiAlgorithms;
 
-import com.n256coding.Actors.*;
+import com.n256coding.Helpers.StopWordHelper;
+import com.n256coding.Services.*;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
@@ -8,7 +9,6 @@ import com.n256coding.DatabaseModels.ResourceRating;
 import com.n256coding.Dev.Trainer;
 import com.n256coding.Helpers.DateEx;
 import com.n256coding.Helpers.SortHelper;
-import com.n256coding.Helpers.StopWord;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
@@ -36,7 +36,7 @@ public class Algorithm2 {
         OntologyHandler ontology = new OntologyHandler(
                 "D:\\SLIIT\\Year 4 Sem 1\\CDAP\\Research Project\\Resources\\Ontologies\\My_Programming.owl",
                 "http://www.semanticweb.org/nishan/ontologies/2018/5/Programming");
-        StopWord stopWord = new StopWord();
+        StopWordHelper stopWordHelper = new StopWordHelper();
         SearchEngineConnection searchEngine = new GoogleConnection();
         DatabaseConnection database = new MongoDbConnection();
         FileHandler fileHandler = new FileHandler();
@@ -153,7 +153,7 @@ public class Algorithm2 {
                     //Here the keyword frequencies are reduced with a limit
                     for (int j = 0, k = 0; k < 20 && j < frequencies.size(); j++, k++) {
                         Map.Entry<String, Integer> frequency = frequencies.get(j);
-                        if (stopWord.isStopWord(frequency.getKey())) {
+                        if (stopWordHelper.isStopWord(frequency.getKey())) {
                             k--;
                             continue;
                         }

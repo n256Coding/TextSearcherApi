@@ -1,15 +1,9 @@
 package com.n256coding.Models;
 
-import com.n256coding.Actors.FileHandler;
-import com.n256coding.Actors.PDFHandler;
+import com.n256coding.Services.FileHandler;
+import com.n256coding.Services.PDFHandler;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
-import de.l3s.boilerpipe.document.TextDocument;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
-import de.l3s.boilerpipe.extractors.CommonExtractors;
-import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
-import de.l3s.boilerpipe.sax.HTMLDocument;
-import de.l3s.boilerpipe.sax.HTMLFetcher;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.SAXException;
@@ -17,8 +11,6 @@ import org.xml.sax.SAXException;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.net.UnknownHostException;
 
 public class WebSearchResult {
     private int id;
@@ -115,6 +107,10 @@ public class WebSearchResult {
 //
 //        return pageResult.text();
         return ArticleExtractor.INSTANCE.getText(pageResult.html());
+    }
+
+    public void setPdf(boolean isPdf){
+        this.isPdf = isPdf;
     }
 
     public boolean isPdf() {

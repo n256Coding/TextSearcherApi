@@ -1,6 +1,6 @@
 package com.n256coding.Dev;
 
-import com.n256coding.Actors.TextAnalyzer;
+import com.n256coding.Services.TextAnalyzer;
 
 import java.io.File;
 import java.io.IOException;

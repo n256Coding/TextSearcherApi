@@ -1,4 +1,4 @@
-package com.n256coding.Actors;
+package com.n256coding.Services;
 
 import com.aliasi.lm.NGramProcessLM;
 import com.aliasi.spell.CompiledSpellChecker;

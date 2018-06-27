@@ -50,6 +50,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+
+
         <dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-core</artifactId>
@@ -88,7 +90,16 @@
             <artifactId>stanford-parser</artifactId>
             <version>3.6.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.mahout</groupId>
+            <artifactId>mahout-core</artifactId>
+            <version>0.9</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.mahout</groupId>-->
+            <!--<artifactId>mahout-integration</artifactId>-->
+            <!--<version>0.13.0</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -167,6 +178,12 @@
             <artifactId>boilerpipe</artifactId>
             <version>1.2.3</version>
         </dependency>
+
+
+
+
+
+
     </dependencies>
 
     <build>

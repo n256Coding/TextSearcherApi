@@ -1,7 +1,8 @@
 package com.n256coding.Dev.ApiAlgorithms;
 
-import com.n256coding.Actors.*;
-import com.n256coding.Actors.Filters.TextFilter;
+import com.n256coding.Helpers.StopWordHelper;
+import com.n256coding.Services.*;
+import com.n256coding.Services.Filters.TextFilter;
 import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
@@ -10,19 +11,20 @@ import com.n256coding.DatabaseModels.ResourceRating;
 import com.n256coding.Dev.Trainer;
 import com.n256coding.Helpers.DateEx;
 import com.n256coding.Helpers.SortHelper;
-import com.n256coding.Helpers.StopWord;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
 import com.n256coding.Models.InsiteSearchResultItem;
 import com.n256coding.Models.TfIdfData;
 import com.n256coding.Models.WebSearchResult;
+import com.n256coding.Services.Filters.UrlFilter;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.jsoup.HttpStatusException;
 import org.xml.sax.SAXException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,7 +41,7 @@ public class Algorithm4 {
     OntologyHandler ontology = new OntologyHandler(
             "D:\\SLIIT\\Year 4 Sem 1\\CDAP\\Research Project\\Resources\\Ontologies\\My_Programming.owl",
             "http://www.semanticweb.org/nishan/ontologies/2018/5/Programming");
-    StopWord stopWord = new StopWord();
+    StopWordHelper stopWordHelper = new StopWordHelper();
     SearchEngineConnection searchEngine = new GoogleConnection();
     DatabaseConnection database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
     FileHandler fileHandler = new FileHandler();
@@ -47,6 +49,7 @@ public class Algorithm4 {
     TextAnalyzer textAnalyzer = new TextAnalyzer();
     NLPProcessor nlpProcessor = new NLPProcessor();
     TextFilter textFilter = new TextFilter();
+    UrlFilter urlFilter = new UrlFilter();
 
     @SuppressWarnings("Duplicates")
     public InsiteSearchResult api(String query) throws IOException {
@@ -56,19 +59,19 @@ public class Algorithm4 {
         //String keywords = "Java Threading";
         boolean isPdf = false;
 
-        //Filter and Identify spell mistakes
         List<String> originalQueryTokens = new ArrayList<>();
 
+        //Filter and Identify spell mistakes
         //Correct spellings
         String spellCorrectedQuery = textAnalyzer.correctSpellingsV2(query);
 
         //Use NLP to identify most important words
         List<String> nouns = nlpProcessor.get(NLPProcessor.WordType.NOUN, query);
         List<String> verbs = nlpProcessor.get(NLPProcessor.WordType.VERB, query);
-        List<String> questions = nlpProcessor.get(NLPProcessor.WordType.QUESTION, query);
         List<String> adjectives = nlpProcessor.get(NLPProcessor.WordType.ADJECTIVE, query);
         List<String> lemmas = nlpProcessor.get(NLPProcessor.WordType.LEMMA, query);
 
+        //Add identified nouns, verbs, adjectives and lemmas to search
         originalQueryTokens.addAll(nouns);
         originalQueryTokens.addAll(verbs);
         originalQueryTokens.addAll(adjectives);
@@ -78,40 +81,40 @@ public class Algorithm4 {
             }
         }
 
-        //Identify related keywords
+        //Identify related keywords for user given keywords
+        //Use words vectors to get semantically relative words
         List<String> relatives = textAnalyzer.identifyRelatives(originalQueryTokens.toArray(new String[originalQueryTokens.size()]));
+        //Use pre-defined ontology to get relative words
         for (String token : originalQueryTokens) {
             relatives.addAll(ontology.getSubWordsOf(token, 5));
         }
 
-        //Search in the web
+
         List<String> webSearchKeywords = new ArrayList<>();
         webSearchKeywords.addAll(originalQueryTokens);
         webSearchKeywords.addAll(relatives);
 
 
-
-        searchInternet(isPdf, query);
-
-
-
-        //Search in the database
         String[] searchKeywords = webSearchKeywords.toArray(new String[webSearchKeywords.size()]);
+        //Search in the database
         List<Resource> localResources = database.getTextResourcesByKeywords(searchKeywords);
-        long totalNumberOfDocuments = database.countResources();
 
-        //Collect all relevant information from database
-        String test = "asdfasdf";
-
-        //Calculate TF-IDF values for each information to rank them.
+        //Filter out old resources
         for (Resource localResource : localResources) {
-            localResource.getTfOf(webSearchKeywords.toArray(new String[webSearchKeywords.size()]));
+            if(date.isOlderThanMonths(localResource.getLastModified(), 6)){
+                localResources.remove(localResource);
+            }
         }
+
+        //If local database does not contains considerable amount of results, search in internet
+        if(localResources.size() < 40){
+            searchInternet(isPdf, query);
+            localResources = database.getTextResourcesByKeywords(searchKeywords);
+        }
+
 
         //If the selected documents have ranks more than 10, make recommendation
         //TODO: implement recommendation part
-
-
 
 
         //Calculate TF-IDF values to rank results
@@ -121,7 +124,12 @@ public class Algorithm4 {
         InsiteSearchResult results = new InsiteSearchResult();
         results.setOriginalQuery(query);
         results.setSpellCorrectedQuery(spellCorrectedQuery);
+
+        int resultCount = 0;
         for (Resource localResource : localResources) {
+            if(resultCount >= 20){
+                break;
+            }
             int rating = 0;
             if (ResourceRating.getRatingOfResource(localResource.getId()) != null) {
                 rating = ResourceRating.getRatingOfResource(localResource.getId()).getRating();
@@ -134,6 +142,7 @@ public class Algorithm4 {
                             weightedTfIdf.get(localResource.getId())
                     )
             );
+            resultCount++;
         }
 
         //Sort results with TF-IDF weights
@@ -145,7 +154,7 @@ public class Algorithm4 {
 
     @SuppressWarnings("Duplicates")
     public void searchInternet(boolean isPdf, String query){
-        for (String tutorialSite : SearchEngineConnection.TUTORIAL_SITES) {
+        for (String tutorialSite : urlFilter.getTutorialSites(query)) {
 
             try {
                 searchEngine.searchOnline(tutorialSite, isPdf, query);
@@ -175,6 +184,8 @@ public class Algorithm4 {
                 WebSearchResult result = null;
                 try {
                     result = searchEngine.nextResult();
+                    if(result == null)
+                        break;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -199,7 +210,7 @@ public class Algorithm4 {
                     int wordCount = 0;
                     try {
                         String tempPage = result.getUrlContent();
-                        tempPage = textFilter.replaceLemmas(tempPage);
+                        tempPage = textFilter.replaceWithLemmas(tempPage);
                         wordCount = textAnalyzer.getWordCount(tempPage);
                         frequencies = textAnalyzer.getWordFrequency(tempPage);
 
@@ -211,7 +222,7 @@ public class Algorithm4 {
                         //TODO: Replace with logger
                         System.out.println("Error status: " + httpErr.getStatusCode());
                         continue;
-                    } catch (UnknownHostException unkHostErr) {
+                    } catch (UnknownHostException | MalformedURLException unkHostErr) {
                         //TODO: Replace with logger
                         System.out.println("Unknown host at: " + unkHostErr.getMessage());
                         continue;
@@ -221,7 +232,7 @@ public class Algorithm4 {
                         continue;
                     } catch (IOException unknownErr) {
                         //TODO: Replace with logger
-                        System.out.println("Invalid File: " + unknownErr.getMessage());
+                        System.out.println("Unknown Error: " + unknownErr.getMessage());
                     } catch (BoilerpipeProcessingException e) {
                         //TODO: Replace with logger
                         continue;
@@ -232,9 +243,9 @@ public class Algorithm4 {
 
                     //Here the keyword frequencies are reduced with a limit
                     //Current limit is 10
-                    for (int j = 0, k = 0; k < 10 && j < frequencies.size(); j++, k++) {
+                    for (int j = 0, k = 0; k < 20 && j < frequencies.size(); j++, k++) {
                         Map.Entry<String, Integer> frequency = frequencies.get(j);
-                        if (stopWord.isStopWord(frequency.getKey())) {
+                        if (stopWordHelper.isStopWord(frequency.getKey())) {
                             k--;
                             continue;
                         }
@@ -277,7 +288,7 @@ public class Algorithm4 {
                                     matchingDocuments.size(),
                                     document.getTfOf(keyword)
                             ),
-                            ((double) 5.0 / (double) webSearchKeywords.size()))
+                            ((double) 2.0 / (double) webSearchKeywords.size()))
                     );
                 }else{
                     tfIdfValues.add(new TfIdfData(document.getId(),

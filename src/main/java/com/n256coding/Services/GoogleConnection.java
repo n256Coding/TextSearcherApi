@@ -1,12 +1,14 @@
-package com.n256coding.Actors;
+package com.n256coding.Services;
 
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.WebSearchResult;
+import com.n256coding.Services.Filters.UrlFilter;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 import javax.annotation.Nullable;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class GoogleConnection implements SearchEngineConnection {
     private Document googlePage;
     private List<WebSearchResult> searchResults;
@@ -21,9 +24,11 @@ public class GoogleConnection implements SearchEngineConnection {
     private int resultCursor;
     private int currentPaginationIndex;
     private List<String> paginationUrls;
+    private UrlFilter urlFilter;
 
 
     public GoogleConnection() {
+        urlFilter = new UrlFilter();
         currentPaginationIndex = 0;
         resultCursor = -1;
         paginationUrls = new ArrayList<>();
@@ -76,9 +81,9 @@ public class GoogleConnection implements SearchEngineConnection {
             }
 
             String url = urlElements.get(0).attr("href");
-            url = UrlFilter.fixUrlEncoding(url);
-            url = UrlFilter.extractUrl(url);
-            if (!UrlFilter.isValidUrl(url)) {
+            url = urlFilter.fixUrlEncoding(url);
+            url = urlFilter.extractUrl(url);
+            if (!urlFilter.isValidUrl(url)) {
                 continue;
             }
 
@@ -86,12 +91,19 @@ public class GoogleConnection implements SearchEngineConnection {
             for (Element cacheUrlElement : cacheUrlElements) {
                 if (cacheUrlElement.ownText().equalsIgnoreCase("cached")) {
                     webCacheUrl = cacheUrlElement.attr("href");
-                    webCacheUrl = UrlFilter.fixUrlEncoding(webCacheUrl);
-                    webCacheUrl = UrlFilter.extractUrl(webCacheUrl);
+                    webCacheUrl = urlFilter.fixUrlEncoding(webCacheUrl);
+                    webCacheUrl = urlFilter.extractUrl(webCacheUrl);
                 }
             }
 
-            String description = descriptionElements.get(0).ownText();
+            String description;
+            try{
+                description = descriptionElements.get(0).ownText();
+            }catch (IndexOutOfBoundsException ex){
+                description = "";
+                //TODO: Replace with logger
+                System.out.println(ex.getMessage());
+            }
 
             //TODO: Newly added part. Needs a review. SEE: Reason
             //Reason: not all urls directs to pdf documents
@@ -113,9 +125,9 @@ public class GoogleConnection implements SearchEngineConnection {
 
                 for (int i = 0; i < slkUrlElements.size(); i++) {
                     String slkUrl = slkUrlElements.get(i).attr("href");
-                    slkUrl = UrlFilter.fixUrlEncoding(slkUrl);
-                    slkUrl = UrlFilter.extractUrl(slkUrl);
-                    if (!UrlFilter.isValidUrl(slkUrl)) {
+                    slkUrl = urlFilter.fixUrlEncoding(slkUrl);
+                    slkUrl = urlFilter.extractUrl(slkUrl);
+                    if (!urlFilter.isValidUrl(slkUrl)) {
                         continue;
                     }
 
@@ -171,9 +183,9 @@ public class GoogleConnection implements SearchEngineConnection {
     }
 
     @Override
-    public void navigateToNextPagination() throws IOException {
+    public boolean navigateToNextPagination() throws IOException {
         if ((currentPaginationIndex + 1) >= (paginationUrls.size())) {
-            return;
+            return false;
         }
         String paginationUrl = paginationUrls.get(currentPaginationIndex + 1);
         searchResults.clear();
@@ -185,6 +197,7 @@ public class GoogleConnection implements SearchEngineConnection {
         setResults();
         currentPaginationIndex++;
         resultCursor = -1;
+        return true;
     }
 
     @Override
@@ -209,8 +222,8 @@ public class GoogleConnection implements SearchEngineConnection {
             if ((resultCursor + 1) < searchResults.size()) {
                 return searchResults.get(++resultCursor);
             } else {
-                navigateToNextPagination();
-                return searchResults.get(++resultCursor);
+                if(navigateToNextPagination())
+                    return searchResults.get(++resultCursor);
             }
         }
         return null;

@@ -1,7 +1,7 @@
 package com.n256coding.Dev;
 
-import com.n256coding.Actors.GoogleConnection;
-import com.n256coding.Actors.NLPProcessor;
+import com.n256coding.Services.GoogleConnection;
+import com.n256coding.Services.NLPProcessor;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.WebSearchResult;
 

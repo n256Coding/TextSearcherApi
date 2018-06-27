@@ -1,12 +1,12 @@
 package com.n256coding.Controllers;
 
-import com.n256coding.Actors.GoogleConnection;
-import com.n256coding.Actors.TextAnalyzer;
+import com.n256coding.Dev.ApiAlgorithms.Algorithm5;
+import com.n256coding.Services.GoogleConnection;
+import com.n256coding.Services.TextAnalyzer;
 import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
-import com.n256coding.Dev.ApiAlgorithms.Algorithm3;
 import com.n256coding.Dev.ApiAlgorithms.Algorithm4;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
@@ -70,10 +70,11 @@ public class MainController {
 //        }
 //
 //        return results;
-        Algorithm4 algorithm = new Algorithm4();
+        Algorithm5 algorithm = new Algorithm5();
         try {
-            return algorithm.api(query);
+            return algorithm.api(query, isPdf.equals("true"));
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
         return new InsiteSearchResult();
@@ -95,7 +96,6 @@ public class MainController {
                 keywordData[j] = new KeywordData(frequency.get(j).getKey(), frequency.get(j).getValue(), 0);
             }
 
-//          TODO: Use this method  Resource resource = new Resource(searchEngine.getResultedUrls().get(i), keywordData, isPdf);
             Resource resource = new Resource(searchEngine.getResultedUrls().get(i),
                     keywordData,
                     isPdf,

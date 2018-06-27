@@ -1,4 +1,4 @@
-package com.n256coding.Actors;
+package com.n256coding.Services;
 
 import com.n256coding.DatabaseModels.Resource;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -175,4 +175,32 @@ public class TextAnalyzer {
 
         return tokens;
     }
+
+    public List<String> getNGramOf(String sentence, int n) {
+        List<String> nGramList = new ArrayList<>();
+        StringBuilder stringBuilder;
+        String[] tokens = sentence.split(" ");
+        for (int i = 0; i <= tokens.length - n; i++) {
+            stringBuilder = new StringBuilder("");
+            for (int j = i; j < i + n; j++) {
+                stringBuilder.append(tokens[j]);
+                stringBuilder.append(j == i + n - 1 ? "" : " ");
+            }
+            nGramList.add(stringBuilder.toString());
+        }
+        return nGramList;
+    }
+
+
+    public List<String> getIterativeNGram(String sentence, int min, int max) {
+        List<String> nGrams = new ArrayList<>();
+        if (min > max)
+            return nGrams;
+        for (int i = min-1; i < max; i++) {
+            nGrams.addAll(getNGramOf(sentence, i + 1));
+        }
+        return nGrams;
+    }
+
+
 }
