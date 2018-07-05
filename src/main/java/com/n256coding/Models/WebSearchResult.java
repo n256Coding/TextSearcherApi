@@ -3,7 +3,11 @@ package com.n256coding.Models;
 import com.n256coding.Services.FileHandler;
 import com.n256coding.Services.PDFHandler;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import de.l3s.boilerpipe.document.TextDocument;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
+import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
+import de.l3s.boilerpipe.sax.HTMLDocument;
+import de.l3s.boilerpipe.sax.HTMLFetcher;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.SAXException;
@@ -80,10 +84,11 @@ public class WebSearchResult {
         Document pageResult = Jsoup.connect(url)
                 .userAgent("Mozilla")
                 .get();
+        return pageResult.text();
 //        final HTMLDocument htmlDoc = HTMLFetcher.fetch(new URL(url));
 //        final TextDocument doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
 //        return CommonExtractors.ARTICLE_EXTRACTOR.getText();
-        return ArticleExtractor.INSTANCE.getText(pageResult.html());
+//        return ArticleExtractor.INSTANCE.getText(pageResult.html());
     }
 
     public String getWebCacheContent() throws IOException, BoilerpipeProcessingException {
@@ -105,8 +110,17 @@ public class WebSearchResult {
                 .userAgent("Mozilla")
                 .get();
 //
-//        return pageResult.text();
-        return ArticleExtractor.INSTANCE.getText(pageResult.html());
+        return pageResult.text();
+//        return ArticleExtractor.INSTANCE.getText(pageResult.html());
+    }
+
+    public String getPageTitle() throws IOException {
+        if(isPdf){
+            return "";
+        }
+        return Jsoup.connect(url)
+                .userAgent("Mozilla")
+                .get().title();
     }
 
     public void setPdf(boolean isPdf){

@@ -1,19 +1,34 @@
 package com.n256coding.Database;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Field;
 import com.n256coding.Common.Environments;
+import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.ResourceRating;
 import com.n256coding.DatabaseModels.User;
 import com.n256coding.Interfaces.DatabaseConnection;
+import com.sun.org.apache.regexp.internal.RE;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import javax.print.Doc;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static com.mongodb.client.model.Aggregates.addFields;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -44,6 +59,7 @@ public class MongoDbConnection implements DatabaseConnection {
         return false;
     }
 
+
     @Override
     public String addResource(Resource resource) {
         Query query = new Query(where("url").is(resource.getUrl()));
@@ -53,13 +69,22 @@ public class MongoDbConnection implements DatabaseConnection {
         update.set("isPdf", resource.isPdf());
         update.set("url", resource.getUrl());
         update.set("description", resource.getDescription());
+        update.set("title", resource.getTitle());
         mongoOperations.upsert(query, update, Resource.class);
         return resource.getId();
     }
 
     @Override
-    public void ModifyResource(String oldResourceId, Resource newResource) {
-
+    public void modifyResource(String oldResourceId, Resource newResource) {
+        Query query = new Query();
+        query.addCriteria(where("_id").is(oldResourceId));
+        Update update = new Update();
+        update.addToSet("url", newResource.getUrl())
+                .addToSet("keywords", newResource.getKeywords())
+                .addToSet("isPdf", newResource.isPdf())
+                .addToSet("lastModified", newResource.getDescription())
+                .addToSet("title", newResource.getTitle());
+        mongoOperations.updateFirst(query, update, Resource.class);
     }
 
     @Override
@@ -68,49 +93,106 @@ public class MongoDbConnection implements DatabaseConnection {
     }
 
     @Override
-    public long countResources(){
+    public long countResources() {
         Query query = new Query(where("_id").exists(true));
         return mongoOperations.count(query, Resource.class);
     }
 
     @Override
-    public List<Resource> getAllTextResources() {
+    public List<Resource> getAllResources() {
         return mongoOperations.findAll(Resource.class);
     }
 
     @Override
-    public List<Resource> getTextResourcesByKeywords(String... keywords) {
+    public List<Resource> getAllResources(boolean isPdf) {
+        Query query = new Query(where("isPdf").is(isPdf));
+        return mongoOperations.find(query, Resource.class);
+    }
+
+    @Override
+    public List<Resource> getResourcesByKeywords(boolean isPdf, String... keywords) {
         //TODO: Could be better to replace with like operator, See other relevant places also
         //TODO: Match elements
 //        List<Resource> result = mongoOperations.find(query(where("keywords.word").all(keywords)), Resource.class);
         Query query = new Query();
         query.addCriteria(where("keywords.word")
-                .in(keywords).and("isPdf").is(false)
+                .in(keywords).and("isPdf").is(isPdf)
         );
         List<Resource> result = mongoOperations.find(query, Resource.class);
         return result;
     }
 
     @Override
-    public List<Resource> getTextResourcesByUrl(String url) {
-        return mongoOperations.find(query(where("url").is(url)), Resource.class);
+    public List<Resource> getPriorityResourcesByKeywords(boolean isPdf, int numberOfMatches, String... keywords) {
+        BasicDBList intersectionList = new BasicDBList();
+        intersectionList.add("$keywords.word");
+        intersectionList.add(keywords);
+
+        BasicDBList matchList = new BasicDBList();
+        matchList.add(new BasicDBObject("matchedTags",
+                new BasicDBObject("$gt", numberOfMatches)));
+        matchList.add(new BasicDBObject("isPdf", isPdf));
+
+        AggregateIterable<Document> aggregate = new MongoClient("127.0.0.1", 27017).getDatabase("ResourceDB").getCollection("Resource").aggregate(
+                Arrays.asList(
+                        new BasicDBObject("$addFields",
+                                new BasicDBObject("matchedTags",
+                                        new BasicDBObject("$size",
+                                                new BasicDBObject("$setIntersection", intersectionList)))),
+                        new BasicDBObject("$match",
+                                new BasicDBObject("$and", matchList)),
+                        new BasicDBObject("$sort",
+                                new BasicDBObject("matchedTags", -1))
+                )
+        );
+        List<Resource> resources = new ArrayList<>();
+        MongoCursor<Document> iterator = aggregate.iterator();
+
+        while (iterator.hasNext()) {
+            Document document = iterator.next();
+            ArrayList keywordList = document.get("keywords", ArrayList.class);
+            List<KeywordData> keywordData = new ArrayList<>();
+            for (Document data : (ArrayList<Document>) keywordList) {
+                keywordData.add(new KeywordData(
+                   data.getString("word"),
+                        data.getInteger("freq"),
+                        data.getDouble("tf")
+                ));
+            }
+            resources.add(new Resource(
+                    document.getObjectId("_id").toString(),
+                    document.getString("url"),
+                    keywordData.toArray(new KeywordData[keywordData.size()]),
+                    document.getBoolean("isPdf"),
+                    document.getDate("lastModified"),
+                    document.getString("description"),
+                    document.getString("title")
+            ));
+        }
+        return resources;
     }
 
     @Override
-    public Resource getResourceById(String resourceId){
+    public List<Resource> getResourcesWhereTitleContains(boolean isPdf, String... keywords) {
+        List<Resource> results = new ArrayList<>();
+        Query query;
+        for (String keyword : keywords) {
+            query = new Query(where("isPdf").is(isPdf).and("title").regex(keyword));
+            results.addAll(mongoOperations.find(query, Resource.class));
+        }
+        return results;
+    }
+
+    @Override
+    public List<Resource> getResourcesByUrl(boolean isPdf, String url) {
+        Query query = new Query(where("isPdf").is(false).and("url").is(url));
+        return mongoOperations.find(query, Resource.class);
+    }
+
+    @Override
+    public Resource getResourceById(String resourceId) {
         Query query = new Query(where("_id").is(resourceId));
         return mongoOperations.findOne(query, Resource.class);
-    }
-
-    @Override
-    public List<Resource> getPdfResourcesByKeywords(String... keywords) {
-        Query query = new Query(where("keywords.word").in(keywords).and("isPdf").is(true));
-        return mongoOperations.find(query(where("keywords.word").in(keywords).andOperator(where("isPdf").is(true))), Resource.class);
-    }
-
-    @Override
-    public List<Resource> getPdfResourcesByUrl(String url) {
-        return null;
     }
 
     @Override

@@ -20,17 +20,29 @@ public class Resource {
     private boolean isPdf;
     private Date lastModified;
     private String description;
+    private String title;
 
     public Resource() {
     }
 
-    @PersistenceConstructor
-    public Resource(String url, KeywordData[] keywords, boolean isPdf, Date lastModified, String description) {
+    public Resource(String id, String url, KeywordData[] keywords, boolean isPdf, Date lastModified, String description, String title) {
+        this.id = id;
         this.url = url;
         this.keywords = keywords;
         this.isPdf = isPdf;
         this.lastModified = lastModified;
         this.description = description;
+        this.title = title;
+    }
+
+    @PersistenceConstructor
+    public Resource(String url, KeywordData[] keywords, boolean isPdf, Date lastModified, String description, String title) {
+        this.url = url;
+        this.keywords = keywords;
+        this.isPdf = isPdf;
+        this.lastModified = lastModified;
+        this.description = description;
+        this.title = title;
     }
 
     public String getId() {
@@ -79,6 +91,14 @@ public class Resource {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public double getTfOf(String... words){

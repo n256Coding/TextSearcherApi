@@ -53,5 +53,27 @@ public class OntologyHandler {
         return subWordList;
     }
 
+    public List<String> getEquivalentWords(String word) {
+        word = word.toLowerCase();
+        List<String> outputWords = new ArrayList<>();
+        String queryString = "PREFIX progonto: <" + ontologyBaseUrl + "#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "select (str(?word) as ?output) where {\n" +
+                "  ?word owl:equivalentClass progonto:" + word + " .\n" +
+                "}";
+        Query query = QueryFactory.create(queryString);
+        QueryExecution queryExecution = QueryExecutionFactory.create(query, ontoModel);
+        ResultSet resultSet = queryExecution.execSelect();
+
+        while (resultSet.hasNext()) {
+            String result = resultSet
+                    .nextSolution()
+                    .getLiteral("output")
+                    .getString()
+                    .replace(ontologyBaseUrl.concat("#"), "");
+            outputWords.add(result);
+        }
+        return outputWords;
+    }
 
 }

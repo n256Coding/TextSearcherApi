@@ -93,7 +93,7 @@ public class Algorithm3 {
 
         //Search in the database
         String[] searchKeywords = webSearchKeywords.toArray(new String[webSearchKeywords.size()]);
-        List<Resource> localResources = database.getTextResourcesByKeywords(searchKeywords);
+        List<Resource> localResources = database.getResourcesByKeywords(isPdf, searchKeywords);
         long totalNumberOfDocuments = database.countResources();
 
         //Collect all relevant information from database
@@ -176,7 +176,7 @@ public class Algorithm3 {
                 }
                 //If selected resource (URL) is not in database or updated date is older than 3 months
                 //Add or update resource information
-                List<Resource> resources = database.getTextResourcesByUrl(result.getUrl());
+                List<Resource> resources = database.getResourcesByUrl(isPdf, result.getUrl());
                 if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getLastModified(), 3)) {
                     //boolean testWord = resources.get(0).getLastModified().getTime() > new Date().getTime();
                     //Extract text content from URL or the result.
@@ -246,7 +246,7 @@ public class Algorithm3 {
         //Experimenting code segment - Start////////////////////////////////////////////////////////////////////////////////////
 
 //        //Get matching documents from database
-//        List<Resource> matchingDocuments = database.getTextResourcesByKeywords(
+//        List<Resource> matchingDocuments = database.getResourcesByKeywords(
 //                webSearchKeywords.toArray(new String[webSearchKeywords.size()])
 //        );
 

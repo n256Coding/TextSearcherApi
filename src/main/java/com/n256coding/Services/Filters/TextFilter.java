@@ -27,7 +27,7 @@ public class TextFilter {
 
     public boolean isValidWebPage(String pageContent, List<Map.Entry<String, Integer>> frequencies) {
         int wordCount = analyzer.getWordCount(pageContent);
-        List<String> tokenizedList = analyzer.getTokenizedList(pageContent, " ");
+        List<String> tokenizedList = analyzer.getLuceneTokenizedList(pageContent);
 
         if (wordCount < 150) {
             return false;

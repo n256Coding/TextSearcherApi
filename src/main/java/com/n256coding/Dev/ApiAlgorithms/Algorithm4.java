@@ -34,6 +34,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.averagingDouble;
 import static java.util.stream.Collectors.groupingBy;
 
+@Deprecated
 public class Algorithm4 {
     Trainer trainer = new Trainer();
     DateEx date = new DateEx();
@@ -97,7 +98,7 @@ public class Algorithm4 {
 
         String[] searchKeywords = webSearchKeywords.toArray(new String[webSearchKeywords.size()]);
         //Search in the database
-        List<Resource> localResources = database.getTextResourcesByKeywords(searchKeywords);
+        List<Resource> localResources = database.getResourcesByKeywords(isPdf, searchKeywords);
 
         //Filter out old resources
         for (Resource localResource : localResources) {
@@ -109,7 +110,7 @@ public class Algorithm4 {
         //If local database does not contains considerable amount of results, search in internet
         if(localResources.size() < 40){
             searchInternet(isPdf, query);
-            localResources = database.getTextResourcesByKeywords(searchKeywords);
+            localResources = database.getResourcesByKeywords(isPdf, searchKeywords);
         }
 
 
@@ -191,7 +192,7 @@ public class Algorithm4 {
                 }
                 //If selected resource (URL) is not in database or updated date is older than 3 months
                 //Add or update resource information
-                List<Resource> resources = database.getTextResourcesByUrl(result.getUrl());
+                List<Resource> resources = database.getResourcesByUrl(isPdf, result.getUrl());
                 if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getLastModified(), 3)) {
                     //boolean testWord = resources.get(0).getLastModified().getTime() > new Date().getTime();
                     //Extract text content from URL or the result.
@@ -268,7 +269,7 @@ public class Algorithm4 {
         //Experimenting code segment - Start////////////////////////////////////////////////////////////////////////////////////
 
 //        //Get matching documents from database
-//        List<Resource> matchingDocuments = database.getTextResourcesByKeywords(
+//        List<Resource> matchingDocuments = database.getResourcesByKeywords(
 //                webSearchKeywords.toArray(new String[webSearchKeywords.size()])
 //        );
 

@@ -1,5 +1,7 @@
 package com.n256coding.Helpers;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashSet;
 
 public class StopWordHelper {
@@ -552,6 +554,7 @@ public class StopWordHelper {
         add("(");
         add(")");
         add("-");
+        add("−");
         add("_");
         add("=");
         add("/");
@@ -563,7 +566,14 @@ public class StopWordHelper {
         }
     }
 
+    public HashSet<String> getStopWords(){
+        return this.m_Words;
+    }
+
     public boolean isStopWord(String word){
+        if(StringUtils.isNumeric(word)){
+            return true;
+        }
         return m_Words.contains(word.toLowerCase().trim());
     }
 }

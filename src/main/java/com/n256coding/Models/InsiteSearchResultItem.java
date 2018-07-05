@@ -57,4 +57,8 @@ public class InsiteSearchResultItem {
     public void setTf_idf(double tf_idf) {
         this.tf_idf = tf_idf;
     }
+
+    public void incTf_idf(double value){
+        this.tf_idf += value;
+    }
 }

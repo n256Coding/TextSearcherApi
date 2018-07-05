@@ -1,18 +1,18 @@
 package com.n256coding.Controllers;
 
-import com.n256coding.Dev.ApiAlgorithms.Algorithm5;
-import com.n256coding.Services.GoogleConnection;
-import com.n256coding.Services.TextAnalyzer;
 import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
-import com.n256coding.Dev.ApiAlgorithms.Algorithm4;
+import com.n256coding.Dev.ApiAlgorithms.Algorithm5;
+import com.n256coding.Dev.ApiAlgorithms.Algorithm6;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
 import com.n256coding.Models.OperationStatus;
 import com.n256coding.Models.Rating;
+import com.n256coding.Services.GoogleConnection;
+import com.n256coding.Services.TextAnalyzer;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
@@ -37,7 +37,7 @@ public class MainController {
     }
 
     @PutMapping("/rating")
-    public OperationStatus addRating(@RequestBody Rating rating){
+    public OperationStatus addRating(@RequestBody Rating rating) {
         db.upsertResourceRating(rating.getResourceId(), rating.getUserId(), rating.getRating());
         return new OperationStatus("ok");
     }
@@ -70,7 +70,7 @@ public class MainController {
 //        }
 //
 //        return results;
-        Algorithm5 algorithm = new Algorithm5();
+        Algorithm6 algorithm = new Algorithm6();
         try {
             return algorithm.api(query, isPdf.equals("true"));
         } catch (IOException e) {
@@ -85,7 +85,7 @@ public class MainController {
 
         for (int i = 0; i < searchEngine.getResultedUrls().size(); i++) {
             //To avoid overwriting existing data in database
-            if (db.getTextResourcesByUrl(searchEngine.getResultedUrls().get(i)).size() != 0) {
+            if (db.getResourcesByUrl(isPdf, searchEngine.getResultedUrls().get(i)).size() != 0) {
                 continue;
             }
 
@@ -100,14 +100,14 @@ public class MainController {
                     keywordData,
                     isPdf,
                     new Date(),
-                    searchEngine.getDescriptionAt(i));
+                    searchEngine.getDescriptionAt(i), null);
             db.addResource(resource);
         }
     }
 
     public String getSearchResults(String keyword) {
         StringBuilder stringBuilder = new StringBuilder();
-        List<Resource> resources = db.getTextResourcesByKeywords(keyword);
+        List<Resource> resources = db.getResourcesByKeywords(false, keyword);
 
         for (Resource resource : resources) {
             stringBuilder.append("<a href='" + resource.getUrl() + "'>" + resource.getUrl() + "</a><br>");

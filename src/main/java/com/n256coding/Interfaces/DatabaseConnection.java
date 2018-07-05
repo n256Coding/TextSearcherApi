@@ -13,23 +13,25 @@ public interface DatabaseConnection {
 
     String addResource(Resource resource);
 
-    void ModifyResource(String oldResourceId, Resource newResource);
+    void modifyResource(String oldResourceId, Resource newResource);
 
     void removeResource(String resourceId);
 
     long countResources();
 
-    List<Resource> getAllTextResources();
+    List<Resource> getAllResources();
 
-    List<Resource> getTextResourcesByKeywords(String... keywords);
+    List<Resource> getAllResources(boolean isPdf);
 
-    List<Resource> getTextResourcesByUrl(String url);
+    List<Resource> getResourcesByKeywords(boolean isPdf, String... keywords);
+
+    List<Resource> getPriorityResourcesByKeywords(boolean isPdf, int numberOfMatches, String... keywords);
+
+    List<Resource> getResourcesWhereTitleContains(boolean isPdf, String... keywords);
+
+    List<Resource> getResourcesByUrl(boolean isPdf, String url);
 
     Resource getResourceById(String resourceId);
-
-    List<Resource> getPdfResourcesByKeywords(String... keywords);
-
-    List<Resource> getPdfResourcesByUrl(String url);
 
     ResourceRating getRatingOfResource(String resourceId);
 

@@ -97,11 +97,7 @@ public class Algorithm5 {
         String[] searchKeywords = webSearchKeywords.toArray(new String[webSearchKeywords.size()]);
         //Search in the database
         List<Resource> localResources;
-        if (isPdf) {
-            localResources = database.getPdfResourcesByKeywords(searchKeywords);
-        } else {
-            localResources = database.getTextResourcesByKeywords(searchKeywords);
-        }
+        localResources = database.getResourcesByKeywords(isPdf, searchKeywords);
 
         //Filter out old resources
         for (Resource localResource : localResources) {
@@ -114,14 +110,14 @@ public class Algorithm5 {
         //If local database does not contains considerable amount of results, search in internet
         if (isPdf && localResources.size() < 30) {
             processEbooksRequest();
-            localResources = database.getPdfResourcesByKeywords(searchKeywords);
+            localResources = database.getResourcesByKeywords(isPdf, searchKeywords);
         }
 
         //For websites
         //If local database does not contains considerable amount of results, search in internet
         if (!isPdf && localResources.size() < 40) {
             searchInternet(isPdf, query);
-            localResources = database.getTextResourcesByKeywords(searchKeywords);
+            localResources = database.getResourcesByKeywords(isPdf, searchKeywords);
         }
 
 
@@ -163,6 +159,7 @@ public class Algorithm5 {
         return results;
     }
 
+    @SuppressWarnings("Duplicates")
     public void processEbooksRequest() {
         RestTemplate restTemplate = new RestTemplate();
         FreeEbook[] ebooksResult = restTemplate.getForObject("https://oreilly-api.appspot.com/books", FreeEbook[].class);
@@ -257,7 +254,7 @@ public class Algorithm5 {
                 }
                 //If selected resource (URL) is not in database or updated date is older than 3 months
                 //Add or update resource information
-                List<Resource> resources = database.getTextResourcesByUrl(result.getUrl());
+                List<Resource> resources = database.getResourcesByUrl(isPdf, result.getUrl());
                 if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getLastModified(), 3)) {
                     //boolean testWord = resources.get(0).getLastModified().getTime() > new Date().getTime();
                     //Extract text content from URL or the result.
@@ -334,7 +331,7 @@ public class Algorithm5 {
         //Experimenting code segment - Start////////////////////////////////////////////////////////////////////////////////////
 
 //        //Get matching documents from database
-//        List<Resource> matchingDocuments = database.getTextResourcesByKeywords(
+//        List<Resource> matchingDocuments = database.getResourcesByKeywords(
 //                webSearchKeywords.toArray(new String[webSearchKeywords.size()])
 //        );
 

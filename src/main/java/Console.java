@@ -1,15 +1,10 @@
-import com.n256coding.Models.FreeEbook;
+import com.n256coding.Database.MongoDbConnection;
+import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Services.FileHandler;
-import com.n256coding.Services.Filters.TextFilter;
-import com.n256coding.Services.OntologyHandler;
-import com.n256coding.Services.Recommender;
-import com.n256coding.Services.TextAnalyzer;
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.mahout.cf.taste.common.TasteException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Console {
@@ -53,7 +48,7 @@ public class Console {
 //        //Get web search results
 //        for (int i = 0; i < searchEngine.getResultCount(); i++) {
 //            //If search results is not in database or updated date is far than 6 months
-//            List<Resource> resources = database.getTextResourcesByUrl(searchEngine.getResultedUrls().get(i));
+//            List<Resource> resources = database.getResourcesByUrl(searchEngine.getResultedUrls().get(i));
 //            if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getLastModified(), 6)) {
 //                //boolean testWord = resources.get(0).getLastModified().getTime() > new Date().getTime();
 //                //Extract text content from URL or the result.
@@ -104,7 +99,7 @@ public class Console {
 //        }
 //
 //        //Search in the database
-//        List<Resource> localResources = database.getTextResourcesByKeywords(webSearchKeywords.toArray(new String[webSearchKeywords.size()]));
+//        List<Resource> localResources = database.getResourcesByKeywords(webSearchKeywords.toArray(new String[webSearchKeywords.size()]));
 //
 //        //Collect all relevant information from database
 //        String test = "asdfasdf";
@@ -139,29 +134,31 @@ public class Console {
 //        tester.getContent("angular 6 basics");
 
 //        DatabaseConnection database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
-//        System.out.println(database.getTextResourcesByUrl("https://www.javaworld.com/article/3033958/open-source-tools/open-source-career-maker-or-wipeout.html").size());
+//        System.out.println(database.getResourcesByUrl("https://www.javaworld.com/article/3033958/open-source-tools/open-source-career-maker-or-wipeout.html").size());
 
 
 
 
 //        Algorithm4 algorithm = new Algorithm4();
 //        algorithm.api("object oriented concepts");
-        TextAnalyzer textAnalyzer = new TextAnalyzer();
-        TextFilter textFilter = new TextFilter();
-        OntologyHandler ontologyHandler = new OntologyHandler(
-                FileHandler.ONTOLOGY_PATH,
-                "http://www.semanticweb.org/nishan/ontologies/2018/5/Programming");
-        List<String> nGrams = textFilter.replaceString(textAnalyzer.getIterativeNGram("object oriented concept of programming concept", 1, 3), " ", "_");
+//        Document pageResult = Jsoup.connect("https://www.completecsharptutorial.com/basic/c-events-tutorial-with-programming-example.php")
+//                .userAgent("Mozilla")
+//                .get();
+////
+////        return pageResult.text();
+//        String testss = "";
+//        String testsss = "";
+//        try {
+//            testss = ArticleExtractor.INSTANCE.getText(pageResult.html());
+//            testsss = ArticleExtractor.INSTANCE.getText(new URL("https://www.completecsharptutorial.com/basic/c-events-tutorial-with-programming-example.php"));
+//        } catch (BoilerpipeProcessingException e) {
+//            e.printStackTrace();
+//        }
+//        String lemmaReplace = new TextFilter().replaceWithLemmas(testss);
 
-        List<String> newList = new ArrayList<>();
-//        newList.add("test string");
-        nGrams.addAll(newList);
-
-        for (String nGram : nGrams) {
-            List<String> subWordsOf = ontologyHandler.getSubWordsOf(nGram, 5);
-            String test = "Hello World";
-        }
-
+//        MongoDbConnection mongoDbConnection = new MongoDbConnection();
+//        List<Resource> priorityResourcesByKeywords = mongoDbConnection.getPriorityResourcesByKeywords(false, "java", "thread");
+        boolean numeric = StringUtils.isNumeric("5");
         String test = "sdfsdf";
     }
 

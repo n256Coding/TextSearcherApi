@@ -65,7 +65,7 @@ public class Algorithm1 {
             while (searchEngine.hasMoreResults()) {
                 WebSearchResult result = searchEngine.nextResult();
                 //If search results is not in database or updated date is far than 6 months
-                List<Resource> resources = database.getTextResourcesByUrl(result.getUrl());
+                List<Resource> resources = database.getResourcesByUrl(isPdf, result.getUrl());
                 if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getLastModified(), 6)) {
                     //boolean testWord = resources.get(0).getLastModified().getTime() > new Date().getTime();
                     //Extract text content from URL or the result.
@@ -123,7 +123,7 @@ public class Algorithm1 {
 
 
         //Search in the database
-        List<Resource> localResources = database.getTextResourcesByKeywords(webSearchKeywords.toArray(new String[webSearchKeywords.size()]));
+        List<Resource> localResources = database.getResourcesByKeywords(isPdf, webSearchKeywords.toArray(new String[webSearchKeywords.size()]));
 
         //Collect all relevant information from database
         String test = "asdfasdf";

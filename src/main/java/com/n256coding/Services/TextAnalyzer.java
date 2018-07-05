@@ -1,6 +1,17 @@
 package com.n256coding.Services;
 
+import com.n256coding.Common.Environments;
+import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.Resource;
+import com.n256coding.Helpers.StopWordHelper;
+import com.n256coding.Interfaces.DatabaseConnection;
+import com.n256coding.Models.TfIdfData;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.TermFrequencyAttribute;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.deeplearning4j.models.embeddings.WeightLookupTable;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
@@ -23,11 +34,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static java.util.stream.Collectors.averagingDouble;
+import static java.util.stream.Collectors.groupingBy;
+
 public class TextAnalyzer {
     private FileHandler fileHandler;
+    private DatabaseConnection database;
 
     public TextAnalyzer() {
         this.fileHandler = new FileHandler();
+        this.database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
     }
 
     public List<String> identifyRelatives(String... keywords) {
@@ -85,10 +101,9 @@ public class TextAnalyzer {
     }
 
     public List<Map.Entry<String, Integer>> getWordFrequency(String corpus) {
-        StringTokenizer tokenizer = new StringTokenizer(corpus.toLowerCase());
+        List<String> tokenizedList = getLuceneTokenizedList(corpus.toLowerCase());
         HashMap<String, Integer> dictionary = new HashMap<>();
-        while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
+        for (String token : tokenizedList) {
             if (dictionary.containsKey(token)) {
                 int count = dictionary.get(token);
                 count++;
@@ -172,8 +187,24 @@ public class TextAnalyzer {
         while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken());
         }
-
         return tokens;
+    }
+
+    public List<String> getLuceneTokenizedList(String sentence) {
+        List<String> tokenList = new ArrayList<>();
+        CharArraySet stopwordSet = new CharArraySet(new StopWordHelper().getStopWords(), false);
+        StandardAnalyzer analyzer = new StandardAnalyzer(stopwordSet);
+        try (TokenStream tokenStream = analyzer.tokenStream("content", sentence)) {
+            tokenStream.reset();
+            while (tokenStream.incrementToken()) {
+                String word = tokenStream.getAttribute(CharTermAttribute.class).toString();
+                tokenList.add(word);
+            }
+        } catch (IOException e) {
+            //TODO: Replace with logger
+            e.printStackTrace();
+        }
+        return tokenList;
     }
 
     public List<String> getNGramOf(String sentence, int n) {
@@ -196,10 +227,59 @@ public class TextAnalyzer {
         List<String> nGrams = new ArrayList<>();
         if (min > max)
             return nGrams;
-        for (int i = min-1; i < max; i++) {
+        for (int i = min - 1; i < max; i++) {
             nGrams.addAll(getNGramOf(sentence, i + 1));
         }
         return nGrams;
+    }
+
+    @SuppressWarnings("Duplicates")
+    public Map<String, Double> calculateWeightedTfIdf(List<String> allTokens, List<String> originalQueryTokens, List<Resource> matchingDocuments) {
+        //Experimenting code segment - Start////////////////////////////////////////////////////////////////////////////////////
+
+//        //Get matching documents from database
+//        List<Resource> matchingDocuments = database.getResourcesByKeywords(
+//                allTokens.toArray(new String[allTokens.size()])
+//        );
+
+
+        //List Example Instance:
+        //ObjectID               Keyword           TF_IDF               WeightedValue
+        //sdfasdgws3423rfef      Java              0.02566261           5.0/2
+        //sdfaefsdvcxvcxbbs      Java              0.05623123           5.0/2
+        List<TfIdfData> tfIdfValues = new ArrayList<>();
+        for (Resource document : matchingDocuments) {
+            for (String keyword : allTokens) {
+                double weightedValue = 0;
+                if (originalQueryTokens.contains(keyword)) {
+                    weightedValue = (double) 2.0 / (double) allTokens.size();
+                } else {
+                    weightedValue = (double) 1.0 / (double) allTokens.size();
+                }
+                if (document.getTitle().contains(keyword)) {
+                    weightedValue++;
+                }
+                double tfidfWeight = getTFIDFWeight(database.countResources(),
+                        matchingDocuments.size(),
+                        document.getTfOf(keyword)
+                );
+                tfIdfValues.add(new TfIdfData(document.getId(),
+                                keyword,
+                                getTFIDFWeight(database.countResources(),
+                                        matchingDocuments.size(),
+                                        document.getTfOf(keyword)
+                                ),
+                                weightedValue
+                        )
+                );
+            }
+        }
+
+        //Get averaging TF-IDF values for every identified document
+        Map<String, Double> weightedTfIdf = tfIdfValues.stream()
+                .collect(groupingBy(TfIdfData::getDocumentId, averagingDouble(TfIdfData::getWeightedTfIdfValue)));
+        return weightedTfIdf;
+        //Experimenting code segment - End/////////////////////////////////////////////////////////////////////////
     }
 
 
