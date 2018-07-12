@@ -130,7 +130,7 @@ public class MongoDbConnection implements DatabaseConnection {
 
         BasicDBList matchList = new BasicDBList();
         matchList.add(new BasicDBObject("matchedTags",
-                new BasicDBObject("$gt", numberOfMatches)));
+                new BasicDBObject("$gte", numberOfMatches)));
         matchList.add(new BasicDBObject("isPdf", isPdf));
 
         AggregateIterable<Document> aggregate = new MongoClient("127.0.0.1", 27017).getDatabase("ResourceDB").getCollection("Resource").aggregate(
