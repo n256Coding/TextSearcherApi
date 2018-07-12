@@ -5,16 +5,18 @@ public class InsiteSearchResultItem {
     protected String url;
     protected String description;
     protected int rating;
+    protected String title;
     protected double tf_idf;
 
     public InsiteSearchResultItem() {
     }
 
-    public InsiteSearchResultItem(String _id, String url, String description, int rating, double tf_idf) {
+    public InsiteSearchResultItem(String _id, String url, String description, int rating, String title, double tf_idf) {
         this._id = _id;
         this.url = url;
         this.description = description;
         this.rating = rating;
+        this.title = title;
         this.tf_idf = tf_idf;
     }
 
@@ -56,6 +58,14 @@ public class InsiteSearchResultItem {
 
     public void setTf_idf(double tf_idf) {
         this.tf_idf = tf_idf;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void incTf_idf(double value){

@@ -44,32 +44,7 @@ public class MainController {
 
     @GetMapping
     public InsiteSearchResult searchResults(@RequestParam("q") String query, @RequestParam("pdf") String isPdf) {
-//        TextSearcher searcher = new TextSearcher();
-//        TextAnalyzer analyzer = new TextAnalyzer();
-//
-//        List<String> tokenizedQuery = null;
-//        List<String> relativeWords = null;
-//
-//        //Correct spelling if available query
-//        try {
-//            tokenizedQuery = textAnalyzer.correctSpellings(query);
-//        } catch (IOException | ParseException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//            tokenizedQuery = textAnalyzer.getTokenizedList(query, " ");
-//        }
-//
-//        //Check relative words to query
-//        relativeWords = textAnalyzer.identifyRelatives(tokenizedQuery.toArray(new String[tokenizedQuery.size()]));
-//
-//
-//        InsiteSearchResult results = new InsiteSearchResult();
-//        try {
-//            results = searcher.searchContent(query, isPdf.equals("true"));
-//        } catch (ParseException | IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return results;
+
         Algorithm6 algorithm = new Algorithm6();
         try {
             return algorithm.api(query, isPdf.equals("true"));
@@ -105,13 +80,4 @@ public class MainController {
         }
     }
 
-    public String getSearchResults(String keyword) {
-        StringBuilder stringBuilder = new StringBuilder();
-        List<Resource> resources = db.getResourcesByKeywords(false, keyword);
-
-        for (Resource resource : resources) {
-            stringBuilder.append("<a href='" + resource.getUrl() + "'>" + resource.getUrl() + "</a><br>");
-        }
-        return stringBuilder.toString();
-    }
 }

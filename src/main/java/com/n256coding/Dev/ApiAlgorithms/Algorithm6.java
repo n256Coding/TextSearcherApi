@@ -15,15 +15,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class Algorithm6 {
-    TextFilter textFilter;
-    NLPProcessor nlpProcessor;
-    OntologyHandler ontologyHandler;
-    TextAnalyzer textAnalyzer;
-    DatabaseConnection database;
-    DateEx date;
-    OnlineDataHandler onlineDataHandler;
+    private TextFilter textFilter;
+    private NLPProcessor nlpProcessor;
+    private OntologyHandler ontologyHandler;
+    private TextAnalyzer textAnalyzer;
+    private DatabaseConnection database;
+    private DateEx date;
+    private OnlineDataHandler onlineDataHandler;
+    private int dbKeywordMatchCount;
 
     public Algorithm6() {
         textFilter = new TextFilter();
@@ -70,9 +72,10 @@ public class Algorithm6 {
 
         //List: Got some results resources from database
 //        List<Resource> localResources = database.getResourcesByKeywords(isPdf, allTokens.toArray(new String[allTokens.size()]));
+        dbKeywordMatchCount = allTokens.size() > 5 ? 3 : 2;
         List<Resource> localResources = database.getPriorityResourcesByKeywords(
                 isPdf,
-                allTokens.size() > 5 ? 3 : 2,
+                dbKeywordMatchCount,
                 allTokens.toArray(new String[allTokens.size()]));
 
         //Filter-out old results
@@ -83,14 +86,19 @@ public class Algorithm6 {
         }
 
         //is the list have more than 30 results that not older than 6 months?
-        if (localResources.size() < 30) {
+        if ((isPdf && localResources.size() < 10) || (!isPdf && localResources.size() < 30)) {
+            //If local storage does not have much information, request online information
             if(isPdf){
-                onlineDataHandler.refreshLocalData_Ebook();
+                onlineDataHandler.refreshLocalData_Ebook(query);
             }else{
                 onlineDataHandler.refreshLocalData_Webpage(isPdf, query);
             }
 
-            localResources = database.getPriorityResourcesByKeywords(isPdf, 2, allTokens.toArray(new String[allTokens.size()]));
+            //Still no considerable amount of results?
+            while(localResources.size() < 20 && dbKeywordMatchCount > 0){
+                //Reduce number of keyword matches limit
+                localResources = database.getPriorityResourcesByKeywords(isPdf, dbKeywordMatchCount--, allTokens.toArray(new String[allTokens.size()]));
+            }
         }
 
         //for each result,
@@ -107,7 +115,7 @@ public class Algorithm6 {
         //Send results to user
         InsiteSearchResult results = new InsiteSearchResult();
         results.setOriginalQuery(query);
-        results.setSpellCorrectedQuery(query);
+        results.setSpellCorrectedQuery(spellCorrectedQuery);
 
         int resultCount = 0;
         for (Resource localResource : localResources) {
@@ -120,7 +128,7 @@ public class Algorithm6 {
             }
             int matchCount = 0;
             for (String token : originalTokens) {
-                if(localResource.getTitle().matches("\\b"+token+"\\b")){
+                if((localResource.getTitle() == null ? "" : localResource.getTitle()).matches("\\b"+token+"\\b")){
                     matchCount++;
                 }
             }
@@ -130,6 +138,7 @@ public class Algorithm6 {
                                 localResource.getUrl(),
                                 localResource.getDescription(),
                                 rating,
+                                localResource.getTitle() == null ? "" : localResource.getTitle(),
                                 weightedTfIdf.get(localResource.getId()) + 2
                         )
                 );
@@ -139,6 +148,7 @@ public class Algorithm6 {
                                 localResource.getUrl(),
                                 localResource.getDescription(),
                                 rating,
+                                localResource.getTitle() == null ? "" : localResource.getTitle(),
                                 weightedTfIdf.get(localResource.getId())
                         )
                 );

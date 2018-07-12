@@ -14,6 +14,10 @@ import com.n256coding.Services.Filters.TextFilter;
 import com.n256coding.Services.Filters.UrlFilter;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.jsoup.HttpStatusException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.web.client.RestTemplate;
 import org.xml.sax.SAXException;
 
@@ -43,6 +47,10 @@ public class OnlineDataHandler {
         this.date = new DateEx();
         this.textAnalyzer = new TextAnalyzer();
         this.stopWordHelper = new StopWordHelper();
+    }
+
+    private void addResourceToDB(String url, String description, String title, boolean isPdf) {
+
     }
 
     @SuppressWarnings("Duplicates")
@@ -166,58 +174,219 @@ public class OnlineDataHandler {
     }
 
     @SuppressWarnings("Duplicates")
-    public void refreshLocalData_Ebook() {
+    public void refreshLocalData_Ebook(String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         FreeEbook[] ebooksResult = restTemplate.getForObject("https://oreilly-api.appspot.com/books", FreeEbook[].class);
+        List<String> freeProgrammingBooks = programmingBookComDownload(query);
 
-        for (FreeEbook ebook : ebooksResult) {
-            WebSearchResult searchResult = new WebSearchResult();
-            if (ebook.getPdf() == null)
-                continue;
-            searchResult.setUrl(ebook.getPdf());
-            searchResult.setDescription(ebook.getDescription());
-            searchResult.setPdf(true);
+//        for (FreeEbook ebook : ebooksResult) {
+//            WebSearchResult searchResult = new WebSearchResult();
+//            if (ebook.getPdf() == null)
+//                continue;
+//            searchResult.setUrl(ebook.getPdf());
+//            searchResult.setDescription(ebook.getDescription());
+//            searchResult.setPdf(true);
+//
+//            List<KeywordData> keywordDataList = new ArrayList<>();
+//            Resource resource = new Resource();
+//            resource.setUrl(ebook.getPdf());
+//            resource.setPdf(true);
+//            resource.setTitle(ebook.getTitle());
+//            resource.setLastModified(new Date());
+//            resource.setDescription(ebook.getDescription());
+//
+//            List<Map.Entry<String, Integer>> frequencies = new ArrayList<>();
+//            int wordCount = 0;
+//            try {
+//                String tempPage = searchResult.getUrlContent();
+//                tempPage = textFilter.replaceWithLemmas(tempPage);
+//                wordCount = textAnalyzer.getWordCount(tempPage);
+//                frequencies = textAnalyzer.getWordFrequency(tempPage);
+//
+//            } catch (BoilerpipeProcessingException e) {
+//                e.printStackTrace();
+//            } catch (SAXException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            //Here the keyword frequencies are reduced with a limit
+//            //Current limit is 10
+//            for (int j = 0, k = 0; k < 20 && j < frequencies.size(); j++, k++) {
+//                Map.Entry<String, Integer> frequency = frequencies.get(j);
+//                if (stopWordHelper.isStopWord(frequency.getKey())) {
+//                    k--;
+//                    continue;
+//                }
+//                KeywordData keywordData = new KeywordData(frequency.getKey(),
+//                        frequency.getValue(),
+//                        ((double) frequency.getValue() / (double) wordCount));
+//                keywordDataList.add(keywordData);
+//            }
+//            resource.setKeywords(keywordDataList.toArray(new KeywordData[keywordDataList.size()]));
+//            //Store or update that information in database.
+//            database.addResource(resource);
+//        }
 
-            List<KeywordData> keywordDataList = new ArrayList<>();
-            Resource resource = new Resource();
-            resource.setUrl(ebook.getPdf());
-            resource.setPdf(true);
-            resource.setTitle(ebook.getTitle());
-            resource.setLastModified(new Date());
-            resource.setDescription(ebook.getDescription());
+        System.out.println("Starting to analyze URL contents");
+        Thread[] analyzerThread = new Thread[freeProgrammingBooks.size()];
 
-            List<Map.Entry<String, Integer>> frequencies = new ArrayList<>();
-            int wordCount = 0;
+        for (int i = 0; i < freeProgrammingBooks.size(); i++) {
+            final int j = i;
+            analyzerThread[i] = new Thread(() -> analyzeUrlContent(freeProgrammingBooks.get(j)));
+            analyzerThread[i].start();
+        }
+        for (int i = 0; i < analyzerThread.length; i++) {
             try {
-                String tempPage = searchResult.getUrlContent();
-                tempPage = textFilter.replaceWithLemmas(tempPage);
-                wordCount = textAnalyzer.getWordCount(tempPage);
-                frequencies = textAnalyzer.getWordFrequency(tempPage);
-
-            } catch (BoilerpipeProcessingException e) {
-                e.printStackTrace();
-            } catch (SAXException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+                analyzerThread[i].join();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
 
-            //Here the keyword frequencies are reduced with a limit
-            //Current limit is 10
-            for (int j = 0, k = 0; k < 20 && j < frequencies.size(); j++, k++) {
-                Map.Entry<String, Integer> frequency = frequencies.get(j);
-                if (stopWordHelper.isStopWord(frequency.getKey())) {
-                    k--;
+    public void analyzeUrlContent(String bookUrl) {
+        System.out.println("Working on " + bookUrl + "-------------------------------------------------");
+        WebSearchResult searchResult = new WebSearchResult();
+
+        searchResult.setUrl(bookUrl);
+        searchResult.setDescription("");
+        searchResult.setPdf(true);
+
+        List<KeywordData> keywordDataList = new ArrayList<>();
+        Resource resource = new Resource();
+        resource.setUrl(bookUrl);
+        resource.setPdf(true);
+        resource.setTitle("");
+        resource.setLastModified(new Date());
+        resource.setDescription("");
+
+        List<Map.Entry<String, Integer>> frequencies = new ArrayList<>();
+        int wordCount = 0;
+        try {
+            String tempPage = searchResult.getUrlContent();
+            System.out.println("Downloaded book " + searchResult.getUrl());
+            wordCount = textAnalyzer.getWordCount(tempPage);
+            System.out.println("Word counted: " + wordCount);
+//                tempPage = textFilter.replaceWithLemmas(tempPage);
+//                System.out.println("Lemma fixed");
+            frequencies = textAnalyzer.getWordFrequency(tempPage);
+            System.out.println("Frequency collected");
+
+        } catch (BoilerpipeProcessingException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Here the keyword frequencies are reduced with a limit
+        //Current limit is 10
+        for (int j = 0, k = 0; k < 60 && j < frequencies.size(); j++, k++) {
+            Map.Entry<String, Integer> frequency = frequencies.get(j);
+            if (stopWordHelper.isStopWord(frequency.getKey())) {
+                k--;
+                continue;
+            }
+            KeywordData keywordData = new KeywordData(frequency.getKey(),
+                    frequency.getValue(),
+                    ((double) frequency.getValue() / (double) wordCount));
+            keywordDataList.add(keywordData);
+        }
+        System.out.println("Frequency reduction completed");
+        resource.setKeywords(keywordDataList.toArray(new KeywordData[keywordDataList.size()]));
+        //Store or update that information in database.
+        database.addResource(resource);
+    }
+
+
+    public List<String> programmingBookComDownload(String query) throws IOException {
+        List<String> bookUrlList = new ArrayList<>();
+        List<String> bookUrlListStep2 = new ArrayList<>();
+        List<String> bookUrlListStep3 = new ArrayList<>();
+        List<String> paginationUrls = new ArrayList<>();
+
+        Document resultPage = Jsoup.connect("http://www.programming-book.com/?s=" + query)
+                .timeout(10000)
+                .userAgent("Mozilla")
+                .get();
+
+        paginationUrls.add("http://www.programming-book.com/?s=" + query);
+        //If true, site contains pagination bar
+        if (resultPage.select("div.wp-pagenavi").size() > 0) {
+
+            Element paginationBar = resultPage.select("div.wp-pagenavi").get(0);
+            //If class="last" is in the pagination bar
+            if (paginationBar.select("a.last").size() > 0) {
+                Element lastLink = paginationBar.select("a.last").get(0);
+                String lastLinkUrl = lastLink.attr("href");
+                int startIndex = lastLinkUrl.lastIndexOf("/page/") + 6;
+                int endIndex = lastLinkUrl.lastIndexOf("/?s");
+                int lastIndex = Integer.parseInt(lastLinkUrl.substring(startIndex, endIndex));
+
+                for (int i = 2; i <= lastIndex; i++) {
+                    paginationUrls.add("http://www.programming-book.com/page/" + i + "/?s=" + query);
+                }
+            }
+        }
+
+        for (int i = 0; i < paginationUrls.size() && i < 2; i++) {
+            System.out.println("Working on pagination " + i);
+            if (i != 0) {
+                resultPage = Jsoup.connect(paginationUrls.get(i))
+                        .timeout(10000)
+                        .userAgent("Mozilla")
+                        .get();
+            }
+            Elements urls = resultPage.select("a.imghover");
+            Elements metaInfo = resultPage.select("div.doc-meta");
+            for (int j = 0; j < metaInfo.size(); j++) {
+                if (metaInfo.get(j).text().trim().equalsIgnoreCase("Pages 1 |".trim())) {
                     continue;
                 }
-                KeywordData keywordData = new KeywordData(frequency.getKey(),
-                        frequency.getValue(),
-                        ((double) frequency.getValue() / (double) wordCount));
-                keywordDataList.add(keywordData);
+                String href = urls.get(j).attr("href");
+                bookUrlList.add(href);
             }
-            resource.setKeywords(keywordDataList.toArray(new KeywordData[keywordDataList.size()]));
-            //Store or update that information in database.
-            database.addResource(resource);
+
+            System.out.println("Book url list: step 1");
+            for (String url : bookUrlList) {
+                Document tempDoc = Jsoup.connect(url)
+                        .timeout(10000)
+                        .userAgent("Mozilla")
+                        .get();
+                Elements select = tempDoc.select("a#download");
+                if (select.size() == 0) {
+                    continue;
+                }
+
+                String href = select.get(0).attr("href");
+                bookUrlListStep2.add(href);
+            }
+
+            System.out.println("Book url list: step 2");
+            for (String url : bookUrlListStep2) {
+                Document tempDoc = Jsoup.connect(url)
+                        .timeout(10000)
+                        .userAgent("Mozilla")
+                        .get();
+                Elements script = tempDoc.select("script");
+                if (script.size() < 13) {
+                    continue;
+                }
+                String substring = script.get(12).data().substring(
+                        script.get(12).data().indexOf("window.location.replace(\"") + 25,
+                        script.get(12).data().indexOf(".pdf\")") + 4
+                );
+                bookUrlListStep3.add(substring);
+                System.out.println("Identified: " + substring);
+            }
+            bookUrlList.clear();
+            bookUrlListStep2.clear();
         }
+
+
+        return bookUrlListStep3;
     }
 }

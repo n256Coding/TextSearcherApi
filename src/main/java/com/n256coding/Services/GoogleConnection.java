@@ -81,7 +81,7 @@ public class GoogleConnection implements SearchEngineConnection {
             }
 
             String url = urlElements.get(0).attr("href");
-            url = urlFilter.fixUrlEncoding(url);
+            url = urlFilter.decodeUrl(url);
             url = urlFilter.extractUrl(url);
             if (!urlFilter.isValidUrl(url)) {
                 continue;
@@ -91,7 +91,7 @@ public class GoogleConnection implements SearchEngineConnection {
             for (Element cacheUrlElement : cacheUrlElements) {
                 if (cacheUrlElement.ownText().equalsIgnoreCase("cached")) {
                     webCacheUrl = cacheUrlElement.attr("href");
-                    webCacheUrl = urlFilter.fixUrlEncoding(webCacheUrl);
+                    webCacheUrl = urlFilter.decodeUrl(webCacheUrl);
                     webCacheUrl = urlFilter.extractUrl(webCacheUrl);
                 }
             }
@@ -125,7 +125,7 @@ public class GoogleConnection implements SearchEngineConnection {
 
                 for (int i = 0; i < slkUrlElements.size(); i++) {
                     String slkUrl = slkUrlElements.get(i).attr("href");
-                    slkUrl = urlFilter.fixUrlEncoding(slkUrl);
+                    slkUrl = urlFilter.decodeUrl(slkUrl);
                     slkUrl = urlFilter.extractUrl(slkUrl);
                     if (!urlFilter.isValidUrl(slkUrl)) {
                         continue;

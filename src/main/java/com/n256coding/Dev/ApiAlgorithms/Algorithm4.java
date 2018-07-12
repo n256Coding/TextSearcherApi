@@ -140,6 +140,7 @@ public class Algorithm4 {
                             localResource.getUrl(),
                             localResource.getDescription(),
                             rating,
+                            localResource.getTitle() == null ? "" : localResource.getTitle(),
                             weightedTfIdf.get(localResource.getId())
                     )
             );

@@ -32,6 +32,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.averagingDouble;
 import static java.util.stream.Collectors.groupingBy;
 
+@Deprecated
 public class Algorithm5 {
     Trainer trainer = new Trainer();
     DateEx date = new DateEx();
@@ -147,6 +148,7 @@ public class Algorithm5 {
                             localResource.getUrl(),
                             localResource.getDescription(),
                             rating,
+                            localResource.getTitle() == null ? "" : localResource.getTitle(),
                             weightedTfIdf.get(localResource.getId())
                     )
             );

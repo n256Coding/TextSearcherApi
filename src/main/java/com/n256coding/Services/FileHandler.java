@@ -1,11 +1,13 @@
 package com.n256coding.Services;
 
+import com.n256coding.Services.Filters.UrlFilter;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
@@ -54,7 +56,19 @@ public class FileHandler {
      */
     public String downloadFile(String url, String localPath, String fileExtension) throws IOException {
         String fileName = UUID.randomUUID().toString().concat(fileExtension);
-        FileUtils.copyURLToFile(new URL(url), new File(localPath+"\\"+fileName), 10000, 10000);
+        if(url.contains("programming-book.com/download")){
+            url = UrlFilter.encodeUrl(url);
+            URL urlConn=new URL(url);
+            URLConnection conn = urlConn.openConnection();
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
+            conn.setRequestProperty("Cookie", "_ga=GA1.2.1403070994.1529653524; _gid=GA1.2.821862884.1531139613");
+            conn.connect();
+            FileUtils.copyInputStreamToFile(conn.getInputStream(), new File(localPath+"\\"+fileName));
+        }
+        else{
+            FileUtils.copyURLToFile(new URL(url), new File(localPath+"\\"+fileName), 100000, 100000);
+        }
+
         return localPath+"\\"+fileName;
     }
 

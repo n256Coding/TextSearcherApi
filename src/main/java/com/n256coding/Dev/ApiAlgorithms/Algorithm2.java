@@ -198,6 +198,7 @@ public class Algorithm2 {
                     localResource.getUrl(),
                     localResource.getDescription(),
                     rating,
+                    localResource.getTitle() == null ? "" : localResource.getTitle(),
                     textAnalyzer.getTFIDFWeightOfWords(totalNumberOfDocuments,
                             localResources.size(),
                             localResource,

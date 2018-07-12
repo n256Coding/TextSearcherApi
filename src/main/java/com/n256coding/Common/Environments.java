@@ -5,7 +5,7 @@ public interface Environments {
     String MONGO_DB_HOSTNAME = "localhost";
     int MONGO_DB_PORT = 27017;
     String MONGO_DB_NAME = "ResourceDB";
-    String CROSS_ORIGIN ="http://localhost:4200";
+    String CROSS_ORIGIN ="http://localhost:8085";
 
     //Google custom search api credentials for text search component
     String GOOGLE_API_KEY = "AIzaSyBGOnB-CFP06uJ1deOV0A2IDmuvY7k5u9k";

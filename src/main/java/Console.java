@@ -1,11 +1,24 @@
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Services.FileHandler;
+import com.n256coding.Services.OnlineDataHandler;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 
 public class Console {
 
@@ -158,7 +171,13 @@ public class Console {
 
 //        MongoDbConnection mongoDbConnection = new MongoDbConnection();
 //        List<Resource> priorityResourcesByKeywords = mongoDbConnection.getPriorityResourcesByKeywords(false, "java", "thread");
-        boolean numeric = StringUtils.isNumeric("5");
+        OnlineDataHandler onlineDataHandler = new OnlineDataHandler();
+
+        List<String> strings = onlineDataHandler.programmingBookComDownload("sql");
+        for (String string : strings) {
+            System.out.println(string);
+        }
+
         String test = "sdfsdf";
     }
 

@@ -256,7 +256,7 @@ public class TextAnalyzer {
                 } else {
                     weightedValue = (double) 1.0 / (double) allTokens.size();
                 }
-                if (document.getTitle().contains(keyword)) {
+                if ((document.getTitle() == null ? "" : document.getTitle()).contains(keyword)) {
                     weightedValue++;
                 }
                 double tfidfWeight = getTFIDFWeight(database.countResources(),
