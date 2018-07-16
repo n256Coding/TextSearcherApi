@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 
 @CrossOrigin(origins = Environments.CROSS_ORIGIN)
@@ -32,12 +33,31 @@ public class MainController {
 
     @GetMapping("/check")
     public String intialMethod() {
-        return "<h1>Its working right now</h1>";
+        Random rand = new Random(5);
+        int randomValue = rand.nextInt();
+        String message = "";
+        switch (randomValue) {
+            case 0:
+                message = "Whats up?";
+                break;
+            case 1:
+                message = "Are you happy now?";
+                break;
+            case 2:
+                message = "Do not disturb!";
+                break;
+            case 3:
+                message = "Connection established";
+                break;
+            default:
+                message = "Awesome!";
+        }
+        return "<h1>" + message + "</h1>";
     }
 
     @PutMapping("/rating")
     public OperationStatus addRating(@RequestBody Rating rating) {
-        db.upsertResourceRating(rating.getItem_id(), rating.getUser_id(), rating.getPreference());
+        db.upsertResourceRating(rating.getItem_id(), rating.getUser_id(), rating.getPreference(), new Date());
         return new OperationStatus("ok");
     }
 

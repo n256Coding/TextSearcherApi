@@ -1,10 +1,9 @@
 package com.n256coding.Services;
 
 import com.n256coding.Common.Environments;
-import com.n256coding.Helpers.LocalLogger;
+import com.n256coding.Dev.MongoDBDataModel;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
-import org.apache.mahout.cf.taste.impl.model.mongodb.MongoDBDataModel;
 import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
@@ -15,7 +14,6 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.UserBasedRecommender;
 import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +46,6 @@ public class Recommender {
                 Environments.MONGO_DB_PASSWORD);
         //TODO: Replace with logger
         System.out.println("Logger connected to Mongo DB");
-
         ItemSimilarity itemSimilarity = new PearsonCorrelationSimilarity(mongoDBDataModel);
         GenericItemBasedRecommender itemBasedRecommender = new GenericItemBasedRecommender(mongoDBDataModel, itemSimilarity);
         String longString = mongoDBDataModel.fromIdToLong(userId, true);
@@ -57,6 +54,7 @@ public class Recommender {
         for (RecommendedItem recommendedItem : recommendedItems) {
             System.out.println(mongoDBDataModel.fromLongToId(recommendedItem.getItemID()));
         }
+//        MongoDBModel
     }
 
     public void testRecommendation(String userId) throws UnknownHostException, TasteException {
@@ -67,6 +65,7 @@ public class Recommender {
                 false,
                 false,
                 null);
+
         //TODO: Replace with logger
         System.out.println("Logger connected to Mongo DB");
 
@@ -74,7 +73,7 @@ public class Recommender {
         GenericItemBasedRecommender itemBasedRecommender = new GenericItemBasedRecommender(mongoDBDataModel, itemSimilarity);
         String longString = mongoDBDataModel.fromIdToLong(userId, true);
         long longUserId = Long.parseLong(longString);
-        List<RecommendedItem> recommendedItems = itemBasedRecommender.recommend(longUserId, 3);
+        List<RecommendedItem> recommendedItems = itemBasedRecommender.recommend(longUserId, 1);
         for (RecommendedItem recommendedItem : recommendedItems) {
             System.out.println(mongoDBDataModel.fromLongToId(recommendedItem.getItemID()));
         }

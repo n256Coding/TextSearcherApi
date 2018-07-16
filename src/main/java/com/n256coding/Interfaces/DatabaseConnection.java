@@ -4,6 +4,7 @@ import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.ResourceRating;
 import com.n256coding.DatabaseModels.User;
 
+import java.util.Date;
 import java.util.List;
 
 public interface DatabaseConnection {
@@ -35,7 +36,7 @@ public interface DatabaseConnection {
 
     ResourceRating getRatingOfResource(String resourceId);
 
-    void upsertResourceRating(String resourceId, String userId, int rating);
+    void upsertResourceRating(String resourceId, String userId, int rating, Date created_at);
 
     void addUser(User user);
 
