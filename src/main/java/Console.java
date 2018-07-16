@@ -2,9 +2,11 @@ import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Services.FileHandler;
 import com.n256coding.Services.OnlineDataHandler;
+import com.n256coding.Services.Recommender;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.mahout.cf.taste.common.TasteException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -129,7 +131,7 @@ public class Console {
 //            results.addResultItem(new InsiteSearchResultItem(
 //                    localResource.getUrl(),
 //                    localResource.getDescription(),
-//                    ResourceRating.getRatingOfResource(localResource.getId()).getRating()
+//                    ResourceRating.getRatingOfResource(localResource.getId()).getPreference()
 //            ));
 //        }
 
@@ -171,11 +173,11 @@ public class Console {
 
 //        MongoDbConnection mongoDbConnection = new MongoDbConnection();
 //        List<Resource> priorityResourcesByKeywords = mongoDbConnection.getPriorityResourcesByKeywords(false, "java", "thread");
-        OnlineDataHandler onlineDataHandler = new OnlineDataHandler();
-
-        List<String> strings = onlineDataHandler.programmingBookComDownload("sql");
-        for (String string : strings) {
-            System.out.println(string);
+        Recommender recommender = new Recommender();
+        try {
+            recommender.testRecommendation("5b25204baf2fc52278dd7ed4");
+        } catch (TasteException e) {
+            e.printStackTrace();
         }
 
         String test = "sdfsdf";

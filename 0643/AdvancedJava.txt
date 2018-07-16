@@ -808,7 +808,7 @@ final StringBuilder sb = new StringBuilder();
 for( int i = 1; i <= 10; ++i ) { sb.append( " " ); sb.append( i ); }
 sb.deleteCharAt( 0 ); sb.insert( 0, "[" ); sb.replace( sb.length() - 3, sb.length(), "]" );
 ThoughusingtheStringBuilder/StringBufferistherecommendedwaytomanipulatestrings,itmaylookover-killing in simple scenario of concatenating two or three strings so the regular + operator could be used instead, for example:
-String userId = "user:" + new Random().nextInt( 100 );
+String user_id = "user:" + new Random().nextInt( 100 );
 The often better alternative to straightforward concatenation is to use string formatting and Java standard library is also here to help by providing the static helper method String.format. It supports a rich set of format speciﬁers, including numbers, characters, dates/times, etc. (for the complete reference please visit the ofﬁcial documentation). Let us explore the power of formatting by example:
 String.format( "%04d", 1 ); -> 0001 String.format( "%.2f", 12.324234d ); -> 12.32 String.format( "%tR", new Date() ); -> 21:11 String.format( "%tF", new Date() ); -> 2014-11-11 String.format( "%d%%", 12 ); -> 12%
 The String.format method provides a clean and easy approach to construct strings from different data types. It worth to mention that some modern Java IDEs are able to analyze the format speciﬁcation against the arguments passed to the String. format method and warn developers in case of any mismatches detected.

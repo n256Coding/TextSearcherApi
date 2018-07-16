@@ -4,38 +4,38 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Rating {
-    private String resourceId;
-    private String userId;
-    private int rating;
+    private String item_id;
+    private String user_id;
+    private int preference;
 
     @JsonCreator
-    public Rating(@JsonProperty("resourceId") String resourceId, @JsonProperty("userId") String userId, @JsonProperty("rating") int rating) {
-        this.resourceId = resourceId;
-        this.userId = userId;
-        this.rating = rating;
+    public Rating(@JsonProperty("item_id") String item_id, @JsonProperty("user_id") String user_id, @JsonProperty("preference") int preference) {
+        this.item_id = item_id;
+        this.user_id = user_id;
+        this.preference = preference;
     }
 
-    public String getResourceId() {
-        return resourceId;
+    public String getItem_id() {
+        return item_id;
     }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
+    public void setItem_id(String item_id) {
+        this.item_id = item_id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
-    public int getRating() {
-        return rating;
+    public int getPreference() {
+        return preference;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setPreference(int preference) {
+        this.preference = preference;
     }
 }

@@ -17,6 +17,7 @@ public class FileHandler {
     public static final String WORD2VEC_MODEL_DIR = TEXT_CORPUS_DIR.concat("Word2VecModel");
     public static final String TEMP_DOWNLOAD_DIR = System.getProperty("user.dir") + "\\DownloadedFiles\\";
     public static final String ONTOLOGY_FILE_PATH = System.getProperty("user.dir")+"\\Ontology\\My_Programming.owl";
+    public static final String LOG_FILE_PATH = System.getProperty("user.dir") + "\\Logger\\Log.txt";
 
     public interface FileTypes {
         String PDF = ".pdf";

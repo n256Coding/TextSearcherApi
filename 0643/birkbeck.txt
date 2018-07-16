@@ -4383,7 +4383,7 @@ rarely: rareley rarly reerely rerely
 rat: ret
 rate: rait
 rather: rarther rarver raver
-rating: grading grating racking radicing raiding raining raiting rakeing raking ratding rateing ration rative ratting reating reigning waiting weieght wrating wrecking writing
+preference: grading grating racking radicing raiding raining raiting rakeing raking ratding rateing ration rative ratting reating reigning waiting weieght wrating wrecking writing
 rattle: ratle
 raw: rore row
 reach: rech rich

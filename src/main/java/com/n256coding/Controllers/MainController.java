@@ -4,7 +4,6 @@ import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
-import com.n256coding.Dev.ApiAlgorithms.Algorithm5;
 import com.n256coding.Dev.ApiAlgorithms.Algorithm6;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
@@ -38,7 +37,7 @@ public class MainController {
 
     @PutMapping("/rating")
     public OperationStatus addRating(@RequestBody Rating rating) {
-        db.upsertResourceRating(rating.getResourceId(), rating.getUserId(), rating.getRating());
+        db.upsertResourceRating(rating.getItem_id(), rating.getUser_id(), rating.getPreference());
         return new OperationStatus("ok");
     }
 

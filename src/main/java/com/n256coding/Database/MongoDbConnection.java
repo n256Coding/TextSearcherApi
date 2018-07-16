@@ -1,34 +1,25 @@
 package com.n256coding.Database;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
+import com.mongodb.*;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Field;
 import com.n256coding.Common.Environments;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.ResourceRating;
 import com.n256coding.DatabaseModels.User;
 import com.n256coding.Interfaces.DatabaseConnection;
-import com.sun.org.apache.regexp.internal.RE;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import javax.print.Doc;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
-import static com.mongodb.client.model.Aggregates.addFields;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -37,11 +28,33 @@ public class MongoDbConnection implements DatabaseConnection {
     private MongoOperations mongoOperations;
 
     public MongoDbConnection() {
-        mongoOperations = new MongoTemplate(new MongoClient(), Environments.MONGO_DB_NAME);
+        try {
+            mongoOperations = new MongoTemplate(new MongoClient(), Environments.MONGO_DB_NAME);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     public MongoDbConnection(String hostname, int port) {
-        mongoOperations = new MongoTemplate(new MongoClient(hostname, port), Environments.MONGO_DB_NAME);
+        try {
+            mongoOperations = new MongoTemplate(new MongoClient(hostname, port), Environments.MONGO_DB_NAME);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public MongoDbConnection(String hostname, int port, String username, String password) {
+        ServerAddress serverAddress = null;
+        try {
+            serverAddress = new ServerAddress(hostname, port);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        MongoCredential credential = MongoCredential.createCredential(username, Environments.MONGO_DB_NAME, password.toCharArray());
+//        MongoClientOptions mongoClientOptions = MongoClientOptions.builder()
+//                .sslEnabled(true)
+//                .build();
+        mongoOperations = new MongoTemplate(new MongoClient(serverAddress, Arrays.asList(credential)), Environments.MONGO_DB_NAME);
     }
 
     @Override
@@ -118,8 +131,7 @@ public class MongoDbConnection implements DatabaseConnection {
         query.addCriteria(where("keywords.word")
                 .in(keywords).and("isPdf").is(isPdf)
         );
-        List<Resource> result = mongoOperations.find(query, Resource.class);
-        return result;
+        return mongoOperations.find(query, Resource.class);
     }
 
     @Override
@@ -133,18 +145,23 @@ public class MongoDbConnection implements DatabaseConnection {
                 new BasicDBObject("$gte", numberOfMatches)));
         matchList.add(new BasicDBObject("isPdf", isPdf));
 
-        AggregateIterable<Document> aggregate = new MongoClient("127.0.0.1", 27017).getDatabase("ResourceDB").getCollection("Resource").aggregate(
-                Arrays.asList(
-                        new BasicDBObject("$addFields",
-                                new BasicDBObject("matchedTags",
-                                        new BasicDBObject("$size",
-                                                new BasicDBObject("$setIntersection", intersectionList)))),
-                        new BasicDBObject("$match",
-                                new BasicDBObject("$and", matchList)),
-                        new BasicDBObject("$sort",
-                                new BasicDBObject("matchedTags", -1))
-                )
-        );
+        AggregateIterable<Document> aggregate = null;
+        try {
+            aggregate = new MongoClient(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT).getDatabase("ResourceDB").getCollection("Resource").aggregate(
+                    Arrays.asList(
+                            new BasicDBObject("$addFields",
+                                    new BasicDBObject("matchedTags",
+                                            new BasicDBObject("$size",
+                                                    new BasicDBObject("$setIntersection", intersectionList)))),
+                            new BasicDBObject("$match",
+                                    new BasicDBObject("$and", matchList)),
+                            new BasicDBObject("$sort",
+                                    new BasicDBObject("matchedTags", -1))
+                    )
+            );
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         List<Resource> resources = new ArrayList<>();
         MongoCursor<Document> iterator = aggregate.iterator();
 
@@ -154,7 +171,7 @@ public class MongoDbConnection implements DatabaseConnection {
             List<KeywordData> keywordData = new ArrayList<>();
             for (Document data : (ArrayList<Document>) keywordList) {
                 keywordData.add(new KeywordData(
-                   data.getString("word"),
+                        data.getString("word"),
                         data.getInteger("freq"),
                         data.getDouble("tf")
                 ));
@@ -206,11 +223,11 @@ public class MongoDbConnection implements DatabaseConnection {
     }
 
     @Override
-    public void upsertResourceRating(String resourceId, String userId, int rating) {
+    public void upsertResourceRating(String item_id, String user_id, int preference) {
         Query query = new Query();
-        query.addCriteria(where("resourceId").is(resourceId).and("userId").is(userId));
+        query.addCriteria(where("item_id").is(item_id).and("user_id").is(user_id));
         Update update = new Update();
-        update.set("rating", rating);
+        update.set("preference", preference);
 
         mongoOperations.upsert(query, update, ResourceRating.class);
     }
