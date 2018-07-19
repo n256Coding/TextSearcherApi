@@ -4,7 +4,8 @@ import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
-import com.n256coding.Dev.ApiAlgorithms.Algorithm6;
+import com.n256coding.DatabaseModels.SearchInfo;
+import com.n256coding.Dev.ApiAlgorithms.Algorithm7;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
@@ -62,11 +63,15 @@ public class MainController {
     }
 
     @GetMapping
-    public InsiteSearchResult searchResults(@RequestParam("q") String query, @RequestParam("pdf") String isPdf) {
+    public InsiteSearchResult searchResults(@RequestParam("q") String query,
+                                            @RequestParam("pdf") String isPdf,
+                                            @RequestParam(value = "userId", required = false) String userId) {
 
-        Algorithm6 algorithm = new Algorithm6();
+        userId = userId == null ? "" : userId;
+        recordSearchResults(userId, query);
+        Algorithm7 algorithm = new Algorithm7();
         try {
-            return algorithm.api(query, isPdf.equals("true"));
+            return algorithm.api(query, isPdf.equals("true"), userId);
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -74,29 +79,8 @@ public class MainController {
         return new InsiteSearchResult();
     }
 
-    public void recordSearchResults(String keyword, boolean isPdf) throws IOException, BoilerpipeProcessingException, SAXException {
-        searchEngine.searchOnline(null, isPdf, keyword);
-
-        for (int i = 0; i < searchEngine.getResultedUrls().size(); i++) {
-            //To avoid overwriting existing data in database
-            if (db.getResourcesByUrl(isPdf, searchEngine.getResultedUrls().get(i)).size() != 0) {
-                continue;
-            }
-
-            List<Map.Entry<String, Integer>> frequency = textAnalyzer.getWordFrequency(searchEngine.getResultPageAt(i));
-            KeywordData[] keywordData = new KeywordData[5];
-
-            for (int j = 0; j < frequency.size() && j < 5; j++) {
-                keywordData[j] = new KeywordData(frequency.get(j).getKey(), frequency.get(j).getValue(), 0);
-            }
-
-            Resource resource = new Resource(searchEngine.getResultedUrls().get(i),
-                    keywordData,
-                    isPdf,
-                    new Date(),
-                    searchEngine.getDescriptionAt(i), null);
-            db.addResource(resource);
-        }
+    private void recordSearchResults(String userId, String query) {
+        db.addSearchHistoryOfUser(new SearchInfo(userId, query, new Date()));
     }
 
 }

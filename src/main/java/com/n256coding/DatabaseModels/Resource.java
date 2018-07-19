@@ -21,11 +21,12 @@ public class Resource {
     private Date lastModified;
     private String description;
     private String title;
+    private String imageUrl;
 
     public Resource() {
     }
 
-    public Resource(String id, String url, KeywordData[] keywords, boolean isPdf, Date lastModified, String description, String title) {
+    public Resource(String id, String url, KeywordData[] keywords, boolean isPdf, Date lastModified, String description, String title, String imageUrl) {
         this.id = id;
         this.url = url;
         this.keywords = keywords;
@@ -33,16 +34,18 @@ public class Resource {
         this.lastModified = lastModified;
         this.description = description;
         this.title = title;
+        this.imageUrl = imageUrl;
     }
 
     @PersistenceConstructor
-    public Resource(String url, KeywordData[] keywords, boolean isPdf, Date lastModified, String description, String title) {
+    public Resource(String url, KeywordData[] keywords, boolean isPdf, Date lastModified, String description, String title, String imageUrl) {
         this.url = url;
         this.keywords = keywords;
         this.isPdf = isPdf;
         this.lastModified = lastModified;
         this.description = description;
         this.title = title;
+        this.imageUrl = imageUrl;
     }
 
     public String getId() {
@@ -99,6 +102,14 @@ public class Resource {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public double getTfOf(String... words){

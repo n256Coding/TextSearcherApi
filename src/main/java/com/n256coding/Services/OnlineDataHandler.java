@@ -25,10 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class OnlineDataHandler {
     private UrlFilter urlFilter;
@@ -94,7 +91,7 @@ public class OnlineDataHandler {
                 //Add or update resource information
                 List<Resource> resources = database.getResourcesByUrl(isPdf, result.getUrl());
                 if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getLastModified(), 3)) {
-                    //boolean testWord = resources.get(0).getLastModified().getTime() > new Date().getTime();
+                    //boolean testWord = resources.get(0).getCreated_at().getTime() > new Date().getTime();
                     //Extract text content from URL or the result.
                     //Look for term frequency of that result.
                     //TODO: Needs to handle resources that older more than 6 months in another way. SEE:Reason
@@ -177,8 +174,9 @@ public class OnlineDataHandler {
     public void refreshLocalData_Ebook(String query) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         FreeEbook[] ebooksResult = restTemplate.getForObject("https://oreilly-api.appspot.com/books", FreeEbook[].class);
-        List<String> freeProgrammingBooks = programmingBookComDownload(query);
+        HashMap<String, String[]> freeProgrammingBooks = programmingBookComDownload(query);
 
+        //TODO: oraily has disabled
 //        for (FreeEbook ebook : ebooksResult) {
 //            WebSearchResult searchResult = new WebSearchResult();
 //            if (ebook.getPdf() == null)
@@ -192,6 +190,7 @@ public class OnlineDataHandler {
 //            resource.setUrl(ebook.getPdf());
 //            resource.setPdf(true);
 //            resource.setTitle(ebook.getTitle());
+//            resource.setImageUrl(ebook.getThumbnail());
 //            resource.setLastModified(new Date());
 //            resource.setDescription(ebook.getDescription());
 //
@@ -231,10 +230,11 @@ public class OnlineDataHandler {
 
         System.out.println("Starting to analyze URL contents");
         Thread[] analyzerThread = new Thread[freeProgrammingBooks.size()];
+        Iterator<String> keys = freeProgrammingBooks.keySet().iterator();
 
         for (int i = 0; i < freeProgrammingBooks.size(); i++) {
-            final int j = i;
-            analyzerThread[i] = new Thread(() -> analyzeUrlContent(freeProgrammingBooks.get(j)));
+            final String url = keys.next();
+            analyzerThread[i] = new Thread(() -> analyzeUrlContent(url, freeProgrammingBooks.get(url)));
             analyzerThread[i].start();
         }
         for (int i = 0; i < analyzerThread.length; i++) {
@@ -246,7 +246,7 @@ public class OnlineDataHandler {
         }
     }
 
-    public void analyzeUrlContent(String bookUrl) {
+    public void analyzeUrlContent(String bookUrl, String[] bookInfo) {
         System.out.println("Working on " + bookUrl + "-------------------------------------------------");
         WebSearchResult searchResult = new WebSearchResult();
 
@@ -258,7 +258,8 @@ public class OnlineDataHandler {
         Resource resource = new Resource();
         resource.setUrl(bookUrl);
         resource.setPdf(true);
-        resource.setTitle("");
+        resource.setImageUrl(bookInfo[0]);
+        resource.setTitle(bookInfo[1]);
         resource.setLastModified(new Date());
         resource.setDescription("");
 
@@ -302,10 +303,10 @@ public class OnlineDataHandler {
     }
 
 
-    public List<String> programmingBookComDownload(String query) throws IOException {
+    public HashMap<String, String[]> programmingBookComDownload(String query) throws IOException {
         List<String> bookUrlList = new ArrayList<>();
         List<String> bookUrlListStep2 = new ArrayList<>();
-        List<String> bookUrlListStep3 = new ArrayList<>();
+        HashMap<String, String[]> bookUrlListStep3 = new HashMap<>();
         List<String> paginationUrls = new ArrayList<>();
 
         Document resultPage = Jsoup.connect("http://www.programming-book.com/?s=" + query)
@@ -367,6 +368,7 @@ public class OnlineDataHandler {
 
             System.out.println("Book url list: step 2");
             for (String url : bookUrlListStep2) {
+                String[] bookData = new String[2];
                 Document tempDoc = Jsoup.connect(url)
                         .timeout(10000)
                         .userAgent("Mozilla")
@@ -375,12 +377,17 @@ public class OnlineDataHandler {
                 if (script.size() < 13) {
                     continue;
                 }
-                String substring = script.get(12).data().substring(
+                String originalUrl = script.get(12).data().substring(
                         script.get(12).data().indexOf("window.location.replace(\"") + 25,
                         script.get(12).data().indexOf(".pdf\")") + 4
                 );
-                bookUrlListStep3.add(substring);
-                System.out.println("Identified: " + substring);
+                bookData[0] = "http://www.programming-book.com/doc-images/"+url.substring(url.lastIndexOf("=") + 1)+".png";
+                Elements bookInfos = tempDoc.select("div#full-width-content > h1");
+                if(bookInfos.size() > 0){
+                    bookData[1] = bookInfos.get(0).ownText();
+                }
+                bookUrlListStep3.put(originalUrl, bookData);
+                System.out.println("Identified: " + originalUrl);
             }
             bookUrlList.clear();
             bookUrlListStep2.clear();

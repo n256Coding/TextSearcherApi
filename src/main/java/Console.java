@@ -1,27 +1,17 @@
-import com.n256coding.Common.Environments;
-import com.n256coding.Database.MongoDbConnection;
-import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Services.FileHandler;
-import com.n256coding.Services.OnlineDataHandler;
 import com.n256coding.Services.Recommender;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.ngram.NGramTokenizer;
+import org.apache.lucene.analysis.shingle.ShingleFilter;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.util.Version;
 import org.apache.mahout.cf.taste.common.TasteException;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
+import java.io.Reader;
+import java.io.StringReader;
 
 public class Console {
 
@@ -34,7 +24,6 @@ public class Console {
 //        StopWordHelper stopWord = new StopWordHelper();
 //        SearchEngineConnection searchEngine = new GoogleConnection();
 //        DatabaseConnection database = new MongoDbConnection();
-        FileHandler fileHandler = new FileHandler();
 //        PDFHandler pdfHandler = new PDFHandler();
 //        TextAnalyzer textAnalyzer = new TextAnalyzer();
 //
@@ -65,8 +54,8 @@ public class Console {
 //        for (int i = 0; i < searchEngine.getResultCount(); i++) {
 //            //If search results is not in database or updated date is far than 6 months
 //            List<Resource> resources = database.getResourcesByUrl(searchEngine.getResultedUrls().get(i));
-//            if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getLastModified(), 6)) {
-//                //boolean testWord = resources.get(0).getLastModified().getTime() > new Date().getTime();
+//            if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getCreated_at(), 6)) {
+//                //boolean testWord = resources.get(0).getCreated_at().getTime() > new Date().getTime();
 //                //Extract text content from URL or the result.
 //                //Look for term frequency of that result.
 //                //TODO: Needs to handle resources that older more than 6 months in another way. SEE:Reason
@@ -76,7 +65,7 @@ public class Console {
 //                Resource resource = new Resource();
 //                resource.setUrl(searchEngine.getResultedUrls().get(i));
 //                resource.setPdf(isPdf);
-//                resource.setLastModified(new Date());
+//                resource.setCreated_at(new Date());
 //
 //                List<Map.Entry<String, Integer>> frequencies = new ArrayList<>();
 //                try {
@@ -174,13 +163,6 @@ public class Console {
 
 //        MongoDbConnection mongoDbConnection = new MongoDbConnection();
 //        List<Resource> priorityResourcesByKeywords = mongoDbConnection.getPriorityResourcesByKeywords(false, "java", "thread");
-        Recommender recommender = new Recommender();
-        try {
-            recommender.testRecommendation("5b25204baf2fc52278dd7ed4");
-        } catch (TasteException e) {
-            e.printStackTrace();
-        }
-
 
         String test = "sdfsdf";
     }

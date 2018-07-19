@@ -36,7 +36,6 @@ public class Algorithm1 {
         StopWordHelper stopWordHelper = new StopWordHelper();
         SearchEngineConnection searchEngine = new GoogleConnection();
         DatabaseConnection database = new MongoDbConnection();
-        FileHandler fileHandler = new FileHandler();
         PDFHandler pdfHandler = new PDFHandler();
         TextAnalyzer textAnalyzer = new TextAnalyzer();
 
@@ -67,7 +66,7 @@ public class Algorithm1 {
                 //If search results is not in database or updated date is far than 6 months
                 List<Resource> resources = database.getResourcesByUrl(isPdf, result.getUrl());
                 if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getLastModified(), 6)) {
-                    //boolean testWord = resources.get(0).getLastModified().getTime() > new Date().getTime();
+                    //boolean testWord = resources.get(0).getCreated_at().getTime() > new Date().getTime();
                     //Extract text content from URL or the result.
                     //Look for term frequency of that result.
                     //TODO: Needs to handle resources that older more than 6 months in another way. SEE:Reason
@@ -139,13 +138,13 @@ public class Algorithm1 {
         for (Resource localResource : localResources) {
             int rating = 0;
             if (ResourceRating.getRatingOfResource(localResource.getId()) != null) {
-                rating = ResourceRating.getRatingOfResource(localResource.getId()).getRating();
+                rating = ResourceRating.getRatingOfResource(localResource.getId()).getPreference();
             }
             results.addResultItem(new InsiteSearchResultItem(
 //                    localResource.getId(),
 //                    localResource.getUrl(),
 //                    localResource.getDescription(),
-//                    rating
+//                    preference
             ));
         }
         return results;

@@ -4,10 +4,7 @@ import com.mongodb.*;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCursor;
 import com.n256coding.Common.Environments;
-import com.n256coding.DatabaseModels.KeywordData;
-import com.n256coding.DatabaseModels.Resource;
-import com.n256coding.DatabaseModels.ResourceRating;
-import com.n256coding.DatabaseModels.User;
+import com.n256coding.DatabaseModels.*;
 import com.n256coding.Interfaces.DatabaseConnection;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -71,6 +68,7 @@ public class MongoDbConnection implements DatabaseConnection {
         update.set("url", resource.getUrl());
         update.set("description", resource.getDescription());
         update.set("title", resource.getTitle());
+        update.set("imageUrl", resource.getImageUrl());
         mongoOperations.upsert(query, update, Resource.class);
         return resource.getId();
     }
@@ -84,7 +82,8 @@ public class MongoDbConnection implements DatabaseConnection {
                 .addToSet("keywords", newResource.getKeywords())
                 .addToSet("isPdf", newResource.isPdf())
                 .addToSet("lastModified", newResource.getDescription())
-                .addToSet("title", newResource.getTitle());
+                .addToSet("title", newResource.getTitle())
+                .addToSet("imageUrl", newResource.getImageUrl());
         mongoOperations.updateFirst(query, update, Resource.class);
     }
 
@@ -168,7 +167,8 @@ public class MongoDbConnection implements DatabaseConnection {
                     document.getBoolean("isPdf"),
                     document.getDate("lastModified"),
                     document.getString("description"),
-                    document.getString("title")
+                    document.getString("title"),
+                    document.getString("imageUrl")
             ));
         }
         return resources;
@@ -198,11 +198,27 @@ public class MongoDbConnection implements DatabaseConnection {
     }
 
     @Override
+    public List<ResourceRating> getAllRatings(){
+        return mongoOperations.findAll(ResourceRating.class);
+    }
+
+    @Override
     public ResourceRating getRatingOfResource(String resourceId) {
-        List<ResourceRating> results = mongoOperations.find(query(where("resourceId").in(resourceId)), ResourceRating.class);
+        List<ResourceRating> results = mongoOperations.find(query(where("item_id").in(resourceId)), ResourceRating.class);
         if (results.size() == 1) {
             return results.get(0);
         } else {
+            return null;
+        }
+    }
+
+    @Override
+    public ResourceRating getRatingOfResourceByUser(String resourceId, String userId){
+        Query query = new Query(where("item_id").is(resourceId).and("user_id").is(userId));
+        List<ResourceRating> results = mongoOperations.find(query, ResourceRating.class);
+        if(results.size() == 1){
+            return results.get(0);
+        }else{
             return null;
         }
     }
@@ -265,5 +281,10 @@ public class MongoDbConnection implements DatabaseConnection {
         update.pullAll("subjects", subjects);
 
         mongoOperations.updateFirst(query, update, User.class);
+    }
+
+    @Override
+    public void addSearchHistoryOfUser(SearchInfo searchInfo){
+        mongoOperations.insert(searchInfo);
     }
 }

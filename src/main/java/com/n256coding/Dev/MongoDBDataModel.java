@@ -202,7 +202,6 @@ public final class MongoDBDataModel implements DataModel {
      *                    from the MongoDB database. If false, the model adds the "deleted_at"
      *                    field with the current date to the "deleted" user/item.
      * @param format      MongoDB date format. If null, the model uses timestamps.
-     * @throws UnknownHostException if the database host cannot be resolved
      */
     public MongoDBDataModel(String host,
                             int port,
@@ -210,7 +209,7 @@ public final class MongoDBDataModel implements DataModel {
                             String collection,
                             boolean manage,
                             boolean finalRemove,
-                            DateFormat format) throws UnknownHostException {
+                            DateFormat format) {
         mongoHost = host;
         mongoPort = port;
         mongoDB = database;
@@ -229,7 +228,6 @@ public final class MongoDBDataModel implements DataModel {
      * @param userIDField     Mongo user ID field
      * @param itemIDField     Mongo item ID field
      * @param preferenceField Mongo preference value field
-     * @throws UnknownHostException if the database host cannot be resolved
      * @see #MongoDBDataModel(String, int, String, String, boolean, boolean, DateFormat)
      */
     public MongoDBDataModel(String host,
@@ -242,7 +240,7 @@ public final class MongoDBDataModel implements DataModel {
                             String userIDField,
                             String itemIDField,
                             String preferenceField,
-                            String mappingCollection) throws UnknownHostException {
+                            String mappingCollection){
         mongoHost = host;
         mongoPort = port;
         mongoDB = database;
@@ -264,7 +262,6 @@ public final class MongoDBDataModel implements DataModel {
      *
      * @param user     Mongo username (authentication)
      * @param password Mongo password (authentication)
-     * @throws UnknownHostException if the database host cannot be resolved
      * @see #MongoDBDataModel(String, int, String, String, boolean, boolean, DateFormat)
      */
     public MongoDBDataModel(String host,
@@ -275,7 +272,7 @@ public final class MongoDBDataModel implements DataModel {
                             boolean finalRemove,
                             DateFormat format,
                             String user,
-                            String password) throws UnknownHostException {
+                            String password) {
         mongoHost = host;
         mongoPort = port;
         mongoDB = database;
@@ -294,7 +291,6 @@ public final class MongoDBDataModel implements DataModel {
      * Creates a new MongoDBDataModel with MongoDB advanced configuration
      * (with authentication)
      *
-     * @throws UnknownHostException if the database host cannot be resolved
      * @see #MongoDBDataModel(String, int, String, String, boolean, boolean, DateFormat, String, String)
      */
     public MongoDBDataModel(String host,
@@ -309,7 +305,7 @@ public final class MongoDBDataModel implements DataModel {
                             String userIDField,
                             String itemIDField,
                             String preferenceField,
-                            String mappingCollection) throws UnknownHostException {
+                            String mappingCollection) {
         mongoHost = host;
         mongoPort = port;
         mongoDB = database;
@@ -539,7 +535,7 @@ public final class MongoDBDataModel implements DataModel {
         return mongoTimestamp;
     }
 
-    private void buildModel() throws UnknownHostException {
+    private void buildModel(){
         boolean readyToUseMongo = false;
         userIsObject = false;
         itemIsObject = false;
@@ -579,7 +575,7 @@ public final class MongoDBDataModel implements DataModel {
 //            collectionMap.ensureIndex(indexObj);
             collectionMap.createIndex(indexObj);
 //            collectionMap.remove(new BasicDBObject());
-            collectionMap.deleteOne(new BasicDBObject());
+            collectionMap.deleteMany(new BasicDBObject());
 //            DBCursor cursor = this.collection.find();
             FindIterable<Document> documents = this.collection.find();
             MongoCursor<Document> cursor = documents.iterator();
@@ -619,12 +615,12 @@ public final class MongoDBDataModel implements DataModel {
             query.put(mongoItemID, itemIsObject ? new ObjectId(itemId) : itemId);
             if (mongoFinalRemove) {
 //                log.info(collection.remove(query).toString());
-                log.info(collection.deleteOne(query).toString());
+                log.info(collection.deleteMany(query).toString());
             } else {
                 BasicDBObject update = new BasicDBObject();
                 update.put("$set", new BasicDBObject("deleted_at", mongoTimestamp));
 //                log.info(collection.update(query, update).toString());
-                log.info(collection.updateOne(query, update).toString());
+                log.info(collection.updateMany(query, update).toString());
             }
             log.info("Removing userID: {} itemID: {}", userID, itemId);
         }

@@ -2,6 +2,7 @@ package com.n256coding.Interfaces;
 
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.ResourceRating;
+import com.n256coding.DatabaseModels.SearchInfo;
 import com.n256coding.DatabaseModels.User;
 
 import java.util.Date;
@@ -34,7 +35,11 @@ public interface DatabaseConnection {
 
     Resource getResourceById(String resourceId);
 
+    List<ResourceRating> getAllRatings();
+
     ResourceRating getRatingOfResource(String resourceId);
+
+    ResourceRating getRatingOfResourceByUser(String resourceId, String userId);
 
     void upsertResourceRating(String resourceId, String userId, int rating, Date created_at);
 
@@ -50,4 +55,5 @@ public interface DatabaseConnection {
 
     void removeSubjectsOfUser(String userId, String... subjects);
 
+    void addSearchHistoryOfUser(SearchInfo searchInfo);
 }

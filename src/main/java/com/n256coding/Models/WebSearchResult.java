@@ -3,11 +3,6 @@ package com.n256coding.Models;
 import com.n256coding.Services.FileHandler;
 import com.n256coding.Services.PDFHandler;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
-import de.l3s.boilerpipe.document.TextDocument;
-import de.l3s.boilerpipe.extractors.ArticleExtractor;
-import de.l3s.boilerpipe.sax.BoilerpipeSAXInput;
-import de.l3s.boilerpipe.sax.HTMLDocument;
-import de.l3s.boilerpipe.sax.HTMLFetcher;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.SAXException;
@@ -66,17 +61,16 @@ public class WebSearchResult {
     }
 
     public String getUrlContent() throws IOException, BoilerpipeProcessingException, SAXException {
-        if(url == null) {
+        if (url == null) {
             return "";
         }
-        if(isPdf){
+        if (isPdf) {
             PDFHandler pdfHandler = new PDFHandler();
-            FileHandler fileHandler = new FileHandler();
-            String downloadedFilePath = fileHandler.downloadFile(url,
+            String downloadedFilePath = FileHandler.downloadFile(url,
                     FileHandler.TEMP_DOWNLOAD_DIR,
                     FileHandler.FileTypes.PDF);
             String textContent = pdfHandler.parseText(new File(downloadedFilePath));
-            fileHandler.removeFile(downloadedFilePath);
+            FileHandler.removeFile(downloadedFilePath);
             return textContent;
         }
 
@@ -92,17 +86,16 @@ public class WebSearchResult {
     }
 
     public String getWebCacheContent() throws IOException, BoilerpipeProcessingException {
-        if(webCacheUrl == null){
+        if (webCacheUrl == null) {
             return "";
         }
-        if(isPdf){
+        if (isPdf) {
             PDFHandler pdfHandler = new PDFHandler();
-            FileHandler fileHandler = new FileHandler();
-            String downloadedFilePath = fileHandler.downloadFile(webCacheUrl,
+            String downloadedFilePath = FileHandler.downloadFile(webCacheUrl,
                     FileHandler.TEMP_DOWNLOAD_DIR,
                     FileHandler.FileTypes.PDF);
             String textContent = pdfHandler.parseText(new File(downloadedFilePath));
-            fileHandler.removeFile(downloadedFilePath);
+            FileHandler.removeFile(downloadedFilePath);
             return textContent;
         }
 
@@ -115,7 +108,7 @@ public class WebSearchResult {
     }
 
     public String getPageTitle() throws IOException {
-        if(isPdf){
+        if (isPdf) {
             return "";
         }
         return Jsoup.connect(url)
@@ -123,7 +116,7 @@ public class WebSearchResult {
                 .get().title();
     }
 
-    public void setPdf(boolean isPdf){
+    public void setPdf(boolean isPdf) {
         this.isPdf = isPdf;
     }
 

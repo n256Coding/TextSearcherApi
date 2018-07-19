@@ -28,7 +28,7 @@ public class DateEx extends Date {
 
     public boolean isOlderThanMonths(Date date, int month){
         calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -6);
+        calendar.add(Calendar.MONTH, -month);
         return date.getTime() < calendar.getTime().getTime();
     }
 

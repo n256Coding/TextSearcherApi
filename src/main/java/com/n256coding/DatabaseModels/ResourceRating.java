@@ -13,21 +13,21 @@ import java.util.Date;
 public class ResourceRating {
     @Id
     public String id;
-    public String userId;
-    public String resourceId;
-    public int rating;
-    public Date lastModified;
+    public String user_id;
+    public String item_id;
+    public int preference;
+    public Date created_at;
 
     public ResourceRating() {
     }
 
     @PersistenceConstructor
-    public ResourceRating(String id, String userId, String resourceId, int rating, Date lastModified) {
+    public ResourceRating(String id, String user_id, String item_id, int preference, Date created_at) {
         this.id = id;
-        this.userId = userId;
-        this.resourceId = resourceId;
-        this.rating = rating;
-        this.lastModified = lastModified;
+        this.user_id = user_id;
+        this.item_id = item_id;
+        this.preference = preference;
+        this.created_at = created_at;
     }
 
     public String getId() {
@@ -38,40 +38,45 @@ public class ResourceRating {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
-    public String getResourceId() {
-        return resourceId;
+    public String getItem_id() {
+        return item_id;
     }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
+    public void setItem_id(String item_id) {
+        this.item_id = item_id;
     }
 
-    public int getRating() {
-        return rating;
+    public int getPreference() {
+        return preference;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setPreference(int preference) {
+        this.preference = preference;
     }
 
-    public Date getLastModified() {
-        return lastModified;
+    public Date getCreated_at() {
+        return created_at;
     }
 
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
     }
 
     public static ResourceRating getRatingOfResource(String resourceId){
         DatabaseConnection database = new MongoDbConnection("localhost", Environments.MONGO_DB_PORT);
         return database.getRatingOfResource(resourceId);
+    }
+
+    public static ResourceRating getRatingOfResourceByUser(String resourceId, String userId){
+        DatabaseConnection database = new MongoDbConnection("localhost", Environments.MONGO_DB_PORT);
+        return database.getRatingOfResourceByUser(resourceId, userId);
     }
 }

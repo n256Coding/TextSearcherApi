@@ -10,10 +10,12 @@ public class InsiteSearchResult {
     protected int count;
     protected String spellCorrectedQuery;
     protected String originalQuery;
+    private List<InsiteSearchResultItem> recommendations;
     private SortHelper sort;
 
     public InsiteSearchResult() {
         resultItems = new ArrayList<>();
+        recommendations = new ArrayList<>();
         sort = new SortHelper();
     }
 
@@ -47,5 +49,13 @@ public class InsiteSearchResult {
 
     public void setOriginalQuery(String originalQuery) {
         this.originalQuery = originalQuery;
+    }
+
+    public List<InsiteSearchResultItem> getRecommendations() {
+        return recommendations;
+    }
+
+    public void setRecommendations(List<InsiteSearchResultItem> recommendations) {
+        this.recommendations = recommendations;
     }
 }

@@ -42,7 +42,6 @@ public class TextAnalyzer {
     private DatabaseConnection database;
 
     public TextAnalyzer() {
-        this.fileHandler = new FileHandler();
         this.database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
     }
 

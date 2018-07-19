@@ -2,6 +2,7 @@ package com.n256coding.Services;
 
 import com.n256coding.Services.Filters.UrlFilter;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -9,13 +10,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.UUID;
 
 public class FileHandler {
-    public static final String TEXT_CORPUS_DIR = System.getProperty("user.dir") + "\\TextCorpusFiles\\";
-    public static final String WORD2VEC_MODEL_PATH = TEXT_CORPUS_DIR.concat("Word2VecModel\\Word2VecModel.txt");
-    public static final String WORD2VEC_MODEL_DIR = TEXT_CORPUS_DIR.concat("Word2VecModel");
     public static final String TEMP_DOWNLOAD_DIR = System.getProperty("user.dir") + "\\DownloadedFiles\\";
+    public static final String TEMP_FILES_DIR = System.getProperty("user.dir")+"\\TemporaryFiles\\";
+    public static final String TEXT_CORPUS_DIR = System.getProperty("user.dir") + "\\TextCorpusFiles\\";
+    public static final String WORD2VEC_MODEL_DIR = TEXT_CORPUS_DIR.concat("Word2VecModel");
+    public static final String WORD2VEC_MODEL_PATH = TEXT_CORPUS_DIR.concat("Word2VecModel\\Word2VecModel.txt");
     public static final String ONTOLOGY_FILE_PATH = System.getProperty("user.dir")+"\\Ontology\\My_Programming.owl";
     public static final String LOG_FILE_PATH = System.getProperty("user.dir") + "\\Logger\\Log.txt";
 
@@ -26,22 +29,22 @@ public class FileHandler {
         String PPTX = ".pptx";
     }
 
-    public FileHandler() {
+    private FileHandler() {
     }
 
-    public String createNewCorpusFile(String textCorpus) throws IOException {
+    public static String createNewCorpusFile(String textCorpus) throws IOException {
         String tempFilePath = TEXT_CORPUS_DIR.concat(UUID.randomUUID().toString());
         File file = new File(tempFilePath);
         FileUtils.writeStringToFile(file, textCorpus, Charset.defaultCharset());
         return tempFilePath;
     }
 
-    public boolean removeFile(String filePath) {
+    public static boolean removeFile(String filePath) throws IOException {
         File file = new File(filePath);
-        return file.delete();
+        return FileUtils.deleteQuietly(file);
     }
 
-    public boolean createCorpusModelDirIfNotExists() {
+    public static boolean createCorpusModelDirIfNotExists() {
         File file = new File(WORD2VEC_MODEL_DIR);
         if(!file.exists()){
             return file.mkdirs();
@@ -55,7 +58,7 @@ public class FileHandler {
      * @return generated file name
      * @throws IOException
      */
-    public String downloadFile(String url, String localPath, String fileExtension) throws IOException {
+    public static String downloadFile(String url, String localPath, String fileExtension) throws IOException {
         String fileName = UUID.randomUUID().toString().concat(fileExtension);
         if(url.contains("programming-book.com/download")){
             url = UrlFilter.encodeUrl(url);
@@ -73,7 +76,7 @@ public class FileHandler {
         return localPath+"\\"+fileName;
     }
 
-    public void writeStringToFile(String content, String directory, String fileName, String extension) throws IOException {
+    public static void writeStringToFile(String content, String directory, String fileName, String extension) throws IOException {
         File file = new File(directory+"\\"+fileName+"."+extension);
         FileWriter writer = new FileWriter(file);
         writer.write(content);
@@ -81,7 +84,11 @@ public class FileHandler {
         writer.close();
     }
 
-    public String getSystemDir(){
-        return TEXT_CORPUS_DIR;
+    public static String createRecommendationFile(List<String> values) throws IOException {
+        String fileName = UUID.randomUUID().toString().concat(".csv");
+        File file = new File(TEMP_FILES_DIR+fileName);
+        FileUtils.writeLines(file, values, true);
+
+        return TEMP_FILES_DIR+fileName;
     }
 }
