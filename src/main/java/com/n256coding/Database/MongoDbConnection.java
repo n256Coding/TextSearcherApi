@@ -23,23 +23,29 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 public class MongoDbConnection implements DatabaseConnection {
 
     private MongoOperations mongoOperations;
+//    private static MongoClientURI uri = new MongoClientURI(Environments.MONGO_DB_CONNECTION_STRING);
+//    private static MongoClient mongoClient = new MongoClient(uri);
+
+    private MongoClient getMongoClient(){
+        return MongoClientSingleton.getMongoClient();
+    }
 
     public MongoDbConnection() {
-        mongoOperations = new MongoTemplate(new MongoClient(), Environments.MONGO_DB_NAME);
+        mongoOperations = new MongoTemplate(getMongoClient(), Environments.MONGO_DB_NAME);
     }
 
     public MongoDbConnection(String hostname, int port) {
-        mongoOperations = new MongoTemplate(new MongoClient(hostname, port), Environments.MONGO_DB_NAME);
+        mongoOperations = new MongoTemplate(getMongoClient(), Environments.MONGO_DB_NAME);
     }
 
     public MongoDbConnection(String hostname, int port, String username, String password) {
-        ServerAddress serverAddress = new ServerAddress(hostname, port);
-
-        MongoCredential credential = MongoCredential.createCredential(username, Environments.MONGO_DB_NAME, password.toCharArray());
-        MongoClientOptions mongoClientOptions = MongoClientOptions.builder()
-                .sslEnabled(true)
-                .build();
-        mongoOperations = new MongoTemplate(new MongoClient(serverAddress, credential, mongoClientOptions), Environments.MONGO_DB_NAME);
+//        ServerAddress serverAddress = new ServerAddress(hostname, port);
+//
+//        MongoCredential credential = MongoCredential.createCredential(username, Environments.MONGO_DB_NAME, password.toCharArray());
+//        MongoClientOptions mongoClientOptions = MongoClientOptions.builder()
+//                .sslEnabled(true)
+//                .build();
+        mongoOperations = new MongoTemplate(getMongoClient(), Environments.MONGO_DB_NAME);
     }
 
     @Override
@@ -133,7 +139,7 @@ public class MongoDbConnection implements DatabaseConnection {
         matchList.add(new BasicDBObject("isPdf", isPdf));
 
         AggregateIterable<Document> aggregate = null;
-        aggregate = new MongoClient(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT).getDatabase("ResourceDB").getCollection("Resource").aggregate(
+        aggregate = getMongoClient().getDatabase("ResourceDB").getCollection("Resource").aggregate(
                 Arrays.asList(
                         new BasicDBObject("$addFields",
                                 new BasicDBObject("matchedTags",

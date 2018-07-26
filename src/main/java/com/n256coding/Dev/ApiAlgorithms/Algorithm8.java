@@ -4,7 +4,9 @@ import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.ResourceRating;
+import com.n256coding.Dev.ConsineSimilarityTester;
 import com.n256coding.Helpers.DateEx;
+import com.n256coding.Helpers.LocalLogger;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Models.InsiteSearchResult;
 import com.n256coding.Models.InsiteSearchResultItem;
@@ -16,9 +18,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-@Deprecated
-public class Algorithm7 {
+
+public class Algorithm8 {
     private TextFilter textFilter;
     private NLPProcessor nlpProcessor;
     private OntologyHandler ontologyHandler;
@@ -28,8 +32,9 @@ public class Algorithm7 {
     private OnlineDataHandler onlineDataHandler;
     private int dbKeywordMatchCount;
     private Recommender recommender;
+    private Logger logger;
 
-    public Algorithm7() {
+    public Algorithm8() {
         textFilter = new TextFilter();
         nlpProcessor = new NLPProcessor();
         ontologyHandler = new OntologyHandler(
@@ -41,23 +46,43 @@ public class Algorithm7 {
         date = new DateEx();
         onlineDataHandler = new OnlineDataHandler();
         recommender = new Recommender();
+        logger = LocalLogger.getInstance().logger;
     }
 
     @SuppressWarnings("Duplicates")
     public InsiteSearchResult api(String query, boolean isPdf, String userId) throws IOException {
+        System.out.println("found search query: "+query);
+        logger.info("found search query: "+query);
         //QUERY ANALYSIS
         //String: Get search query of user
         //String: Replace with lemma
         query = textFilter.replaceWithLemmas(query);
+        System.out.println("lemma replaced: "+query);
+        logger.info("lemma replaced: "+query);
 
         //Correct Spellings
         String spellCorrectedQuery = textAnalyzer.correctSpellingsV2(query);
+        System.out.println("Spell corrected");
+        logger.info("Spell corrected");
 
-        //List: Get nouns, verbs and adjectives     -> OriginalTokens:List
+        //List: Get nGram of user query and filter out tokens which not important     -> OriginalTokens:List
         List<String> originalTokens = new ArrayList<>();
-        originalTokens.addAll(nlpProcessor.get(NLPProcessor.WordType.NOUN, query));
-        originalTokens.addAll(nlpProcessor.get(NLPProcessor.WordType.VERB, query));
-        originalTokens.addAll(nlpProcessor.get(NLPProcessor.WordType.ADJECTIVE, query));
+        originalTokens = textAnalyzer.getNGramOf(query, 1, 3);
+        //TODO: Remove this
+        originalTokens = textAnalyzer.getLuceneTokenizedList(query);
+        System.out.println("query analyzed with NGram");
+        System.out.println(originalTokens);
+        logger.info("query analyzed with NGram "+originalTokens.toString());
+
+        for (String originalToken : originalTokens) {
+            if(nlpProcessor.get(NLPProcessor.WordType.NOUN, originalToken).size() == 0 &&
+                    nlpProcessor.get(NLPProcessor.WordType.VERB, originalToken).size() == 0 &&
+                    nlpProcessor.get(NLPProcessor.WordType.ADJECTIVE, originalToken).size() == 0){
+                originalTokens.remove(originalToken);
+            }
+        }
+        System.out.println("Applied NLP for query");
+        logger.info("Applied NLP for query");
 
         //List: Identify relative keywords          -> RelativeTokens:List
         List<String> relativeTokens = new ArrayList<>();
@@ -66,6 +91,9 @@ public class Algorithm7 {
             relativeTokens.addAll(ontologyHandler.getSubWordsOf(originalToken, 5));
             relativeTokens.addAll(ontologyHandler.getEquivalentWords(originalToken));
         }
+        System.out.println("Identified relative tokens: ");
+        System.out.println(relativeTokens);
+        logger.info("Identified relative tokens: "+relativeTokens.toString());
 
 
         //DATABASE CHECKUP
@@ -73,6 +101,8 @@ public class Algorithm7 {
         List<String> allTokens = new ArrayList<>();
         allTokens.addAll(originalTokens);
         allTokens.addAll(relativeTokens);
+        System.out.println("All tokens created successfully");
+        logger.info("All tokens created successfully");
 
         //List: Got some results resources from database
 //        List<Resource> localResources = database.getResourcesByKeywords(isPdf, allTokens.toArray(new String[allTokens.size()]));
@@ -81,6 +111,16 @@ public class Algorithm7 {
                 isPdf,
                 dbKeywordMatchCount,
                 allTokens.toArray(new String[allTokens.size()]));
+        System.out.println("Got results from database for alltoken");
+        logger.info("Got results from database for alltoken");
+
+        //If not enough information available in database
+//        for(int i=0; localResources.size() < 20 && dbKeywordMatchCount - i > 0; i++){
+//            //Reduce number of keyword matches limit
+//            localResources = database.getPriorityResourcesByKeywords(isPdf, dbKeywordMatchCount - i, allTokens.toArray(new String[allTokens.size()]));
+//            System.out.println("Results not enough, Got database results again with "+(dbKeywordMatchCount - i)+" keywords");
+//            logger.info("Results not enough, Got database results again with "+(dbKeywordMatchCount - i)+" keywords");
+//        }
 
         //Filter-out old results
         for (Resource localResource : localResources) {
@@ -88,9 +128,14 @@ public class Algorithm7 {
                 localResources.remove(localResource);
             }
         }
+        System.out.println("Old results filtered");
+        logger.info("Old results filtered");
 
         //is the list have more than 30 results that not older than 6 months?
         if ((isPdf && localResources.size() < 10) || (!isPdf && localResources.size() < 30)) {
+            System.out.println("Connecting to internet for refreshing data...");
+            logger.info("Connecting to internet for refreshing data...");
+
             //If local storage does not have much information, request online information
             if(isPdf){
                 onlineDataHandler.refreshLocalData_Ebook(query);
@@ -98,23 +143,33 @@ public class Algorithm7 {
                 onlineDataHandler.refreshLocalData_Webpage(isPdf, query);
             }
 
+            System.out.println("Data collected from internet");
+            logger.info("Data collected from internet");
+
             //Still no considerable amount of results?
             while(localResources.size() < 20 && dbKeywordMatchCount > 0){
                 //Reduce number of keyword matches limit
                 localResources = database.getPriorityResourcesByKeywords(isPdf, dbKeywordMatchCount--, allTokens.toArray(new String[allTokens.size()]));
+                System.out.println("Results not enough, Got database results again with "+dbKeywordMatchCount+" keywords");
+                logger.info("Results not enough, Got database results again with "+dbKeywordMatchCount+" keywords");
             }
         }
 
         //for each result,
-        for (Resource localResource : localResources) {
-            textAnalyzer.getTFIDFWeightOfWords(database.countResources(),
-                    localResources.size(),
-                    localResource,
-                    allTokens.toArray(new String[allTokens.size()]));
-        }
+//        for (Resource localResource : localResources) {
+//            textAnalyzer.getTFIDFWeightOfWords(database.countResources(),
+//                    localResources.size(),
+//                    localResource,
+//                    allTokens.toArray(new String[allTokens.size()]));
+//        }
 
         //calculate tf-idf value
-        Map<String, Double> weightedTfIdf = textAnalyzer.calculateWeightedTfIdf(allTokens, originalTokens, localResources);
+        //TODO: rating algorithm changed
+//        Map<String, Double> weightedTfIdf = textAnalyzer.calculateWeightedTfIdf(allTokens, originalTokens, localResources);
+        Map<String, Double> weightedTfIdf = new ConsineSimilarityTester().rankResults(allTokens, originalTokens, localResources);
+        System.out.println("Results ranked successfully");
+        logger.info("Results ranked successfully");
+
 
         //Send results to user
         InsiteSearchResult results = new InsiteSearchResult();
@@ -161,33 +216,25 @@ public class Algorithm7 {
             }
             resultCount++;
         }
+        System.out.println("Second step ranking completed");
+        logger.info("Second step ranking completed");
 
         //Make recommendations for the user
         try {
             results.setRecommendations(recommender.getItemBasedRecommendation(userId));
         } catch (TasteException e) {
-            //TODO: Replace with logger
+            logger.log(Level.SEVERE, "Error in recommendation", e);
             e.printStackTrace();
         }
+        System.out.println("Recommendation completed");
+        logger.info("Recommendation completed");
 
 
         //Sort results with TF-IDF weights
-        results.sort(false);
-
-        //for each result,
-        // if title contains any of (OriginalTokens, RelativeTokens)
-        //-> Give higher priority to it
-
-        //If there is no considerable amount of results available
-        //Search in the internet
-        //Gather search results into database
-
-        //Search in database again
-        //for each result,
-        //calculate tf-idf value
-        //for each result,
-        // if title contains any of (OriginalTokens, RelativeTokens)
-        //-> Give higher priority to it
+        results.sort(true);
+        System.out.println("Results sorted");
+        logger.info("Results sorted");
+        logger.info("-----------------------------------------------------------------------");
 
         //Prepare results to send to the client
         return results;

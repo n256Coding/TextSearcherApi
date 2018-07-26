@@ -99,8 +99,42 @@ public class TextAnalyzer {
         WordVectorSerializer.writeWord2VecModel(vec, FileHandler.WORD2VEC_MODEL_PATH);
     }
 
+    @SuppressWarnings("Duplicates")
     public List<Map.Entry<String, Integer>> getWordFrequency(String corpus) {
         List<String> tokenizedList = getLuceneTokenizedList(corpus.toLowerCase());
+//        TODO: Check nGram removed
+//        tokenizedList = getNGramOf(tokenizedList, 1, 3);
+        HashMap<String, Integer> dictionary = new HashMap<>();
+        for (String token : tokenizedList) {
+            if (dictionary.containsKey(token)) {
+                int count = dictionary.get(token);
+                count++;
+                dictionary.put(token, count);
+            } else {
+                dictionary.put(token, 1);
+            }
+        }
+
+        List<Map.Entry<String, Integer>> list = new LinkedList<>(dictionary.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return (o2.getValue()).compareTo(o1.getValue());
+            }
+        });
+
+        dictionary = null;
+//        LinkedHashMap<String, Integer> sortedDictionary = new LinkedHashMap<>();
+//        for (Map.Entry<String, Integer> entry : list) {
+//            sortedDictionary.put(entry.getKey(), entry.getValue());
+//        }
+        return list;
+    }
+
+    @SuppressWarnings("Duplicates")
+    public List<Map.Entry<String, Integer>> getWordFrequency(List<String> tokenizedList) {
+//        TODO: Check nGram removed
+//        tokenizedList = getNGramOf(tokenizedList, 1, 3);
         HashMap<String, Integer> dictionary = new HashMap<>();
         for (String token : tokenizedList) {
             if (dictionary.containsKey(token)) {
@@ -131,10 +165,10 @@ public class TextAnalyzer {
     @Deprecated
     public List<String> correctSpellings(String... keywords) throws IOException, ParseException, ClassNotFoundException {
         String correctedKeyword = "";
-        SpellChecker spellChecker = new SpellChecker();
-        for (String keyword : keywords) {
-            correctedKeyword = correctedKeyword.concat(spellChecker.getCorrection(keyword));
-        }
+//        SpellChecker spellChecker = new SpellChecker();
+//        for (String keyword : keywords) {
+//            correctedKeyword = correctedKeyword.concat(spellChecker.getCorrection(keyword));
+//        }
 
         StringTokenizer stringTokenizer = new StringTokenizer(correctedKeyword, " ");
         List<String> tokenizedWords = new ArrayList<>(stringTokenizer.countTokens());
@@ -221,13 +255,36 @@ public class TextAnalyzer {
         return nGramList;
     }
 
+    public List<String> getNGramOf(List<String> tokens, int n){
+        List<String> nGramList = new ArrayList<>();
+        StringBuilder stringBuilder;
+        for (int i = 0; i <= tokens.size() - n; i++) {
+            stringBuilder = new StringBuilder("");
+            for (int j = i; j < i + n; j++) {
+                stringBuilder.append(tokens.get(j));
+                stringBuilder.append(j == i + n - 1 ? "" : " ");
+            }
+            nGramList.add(stringBuilder.toString());
+        }
+        return nGramList;
+    }
 
-    public List<String> getIterativeNGram(String sentence, int min, int max) {
+    public List<String> getNGramOf(String sentence, int min, int max) {
         List<String> nGrams = new ArrayList<>();
         if (min > max)
             return nGrams;
         for (int i = min - 1; i < max; i++) {
             nGrams.addAll(getNGramOf(sentence, i + 1));
+        }
+        return nGrams;
+    }
+
+    public List<String> getNGramOf(List<String> tokens, int min, int max) {
+        List<String> nGrams = new ArrayList<>();
+        if (min > max)
+            return nGrams;
+        for (int i = min - 1; i < max; i++) {
+            nGrams.addAll(getNGramOf(tokens, i + 1));
         }
         return nGrams;
     }
@@ -255,13 +312,12 @@ public class TextAnalyzer {
                 } else {
                     weightedValue = (double) 1.0 / (double) allTokens.size();
                 }
-                if ((document.getTitle() == null ? "" : document.getTitle()).contains(keyword)) {
+                if ((document.getTitle() == null ? "" : document.getTitle()).toLowerCase().contains(keyword)) {
                     weightedValue++;
                 }
-                double tfidfWeight = getTFIDFWeight(database.countResources(),
-                        matchingDocuments.size(),
-                        document.getTfOf(keyword)
-                );
+                if(document.getUrl().toLowerCase().contains(keyword)){
+                    weightedValue++;
+                }
                 tfIdfValues.add(new TfIdfData(document.getId(),
                                 keyword,
                                 getTFIDFWeight(database.countResources(),

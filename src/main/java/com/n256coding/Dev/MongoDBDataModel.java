@@ -6,6 +6,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.n256coding.Common.Environments;
+import com.n256coding.Database.MongoClientSingleton;
 import org.apache.mahout.cf.taste.common.NoSuchItemException;
 import org.apache.mahout.cf.taste.common.NoSuchUserException;
 import org.apache.mahout.cf.taste.common.Refreshable;
@@ -178,6 +180,7 @@ public final class MongoDBDataModel implements DataModel {
     private boolean userIsObject;
     private boolean itemIsObject;
     private boolean preferenceIsString;
+    private String mongoConnectionString;
     private long idCounter;
 
     /**
@@ -217,6 +220,26 @@ public final class MongoDBDataModel implements DataModel {
         mongoManage = manage;
         mongoFinalRemove = finalRemove;
         dateFormat = format;
+        this.reloadLock = new ReentrantLock();
+        buildModel();
+    }
+
+    public MongoDBDataModel(String host,
+                            int port,
+                            String database,
+                            String collection,
+                            boolean manage,
+                            boolean finalRemove,
+                            DateFormat format,
+                            String connectionString) {
+        mongoHost = host;
+        mongoPort = port;
+        mongoDB = database;
+        mongoCollection = collection;
+        mongoManage = manage;
+        mongoFinalRemove = finalRemove;
+        dateFormat = format;
+        this.mongoConnectionString = connectionString;
         this.reloadLock = new ReentrantLock();
         buildModel();
     }
@@ -543,6 +566,7 @@ public final class MongoDBDataModel implements DataModel {
         preferenceIsString = true;
 //        Mongo mongoDDBB = new Mongo(mongoHost, mongoPort);
         MongoClient mongoDDBB;
+        MongoClientURI uri = new MongoClientURI(this.mongoConnectionString);
         if(mongoAuth){
             ServerAddress serverAddress = new ServerAddress(mongoHost, mongoPort);
             MongoCredential credential = MongoCredential.createCredential(mongoUsername, mongoDB, mongoPassword.toCharArray());
@@ -550,11 +574,13 @@ public final class MongoDBDataModel implements DataModel {
                     .builder()
                     .sslEnabled(true)
                     .build();
-            mongoDDBB = new MongoClient(serverAddress, credential, mongoClientOptions);
+            mongoDDBB = MongoClientSingleton.getMongoClient();
+//            mongoDDBB = new MongoClient(uri);
             readyToUseMongo = true;
         }
         else{
-            mongoDDBB = new MongoClient(mongoHost, mongoPort);
+//            mongoDDBB = new MongoClient(uri);
+            mongoDDBB = MongoClientSingleton.getMongoClient();
             readyToUseMongo = true;
         }
         MongoDatabase db = mongoDDBB.getDatabase(mongoDB);

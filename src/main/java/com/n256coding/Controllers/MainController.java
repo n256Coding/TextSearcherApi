@@ -2,10 +2,9 @@ package com.n256coding.Controllers;
 
 import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
-import com.n256coding.DatabaseModels.KeywordData;
-import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.DatabaseModels.SearchInfo;
 import com.n256coding.Dev.ApiAlgorithms.Algorithm7;
+import com.n256coding.Dev.ApiAlgorithms.Algorithm8;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
@@ -13,14 +12,10 @@ import com.n256coding.Models.OperationStatus;
 import com.n256coding.Models.Rating;
 import com.n256coding.Services.GoogleConnection;
 import com.n256coding.Services.TextAnalyzer;
-import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import org.springframework.web.bind.annotation.*;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 
@@ -28,9 +23,7 @@ import java.util.Random;
 @RestController
 @RequestMapping("/api/resource")
 public class MainController {
-    private SearchEngineConnection searchEngine = new GoogleConnection();
     private DatabaseConnection db = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
-    private TextAnalyzer textAnalyzer = new TextAnalyzer();
 
     @GetMapping("/check")
     public String intialMethod() {
@@ -69,7 +62,7 @@ public class MainController {
 
         userId = userId == null ? "" : userId;
         recordSearchResults(userId, query);
-        Algorithm7 algorithm = new Algorithm7();
+        Algorithm8 algorithm = new Algorithm8();
         try {
             return algorithm.api(query, isPdf.equals("true"), userId);
         } catch (IOException e) {

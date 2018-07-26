@@ -23,8 +23,8 @@ public class InsiteSearchResult {
         return resultItems;
     }
 
-    public void sort(){
-        this.resultItems = sort.sortSearchResultsWithTfIDF(this.getResultItems());
+    public void sort(boolean reverse){
+        this.resultItems = sort.sortSearchResultsWithTfIDF(this.getResultItems(), reverse);
     }
 
     public void addResultItem(InsiteSearchResultItem resultItem) {

@@ -10,10 +10,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @version 1.2
+ * @author Nishan
+ */
 public class OntologyHandler {
     private OntModel ontoModel;
     private String ontologyBaseUrl;
-    private TextAnalyzer textAnalyzer;
 
     public OntologyHandler(String ontologyPath, String ontologyBaseUrl) {
         loadOntology(ontologyPath, ontologyBaseUrl);
@@ -26,46 +29,57 @@ public class OntologyHandler {
         ontoModel.read(in, null);
     }
 
+
+    /**
+     * @apiNote Get sub-words of given word, Ex. Object Oriented Concepts -> Polymorphism, Inheritance, Abstraction ..
+     * @param word keyword that needs to find subkeywords of
+     * @param resultLimit maximum number of results needs to return
+     * @return sub-keywords
+     */
     public List<String> getSubWordsOf(String word, int resultLimit) {
-        word = word.toLowerCase();
-        List<String> subWordList = new ArrayList<>();
+        word = word
+                .toLowerCase()
+                .replace(" ", "_");
         String queryString = "PREFIX progonto: <" + ontologyBaseUrl + "#>\n" +
                 "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
                 "\n" +
                 "select (str(?subclass) as ?output) where {\n" +
                 "  ?subclass rdfs:subClassOf* progonto:" + word + "\n" +
-//                "   ?subclass2 rdfs:subClassOf* ?subclass" +
                 "}";
-        Query query = QueryFactory.create(queryString);
-        QueryExecution queryExecution = QueryExecutionFactory.create(query, ontoModel);
-        ResultSet resultSet = queryExecution.execSelect();
-
-        for (int i = 0; i < resultLimit && resultSet.hasNext(); i++) {
-            String result = resultSet
-                    .nextSolution()
-                    .getLiteral("output")
-                    .getString()
-                    .replace(ontologyBaseUrl.concat("#"), "");
-            if (i == 0)
-                continue;
-            subWordList.add(result);
-        }
-        return subWordList;
+        return executeRequest(queryString, word, resultLimit);
     }
 
+
+    /**
+     * @param word keyword that needs to find similar words of
+     * @return equivalent words
+     */
     public List<String> getEquivalentWords(String word) {
-        word = word.toLowerCase();
-        List<String> outputWords = new ArrayList<>();
+        word = word
+                .toLowerCase()
+                .replace(" ", "_");
         String queryString = "PREFIX progonto: <" + ontologyBaseUrl + "#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "select (str(?word) as ?output) where {\n" +
                 "  ?word owl:equivalentClass progonto:" + word + " .\n" +
                 "}";
+        return executeRequest(queryString, word, 99999);
+    }
+
+
+    /**
+     * @apiNote Executes the query to read ontology
+     * @param queryString query to read ontology
+     * @param word word to find in ontology
+     * @return
+     */
+    private List<String> executeRequest(String queryString, String word, int resultLimit){
+        List<String> outputWords = new ArrayList<>();
         Query query = QueryFactory.create(queryString);
         QueryExecution queryExecution = QueryExecutionFactory.create(query, ontoModel);
         ResultSet resultSet = queryExecution.execSelect();
 
-        while (resultSet.hasNext()) {
+        for (int i=0; resultSet.hasNext() && i < resultLimit; i++) {
             String result = resultSet
                     .nextSolution()
                     .getLiteral("output")

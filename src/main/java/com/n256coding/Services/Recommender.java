@@ -71,7 +71,8 @@ public class Recommender {
                 "ResourceRating",
                 false,
                 false,
-                null);
+                null,
+                Environments.MONGO_DB_CONNECTION_STRING);
     }
 
     public void createDBConnection(String username, String password) {
@@ -113,18 +114,6 @@ public class Recommender {
             results.add(getResultItem(model.fromLongToId(recommendedItem.getItemID())));
         }
         return results;
-    }
-
-    public void getSVDRecommendar(String userId) throws TasteException {
-        List<InsiteSearchResultItem> results = new ArrayList<>();
-        SVDRecommender svdRecommender = new SVDRecommender(model, new ALSWRFactorizer(model, 3, 0.05f, 50));
-        String longString = model.fromIdToLong(userId, true);
-        long longUserId = Long.parseLong(longString);
-        List<RecommendedItem> recommendedItems = svdRecommender.recommend(longUserId, 5);
-        for (RecommendedItem recommendedItem : recommendedItems) {
-            System.out.println(model.fromLongToId(recommendedItem.getItemID()));
-            results.add(getResultItem(model.fromLongToId(recommendedItem.getItemID())));
-        }
     }
 
 }

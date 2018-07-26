@@ -16,6 +16,7 @@
 //import java.util.List;
 //import java.util.Map;
 //
+//@Deprecated
 //public class Algorithm6 {
 //    private TextFilter textFilter;
 //    private NLPProcessor nlpProcessor;

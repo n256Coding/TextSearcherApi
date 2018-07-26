@@ -1,3 +1,4 @@
+import com.n256coding.Dev.ConsineSimilarityTester;
 import com.n256coding.Services.FileHandler;
 import com.n256coding.Services.Recommender;
 import org.apache.lucene.analysis.TokenStream;
@@ -12,6 +13,7 @@ import org.apache.mahout.cf.taste.common.TasteException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.HashMap;
 
 public class Console {
 
@@ -161,8 +163,9 @@ public class Console {
 //        }
 //        String lemmaReplace = new TextFilter().replaceWithLemmas(testss);
 
-//        MongoDbConnection mongoDbConnection = new MongoDbConnection();
-//        List<Resource> priorityResourcesByKeywords = mongoDbConnection.getPriorityResourcesByKeywords(false, "java", "thread");
+        ConsineSimilarityTester tester = new ConsineSimilarityTester();
+        HashMap<String, Double> stringDoubleHashMap = tester.cosineSimilarity("sql database");
+        System.out.println(stringDoubleHashMap);
 
         String test = "sdfsdf";
     }
