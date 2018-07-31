@@ -574,13 +574,13 @@ public final class MongoDBDataModel implements DataModel {
                     .builder()
                     .sslEnabled(true)
                     .build();
-            mongoDDBB = MongoClientSingleton.getMongoClient();
+            mongoDDBB = MongoClientSingleton.getInstance().getMongoClient();
 //            mongoDDBB = new MongoClient(uri);
             readyToUseMongo = true;
         }
         else{
 //            mongoDDBB = new MongoClient(uri);
-            mongoDDBB = MongoClientSingleton.getMongoClient();
+            mongoDDBB = MongoClientSingleton.getInstance().getMongoClient();
             readyToUseMongo = true;
         }
         MongoDatabase db = mongoDDBB.getDatabase(mongoDB);

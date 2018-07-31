@@ -66,7 +66,7 @@ public class Algorithm8 {
         logger.info("Spell corrected");
 
         //List: Get nGram of user query and filter out tokens which not important     -> OriginalTokens:List
-        List<String> originalTokens = new ArrayList<>();
+        List<String> originalTokens;
         originalTokens = textAnalyzer.getNGramOf(query, 1, 3);
         //TODO: Remove this
         originalTokens = textAnalyzer.getLuceneTokenizedList(query);
@@ -86,7 +86,7 @@ public class Algorithm8 {
 
         //List: Identify relative keywords          -> RelativeTokens:List
         List<String> relativeTokens = new ArrayList<>();
-        relativeTokens.addAll(textAnalyzer.identifyRelatives(originalTokens.toArray(new String[originalTokens.size()])));
+//        relativeTokens.addAll(textAnalyzer.identifyRelatives(originalTokens.toArray(new String[originalTokens.size()])));
         for (String originalToken : originalTokens) {
             relativeTokens.addAll(ontologyHandler.getSubWordsOf(originalToken, 5));
             relativeTokens.addAll(ontologyHandler.getEquivalentWords(originalToken));
@@ -224,7 +224,6 @@ public class Algorithm8 {
             results.setRecommendations(recommender.getItemBasedRecommendation(userId));
         } catch (TasteException e) {
             logger.log(Level.SEVERE, "Error in recommendation", e);
-            e.printStackTrace();
         }
         System.out.println("Recommendation completed");
         logger.info("Recommendation completed");

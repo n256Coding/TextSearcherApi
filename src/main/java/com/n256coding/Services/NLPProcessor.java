@@ -103,7 +103,7 @@ public class NLPProcessor {
                 if (!token.originalText().equalsIgnoreCase(lemma)) {
                     try{
                         text = text.replaceAll("\\b"+token.originalText()+"\\b", lemma);
-                    }catch (PatternSyntaxException ex){
+                    }catch (IllegalArgumentException ex){
                         continue;
                     }
                 }

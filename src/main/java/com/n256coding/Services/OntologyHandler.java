@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @version 1.2
+ * @version 1.4
  * @author Nishan
  */
 public class OntologyHandler {
@@ -46,7 +46,7 @@ public class OntologyHandler {
                 "select (str(?subclass) as ?output) where {\n" +
                 "  ?subclass rdfs:subClassOf* progonto:" + word + "\n" +
                 "}";
-        return executeRequest(queryString, word, resultLimit);
+        return executeRequest(queryString, resultLimit);
     }
 
 
@@ -63,17 +63,16 @@ public class OntologyHandler {
                 "select (str(?word) as ?output) where {\n" +
                 "  ?word owl:equivalentClass progonto:" + word + " .\n" +
                 "}";
-        return executeRequest(queryString, word, 99999);
+        return executeRequest(queryString, 99999);
     }
 
 
     /**
      * @apiNote Executes the query to read ontology
      * @param queryString query to read ontology
-     * @param word word to find in ontology
      * @return
      */
-    private List<String> executeRequest(String queryString, String word, int resultLimit){
+    private List<String> executeRequest(String queryString, int resultLimit){
         List<String> outputWords = new ArrayList<>();
         Query query = QueryFactory.create(queryString);
         QueryExecution queryExecution = QueryExecutionFactory.create(query, ontoModel);

@@ -27,7 +27,7 @@ public class MongoDbConnection implements DatabaseConnection {
 //    private static MongoClient mongoClient = new MongoClient(uri);
 
     private MongoClient getMongoClient(){
-        return MongoClientSingleton.getMongoClient();
+        return MongoClientSingleton.getInstance().getMongoClient();
     }
 
     public MongoDbConnection() {
@@ -39,12 +39,6 @@ public class MongoDbConnection implements DatabaseConnection {
     }
 
     public MongoDbConnection(String hostname, int port, String username, String password) {
-//        ServerAddress serverAddress = new ServerAddress(hostname, port);
-//
-//        MongoCredential credential = MongoCredential.createCredential(username, Environments.MONGO_DB_NAME, password.toCharArray());
-//        MongoClientOptions mongoClientOptions = MongoClientOptions.builder()
-//                .sslEnabled(true)
-//                .build();
         mongoOperations = new MongoTemplate(getMongoClient(), Environments.MONGO_DB_NAME);
     }
 

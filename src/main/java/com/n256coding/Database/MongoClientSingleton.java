@@ -6,14 +6,20 @@ import com.mongodb.MongoClientURI;
 import com.n256coding.Common.Environments;
 
 public class MongoClientSingleton {
-    private volatile static MongoClientURI uri = new MongoClientURI(Environments.MONGO_DB_CONNECTION_STRING);
-    private volatile static MongoClient mongoClient = new MongoClient(uri);
-//    private volatile static MongoClient mongoClient = new MongoClient("localhost", 27017);
-
-    public static MongoClient getMongoClient() {
-        return mongoClient;
-    }
+    private static volatile MongoClientSingleton ourInstance = new MongoClientSingleton();
+    private MongoClientURI uri = new MongoClientURI(Environments.MONGO_DB_CONNECTION_STRING);
+    private MongoClient mongoClient = new MongoClient(uri);
+//    private MongoClient mongoClient = new MongoClient("localhost", 27017);
 
     private MongoClientSingleton() {
     }
+
+    public static MongoClientSingleton getInstance(){
+        return ourInstance;
+    }
+
+    public MongoClient getMongoClient() {
+        return this.mongoClient;
+    }
+
 }

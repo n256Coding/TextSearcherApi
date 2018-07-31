@@ -6,7 +6,10 @@ import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Services.TextAnalyzer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ConsineSimilarityTester {
@@ -36,7 +39,7 @@ public class ConsineSimilarityTester {
         return tempList;
     }
 
-    private List<DocumentInfo> getDocumentTfIdf(List<String> queryTokens, List<Resource> localResources){
+    private List<DocumentInfo> getDocumentTfIdf(List<String> queryTokens, List<Resource> localResources) {
         HashMap<String, Double> allIdfValues = getAllIdfValues(queryTokens);
         List<DocumentInfo> tempList = new ArrayList<>();
         matchingDocuments = localResources;
@@ -50,7 +53,7 @@ public class ConsineSimilarityTester {
         return tempList;
     }
 
-    private HashMap<String, Double> getQueryTfIdf(String query){
+    private HashMap<String, Double> getQueryTfIdf(String query) {
         List<String> queryTokens = textAnalyzer.getLuceneTokenizedList(query);
         List<Map.Entry<String, Integer>> wordFrequency = textAnalyzer.getWordFrequency(query);
         HashMap<String, Double> allIdfValues = getAllIdfValues(queryTokens);
@@ -64,7 +67,7 @@ public class ConsineSimilarityTester {
         return tfidfList;
     }
 
-    private HashMap<String, Double> getQueryTfIdf(List<String> queryTokens){
+    private HashMap<String, Double> getQueryTfIdf(List<String> queryTokens) {
         List<Map.Entry<String, Integer>> wordFrequency = textAnalyzer.getWordFrequency(queryTokens);
         HashMap<String, Double> allIdfValues = getAllIdfValues(queryTokens);
         int wordCount = queryTokens.size();
@@ -79,13 +82,13 @@ public class ConsineSimilarityTester {
 
     private double getIdfOf(String word) {
         int matchingDocuments = database.getResourcesByKeywords(false, word).size();
-        if(matchingDocuments == 0){
+        if (matchingDocuments == 0) {
             return 0;
         }
         return 1 + Math.log(totalDocuments / matchingDocuments);
     }
 
-    private HashMap<String, Double> getAllIdfValues(List<String> tokens){
+    private HashMap<String, Double> getAllIdfValues(List<String> tokens) {
         HashMap<String, Double> idfValues = new HashMap<>();
         for (String token : tokens) {
             idfValues.put(token, getIdfOf(token));
@@ -93,7 +96,7 @@ public class ConsineSimilarityTester {
         return idfValues;
     }
 
-    private double getCosineSimilarityOfDocument(HashMap<String, Double> queryTfIdf, List<DocumentInfo> documentTfIdf){
+    private double getCosineSimilarityOfDocument(HashMap<String, Double> queryTfIdf, List<DocumentInfo> documentTfIdf) {
 
         /*
         Cosine Similarity (d1, d2) =  Dot product(d1, d2) / ||d1|| * ||d2||
@@ -107,7 +110,7 @@ public class ConsineSimilarityTester {
         double sqrtQuery = 0.0;
         for (String queryToken : queryTfIdf.keySet()) {
             List<DocumentInfo> documents = documentTfIdf.stream().filter(doc -> doc.word.equals(queryToken)).collect(Collectors.toList());
-            if(documents.size() == 0){
+            if (documents.size() == 0) {
                 continue;
             }
 
@@ -122,12 +125,12 @@ public class ConsineSimilarityTester {
         return dotProduct / (sqrtDocument * sqrtQuery);
     }
 
-    private double getEuclideneSimilarityOfDocument(HashMap<String, Double> queryTfIdf, List<DocumentInfo> documentTfIdf){
+    private double getEuclideneSimilarityOfDocument(HashMap<String, Double> queryTfIdf, List<DocumentInfo> documentTfIdf) {
 
         double euclideneValue = 0;
         for (String queryToken : queryTfIdf.keySet()) {
             List<DocumentInfo> documents = documentTfIdf.stream().filter(doc -> doc.word.equals(queryToken)).collect(Collectors.toList());
-            if(documents.size() == 0){
+            if (documents.size() == 0) {
                 continue;
             }
 
@@ -137,7 +140,7 @@ public class ConsineSimilarityTester {
         return Math.sqrt(euclideneValue);
     }
 
-    public HashMap<String, Double> cosineSimilarity(String query){
+    public HashMap<String, Double> cosineSimilarity(String query) {
         HashMap<String, Double> results = new HashMap<>();
         HashMap<String, Double> queryTfIdf = getQueryTfIdf(query);
         List<DocumentInfo> documentTfIdf = getDocumentTfIdf(query);
@@ -148,7 +151,7 @@ public class ConsineSimilarityTester {
         return results;
     }
 
-    public HashMap<String, Double> rankResults(List<String> allTokens, List<String> originalTokens, List<Resource> localResources){
+    public HashMap<String, Double> rankResults(List<String> allTokens, List<String> originalTokens, List<Resource> localResources) {
         HashMap<String, Double> results = new HashMap<>();
         HashMap<String, Double> queryTfIdf = getQueryTfIdf(originalTokens);
         List<DocumentInfo> documentTfIdf = getDocumentTfIdf(originalTokens, localResources);
@@ -160,13 +163,10 @@ public class ConsineSimilarityTester {
     }
 
 
-    private class DocumentInfo{
+    private class DocumentInfo {
         public String documentId = "";
         public String word = "";
         public double tfidf = 0.0;
-
-        public DocumentInfo() {
-        }
 
         public DocumentInfo(String documentId, String word, double tfidf) {
             this.documentId = documentId;
