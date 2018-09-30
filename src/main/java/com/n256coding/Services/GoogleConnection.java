@@ -24,11 +24,9 @@ public class GoogleConnection implements SearchEngineConnection {
     private int resultCursor;
     private int currentPaginationIndex;
     private List<String> paginationUrls;
-    private UrlFilter urlFilter;
 
 
     public GoogleConnection() {
-        urlFilter = new UrlFilter();
         currentPaginationIndex = 0;
         resultCursor = -1;
         paginationUrls = new ArrayList<>();
@@ -55,7 +53,7 @@ public class GoogleConnection implements SearchEngineConnection {
         }
         googlePage = Jsoup.connect("https://www.google.com/search?q=" + searchKey)
                 .userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
-//                .ignoreHttpErrors(true)
+                .ignoreHttpErrors(true)
                 .timeout(5000)
                 .get();
         paginationUrls.add("https://www.google.com/search?q=" + searchKey);
@@ -81,9 +79,9 @@ public class GoogleConnection implements SearchEngineConnection {
             }
 
             String url = urlElements.get(0).attr("href");
-            url = urlFilter.decodeUrl(url);
-            url = urlFilter.extractUrl(url);
-            if (!urlFilter.isValidUrl(url)) {
+            url = UrlFilter.decodeUrl(url);
+            url = UrlFilter.extractUrl(url);
+            if (!UrlFilter.isValidUrl(url)) {
                 continue;
             }
 
@@ -91,8 +89,8 @@ public class GoogleConnection implements SearchEngineConnection {
             for (Element cacheUrlElement : cacheUrlElements) {
                 if (cacheUrlElement.ownText().equalsIgnoreCase("cached")) {
                     webCacheUrl = cacheUrlElement.attr("href");
-                    webCacheUrl = urlFilter.decodeUrl(webCacheUrl);
-                    webCacheUrl = urlFilter.extractUrl(webCacheUrl);
+                    webCacheUrl = UrlFilter.decodeUrl(webCacheUrl);
+                    webCacheUrl = UrlFilter.extractUrl(webCacheUrl);
                 }
             }
 
@@ -125,9 +123,9 @@ public class GoogleConnection implements SearchEngineConnection {
 
                 for (int i = 0; i < slkUrlElements.size(); i++) {
                     String slkUrl = slkUrlElements.get(i).attr("href");
-                    slkUrl = urlFilter.decodeUrl(slkUrl);
-                    slkUrl = urlFilter.extractUrl(slkUrl);
-                    if (!urlFilter.isValidUrl(slkUrl)) {
+                    slkUrl = UrlFilter.decodeUrl(slkUrl);
+                    slkUrl = UrlFilter.extractUrl(slkUrl);
+                    if (!UrlFilter.isValidUrl(slkUrl)) {
                         continue;
                     }
 

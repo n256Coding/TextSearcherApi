@@ -9,13 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 public class TextFilter {
-    private TextAnalyzer analyzer;
     private List<String> disqualifiedWords;
-    private NLPProcessor nlpProcessor;
 
     public TextFilter() {
-        this.analyzer = new TextAnalyzer();
-        this.nlpProcessor = new NLPProcessor();
         disqualifiedWords = new ArrayList<>();
         addDisqualifiedWords("quiz");
         addDisqualifiedWords("quizzes");
@@ -26,8 +22,8 @@ public class TextFilter {
     }
 
     public boolean isValidWebPage(String pageContent, List<Map.Entry<String, Integer>> frequencies) {
-        int wordCount = analyzer.getWordCount(pageContent);
-        List<String> tokenizedList = analyzer.getLuceneTokenizedList(pageContent);
+        int wordCount = TextAnalyzer.getWordCount(pageContent);
+        List<String> tokenizedList = TextAnalyzer.getLuceneTokenizedList(pageContent);
 
         if (wordCount < 150) {
             return false;
@@ -38,7 +34,7 @@ public class TextFilter {
     }
 
     public String replaceWithLemmas(String pageContent) {
-        return nlpProcessor.replaceWithLemma(pageContent);
+        return NLPProcessor.replaceWithLemma(pageContent);
     }
 
     public String joinListToString(List<String> wordList, String joiner) {
@@ -49,7 +45,7 @@ public class TextFilter {
         return Arrays.asList(sentence.split(delemeter));
     }
 
-    public List<String> replaceString(List<String> sentenceList, String target, String replacement){
+    public List<String> replaceString(List<String> sentenceList, String target, String replacement) {
         List<String> outputList = new ArrayList<>();
         for (String sentence : sentenceList) {
             outputList.add(sentence.replace(target, replacement));
@@ -57,7 +53,7 @@ public class TextFilter {
         return outputList;
     }
 
-    public String replaceString(String sentence, String target, String replacement){
+    public String replaceString(String sentence, String target, String replacement) {
         return sentence.replace(target, replacement);
     }
 }

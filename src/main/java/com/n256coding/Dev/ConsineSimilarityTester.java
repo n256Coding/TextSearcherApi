@@ -1,6 +1,5 @@
 package com.n256coding.Dev;
 
-import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Interfaces.DatabaseConnection;
@@ -14,18 +13,16 @@ import java.util.stream.Collectors;
 
 public class ConsineSimilarityTester {
     private DatabaseConnection database;
-    private TextAnalyzer textAnalyzer;
     private int totalDocuments;
     private List<Resource> matchingDocuments;
 
     public ConsineSimilarityTester() {
-        database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
-        textAnalyzer = new TextAnalyzer();
+        database = new MongoDbConnection();
         totalDocuments = (int) database.countResources();
     }
 
     private List<DocumentInfo> getDocumentTfIdf(String query) {
-        List<String> queryTokens = textAnalyzer.getLuceneTokenizedList(query);
+        List<String> queryTokens = TextAnalyzer.getLuceneTokenizedList(query);
         matchingDocuments = database.getResourcesByKeywords(false, queryTokens.toArray(new String[queryTokens.size()]));
         HashMap<String, Double> allIdfValues = getAllIdfValues(queryTokens);
         List<DocumentInfo> tempList = new ArrayList<>();
@@ -54,8 +51,8 @@ public class ConsineSimilarityTester {
     }
 
     private HashMap<String, Double> getQueryTfIdf(String query) {
-        List<String> queryTokens = textAnalyzer.getLuceneTokenizedList(query);
-        List<Map.Entry<String, Integer>> wordFrequency = textAnalyzer.getWordFrequency(query);
+        List<String> queryTokens = TextAnalyzer.getLuceneTokenizedList(query);
+        List<Map.Entry<String, Integer>> wordFrequency = TextAnalyzer.getWordFrequency(query);
         HashMap<String, Double> allIdfValues = getAllIdfValues(queryTokens);
         int wordCount = query.split(" ").length;
         HashMap<String, Double> tfidfList = new HashMap<>();
@@ -68,7 +65,7 @@ public class ConsineSimilarityTester {
     }
 
     private HashMap<String, Double> getQueryTfIdf(List<String> queryTokens) {
-        List<Map.Entry<String, Integer>> wordFrequency = textAnalyzer.getWordFrequency(queryTokens);
+        List<Map.Entry<String, Integer>> wordFrequency = TextAnalyzer.getWordFrequency(queryTokens);
         HashMap<String, Double> allIdfValues = getAllIdfValues(queryTokens);
         int wordCount = queryTokens.size();
         HashMap<String, Double> tfidfList = new HashMap<>();

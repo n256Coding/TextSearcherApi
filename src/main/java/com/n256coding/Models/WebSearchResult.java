@@ -3,6 +3,7 @@ package com.n256coding.Models;
 import com.n256coding.Services.FileHandler;
 import com.n256coding.Services.PDFHandler;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.SAXException;
@@ -65,11 +66,10 @@ public class WebSearchResult {
             return "";
         }
         if (isPdf) {
-            PDFHandler pdfHandler = new PDFHandler();
             String downloadedFilePath = FileHandler.downloadFile(url,
                     FileHandler.TEMP_DOWNLOAD_DIR,
                     FileHandler.FileTypes.PDF);
-            String textContent = pdfHandler.parseText(new File(downloadedFilePath));
+            String textContent = PDFHandler.parseText(new File(downloadedFilePath));
             FileHandler.removeFile(downloadedFilePath);
             return textContent;
         }
@@ -78,11 +78,11 @@ public class WebSearchResult {
         Document pageResult = Jsoup.connect(url)
                 .userAgent("Mozilla")
                 .get();
-        return pageResult.text();
+//        return pageResult.text();
 //        final HTMLDocument htmlDoc = HTMLFetcher.fetch(new URL(url));
 //        final TextDocument doc = new BoilerpipeSAXInput(htmlDoc.toInputSource()).getTextDocument();
 //        return CommonExtractors.ARTICLE_EXTRACTOR.getText();
-//        return ArticleExtractor.INSTANCE.getText(pageResult.html());
+        return ArticleExtractor.INSTANCE.getText(pageResult.html());
     }
 
     public String getWebCacheContent() throws IOException, BoilerpipeProcessingException {
@@ -90,11 +90,10 @@ public class WebSearchResult {
             return "";
         }
         if (isPdf) {
-            PDFHandler pdfHandler = new PDFHandler();
             String downloadedFilePath = FileHandler.downloadFile(webCacheUrl,
                     FileHandler.TEMP_DOWNLOAD_DIR,
                     FileHandler.FileTypes.PDF);
-            String textContent = pdfHandler.parseText(new File(downloadedFilePath));
+            String textContent = PDFHandler.parseText(new File(downloadedFilePath));
             FileHandler.removeFile(downloadedFilePath);
             return textContent;
         }

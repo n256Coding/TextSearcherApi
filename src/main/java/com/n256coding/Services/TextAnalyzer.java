@@ -1,6 +1,5 @@
 package com.n256coding.Services;
 
-import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Helpers.StopWordHelper;
@@ -10,8 +9,6 @@ import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermFrequencyAttribute;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.deeplearning4j.models.embeddings.WeightLookupTable;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
@@ -38,14 +35,8 @@ import static java.util.stream.Collectors.averagingDouble;
 import static java.util.stream.Collectors.groupingBy;
 
 public class TextAnalyzer {
-    private FileHandler fileHandler;
-    private DatabaseConnection database;
 
-    public TextAnalyzer() {
-        this.database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
-    }
-
-    public List<String> identifyRelatives(String... keywords) {
+    public static List<String> identifyRelatives(String... keywords) {
         List<String> semanticallyRelatives = new ArrayList<>();
         File file = new File(FileHandler.WORD2VEC_MODEL_PATH);
         if (!file.exists()) {
@@ -61,10 +52,10 @@ public class TextAnalyzer {
         return semanticallyRelatives;
     }
 
-    public void trainWord2VecModel(String textCorpus) throws IOException {
+    public static void trainWord2VecModel(String textCorpus) throws IOException {
         Word2Vec vec;
         File word2vecFile = new File(FileHandler.WORD2VEC_MODEL_PATH);
-        String tempFilePath = fileHandler.createNewCorpusFile(textCorpus);
+        String tempFilePath = FileHandler.createNewCorpusFile(textCorpus);
         SentenceIterator iterator = new BasicLineIterator(tempFilePath);
         //TODO: fileHandler.removeCorpusFile(tempFilePath);
         TokenizerFactory tokenizerFactory = new DefaultTokenizerFactory();
@@ -81,7 +72,7 @@ public class TextAnalyzer {
             vec.setTokenizerFactory(tokenizerFactory);
             vec.setSentenceIterator(iterator);
         } else {
-            fileHandler.createCorpusModelDirIfNotExists();
+            FileHandler.createCorpusModelDirIfNotExists();
             vec = new Word2Vec.Builder()
                     .minWordFrequency(5)
                     .iterations(5)
@@ -100,7 +91,7 @@ public class TextAnalyzer {
     }
 
     @SuppressWarnings("Duplicates")
-    public List<Map.Entry<String, Integer>> getWordFrequency(String corpus) {
+    public static List<Map.Entry<String, Integer>> getWordFrequency(String corpus) {
         List<String> tokenizedList = getLuceneTokenizedList(corpus.toLowerCase());
 //        TODO: Check nGram removed
 //        tokenizedList = getNGramOf(tokenizedList, 1, 3);
@@ -132,7 +123,7 @@ public class TextAnalyzer {
     }
 
     @SuppressWarnings("Duplicates")
-    public List<Map.Entry<String, Integer>> getWordFrequency(List<String> tokenizedList) {
+    public static List<Map.Entry<String, Integer>> getWordFrequency(List<String> tokenizedList) {
 //        TODO: Check nGram removed
 //        tokenizedList = getNGramOf(tokenizedList, 1, 3);
         HashMap<String, Integer> dictionary = new HashMap<>();
@@ -163,7 +154,7 @@ public class TextAnalyzer {
     }
 
     @Deprecated
-    public List<String> correctSpellings(String... keywords) throws IOException, ParseException, ClassNotFoundException {
+    public static List<String> correctSpellings(String... keywords) throws IOException, ParseException, ClassNotFoundException {
         String correctedKeyword = "";
 //        SpellChecker spellChecker = new SpellChecker();
 //        for (String keyword : keywords) {
@@ -180,7 +171,7 @@ public class TextAnalyzer {
         return tokenizedWords;
     }
 
-    public String correctSpellingsV2(String query) throws IOException {
+    public static String correctSpellingsV2(String query) throws IOException {
         JLanguageTool langTool = new JLanguageTool(new AmericanEnglish());
         for (Rule rule : langTool.getAllRules()) {
             if (!rule.isDictionaryBasedSpellingRule()) {
@@ -197,24 +188,24 @@ public class TextAnalyzer {
         return buff.toString();
     }
 
-    public int getWordCount(String document) {
+    public static int getWordCount(String document) {
         return getTokenizedList(document, " ").size();
     }
 
-    public double getTFIDFWeightOfWords(long totalNumberOfDocuments,
+    public static double getTFIDFWeightOfWords(long totalNumberOfDocuments,
                                         int matchingNoOfDocuments,
                                         Resource resource,
                                         String... words) {
         return resource.getTfOf(words) * Math.log((double) totalNumberOfDocuments / (double) matchingNoOfDocuments);
     }
 
-    public double getTFIDFWeight(long totalNumberOfDocuments,
+    public static double getTFIDFWeight(long totalNumberOfDocuments,
                                  int matchingNoOfDocuments,
                                  double termFrequency) {
         return termFrequency * Math.log(((double) totalNumberOfDocuments) / ((double) matchingNoOfDocuments));
     }
 
-    public List<String> getTokenizedList(String sentence, String delim) {
+    public static List<String> getTokenizedList(String sentence, String delim) {
         List<String> tokens = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(sentence, delim);
         while (tokenizer.hasMoreTokens()) {
@@ -223,7 +214,7 @@ public class TextAnalyzer {
         return tokens;
     }
 
-    public List<String> getLuceneTokenizedList(String sentence) {
+    public static List<String> getLuceneTokenizedList(String sentence) {
         List<String> tokenList = new ArrayList<>();
         CharArraySet stopwordSet = new CharArraySet(new StopWordHelper().getStopWords(), false);
         StandardAnalyzer analyzer = new StandardAnalyzer(stopwordSet);
@@ -240,7 +231,7 @@ public class TextAnalyzer {
         return tokenList;
     }
 
-    public List<String> getNGramOf(String sentence, int n) {
+    public static List<String> getNGramOf(String sentence, int n) {
         List<String> nGramList = new ArrayList<>();
         StringBuilder stringBuilder;
         String[] tokens = sentence.split(" ");
@@ -255,7 +246,7 @@ public class TextAnalyzer {
         return nGramList;
     }
 
-    public List<String> getNGramOf(List<String> tokens, int n){
+    public static List<String> getNGramOf(List<String> tokens, int n) {
         List<String> nGramList = new ArrayList<>();
         StringBuilder stringBuilder;
         for (int i = 0; i <= tokens.size() - n; i++) {
@@ -269,7 +260,7 @@ public class TextAnalyzer {
         return nGramList;
     }
 
-    public List<String> getNGramOf(String sentence, int min, int max) {
+    public static List<String> getNGramOf(String sentence, int min, int max) {
         List<String> nGrams = new ArrayList<>();
         if (min > max)
             return nGrams;
@@ -279,7 +270,7 @@ public class TextAnalyzer {
         return nGrams;
     }
 
-    public List<String> getNGramOf(List<String> tokens, int min, int max) {
+    public static List<String> getNGramOf(List<String> tokens, int min, int max) {
         List<String> nGrams = new ArrayList<>();
         if (min > max)
             return nGrams;
@@ -290,9 +281,9 @@ public class TextAnalyzer {
     }
 
     @SuppressWarnings("Duplicates")
-    public Map<String, Double> calculateWeightedTfIdf(List<String> allTokens, List<String> originalQueryTokens, List<Resource> matchingDocuments) {
+    public static Map<String, Double> calculateWeightedTfIdf(List<String> allTokens, List<String> originalQueryTokens, List<Resource> matchingDocuments) {
         //Experimenting code segment - Start////////////////////////////////////////////////////////////////////////////////////
-
+        DatabaseConnection database = new MongoDbConnection();
 //        //Get matching documents from database
 //        List<Resource> matchingDocuments = database.getResourcesByKeywords(
 //                allTokens.toArray(new String[allTokens.size()])
@@ -315,7 +306,7 @@ public class TextAnalyzer {
                 if ((document.getTitle() == null ? "" : document.getTitle()).toLowerCase().contains(keyword)) {
                     weightedValue++;
                 }
-                if(document.getUrl().toLowerCase().contains(keyword)){
+                if (document.getUrl().toLowerCase().contains(keyword)) {
                     weightedValue++;
                 }
                 tfIdfValues.add(new TfIdfData(document.getId(),

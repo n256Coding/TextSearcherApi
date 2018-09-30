@@ -1,8 +1,6 @@
 package com.n256coding.DatabaseModels;
 
-import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
-import com.n256coding.Interfaces.DatabaseConnection;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -112,10 +110,10 @@ public class Resource {
         this.imageUrl = imageUrl;
     }
 
-    public double getTfOf(String... words){
+    public double getTfOf(String... words) {
         for (KeywordData keyword : keywords) {
             for (String word : words) {
-                if(keyword.getWord().contains(word)){
+                if (keyword.getWord().contains(word)) {
                     return keyword.getTf();
                 }
             }
@@ -123,17 +121,20 @@ public class Resource {
         return 0.0;
     }
 
-    public double getTfOf(String word){
+    public double getTfOf(String word) {
         for (KeywordData keyword : keywords) {
-            if(keyword.getWord().equalsIgnoreCase(word.trim())){
+            if (keyword.getWord().equalsIgnoreCase(word.trim())) {
                 return keyword.getTf();
             }
         }
         return 0.0;
     }
 
-    public static Resource getResourceById(String resourceId){
-        DatabaseConnection database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
-        return database.getResourceById(resourceId);
+    public static Resource getResourceById(String resourceId) {
+        return new MongoDbConnection().getResourceById(resourceId);
+    }
+
+    public static boolean isResourceAvailable(String url) {
+        return new MongoDbConnection().getResourcesByUrl(url).size() > 0;
     }
 }

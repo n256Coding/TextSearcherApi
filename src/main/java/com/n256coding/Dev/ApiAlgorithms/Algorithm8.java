@@ -15,20 +15,15 @@ import com.n256coding.Services.Filters.TextFilter;
 import org.apache.mahout.cf.taste.common.TasteException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class Algorithm8 {
     private TextFilter textFilter;
-    private NLPProcessor nlpProcessor;
     private OntologyHandler ontologyHandler;
-    private TextAnalyzer textAnalyzer;
     private DatabaseConnection database;
-    private DateEx date;
     private OnlineDataHandler onlineDataHandler;
     private int dbKeywordMatchCount;
     private Recommender recommender;
@@ -36,14 +31,8 @@ public class Algorithm8 {
 
     public Algorithm8() {
         textFilter = new TextFilter();
-        nlpProcessor = new NLPProcessor();
-        ontologyHandler = new OntologyHandler(
-                FileHandler.ONTOLOGY_FILE_PATH,
-                "http://www.semanticweb.org/nishan/ontologies/2018/5/Programming"
-        );
-        textAnalyzer = new TextAnalyzer();
-        database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
-        date = new DateEx();
+        ontologyHandler = new OntologyHandler(FileHandler.ONTOLOGY_FILE_PATH, Environments.ONTOLOGY_BASE_URL);
+        database = new MongoDbConnection();
         onlineDataHandler = new OnlineDataHandler();
         recommender = new Recommender();
         logger = LocalLogger.getInstance().logger;
@@ -51,6 +40,8 @@ public class Algorithm8 {
 
     @SuppressWarnings("Duplicates")
     public InsiteSearchResult api(String query, boolean isPdf, String userId) throws IOException {
+        long startTime = new Date().getTime();
+        System.out.println("Start time: "+startTime);
         System.out.println("found search query: "+query);
         logger.info("found search query: "+query);
         //QUERY ANALYSIS
@@ -61,23 +52,23 @@ public class Algorithm8 {
         logger.info("lemma replaced: "+query);
 
         //Correct Spellings
-        String spellCorrectedQuery = textAnalyzer.correctSpellingsV2(query);
+        String spellCorrectedQuery = TextAnalyzer.correctSpellingsV2(query);
         System.out.println("Spell corrected");
         logger.info("Spell corrected");
 
         //List: Get nGram of user query and filter out tokens which not important     -> OriginalTokens:List
         List<String> originalTokens;
-        originalTokens = textAnalyzer.getNGramOf(query, 1, 3);
+        originalTokens = TextAnalyzer.getNGramOf(query, 1, 3);
         //TODO: Remove this
-        originalTokens = textAnalyzer.getLuceneTokenizedList(query);
+        originalTokens = TextAnalyzer.getLuceneTokenizedList(query);
         System.out.println("query analyzed with NGram");
         System.out.println(originalTokens);
         logger.info("query analyzed with NGram "+originalTokens.toString());
 
         for (String originalToken : originalTokens) {
-            if(nlpProcessor.get(NLPProcessor.WordType.NOUN, originalToken).size() == 0 &&
-                    nlpProcessor.get(NLPProcessor.WordType.VERB, originalToken).size() == 0 &&
-                    nlpProcessor.get(NLPProcessor.WordType.ADJECTIVE, originalToken).size() == 0){
+            if(NLPProcessor.get(NLPProcessor.WordType.NOUN, originalToken).size() == 0 &&
+                    NLPProcessor.get(NLPProcessor.WordType.VERB, originalToken).size() == 0 &&
+                    NLPProcessor.get(NLPProcessor.WordType.ADJECTIVE, originalToken).size() == 0){
                 originalTokens.remove(originalToken);
             }
         }
@@ -86,7 +77,7 @@ public class Algorithm8 {
 
         //List: Identify relative keywords          -> RelativeTokens:List
         List<String> relativeTokens = new ArrayList<>();
-//        relativeTokens.addAll(textAnalyzer.identifyRelatives(originalTokens.toArray(new String[originalTokens.size()])));
+        relativeTokens.addAll(TextAnalyzer.identifyRelatives(originalTokens.toArray(new String[originalTokens.size()])));
         for (String originalToken : originalTokens) {
             relativeTokens.addAll(ontologyHandler.getSubWordsOf(originalToken, 5));
             relativeTokens.addAll(ontologyHandler.getEquivalentWords(originalToken));
@@ -101,7 +92,7 @@ public class Algorithm8 {
         List<String> allTokens = new ArrayList<>();
         allTokens.addAll(originalTokens);
         allTokens.addAll(relativeTokens);
-        System.out.println("All tokens created successfully");
+        System.out.println("All tokens created successfully" + allTokens);
         logger.info("All tokens created successfully");
 
         //List: Got some results resources from database
@@ -124,7 +115,7 @@ public class Algorithm8 {
 
         //Filter-out old results
         for (Resource localResource : localResources) {
-            if (date.isOlderThanMonths(localResource.getLastModified(), 3)) {
+            if (DateEx.isOlderThanMonths(localResource.getLastModified(), 3)) {
                 localResources.remove(localResource);
             }
         }
@@ -235,6 +226,8 @@ public class Algorithm8 {
         logger.info("Results sorted");
         logger.info("-----------------------------------------------------------------------");
 
+        long endTime = new Date().getTime();
+        System.out.println("Time taken to show (seconds): "+(endTime-startTime)/1000);
         //Prepare results to send to the client
         return results;
     }

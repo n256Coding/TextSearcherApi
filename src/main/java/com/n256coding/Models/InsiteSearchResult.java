@@ -11,12 +11,10 @@ public class InsiteSearchResult {
     protected String spellCorrectedQuery;
     protected String originalQuery;
     private List<InsiteSearchResultItem> recommendations;
-    private SortHelper sort;
 
     public InsiteSearchResult() {
         resultItems = new ArrayList<>();
         recommendations = new ArrayList<>();
-        sort = new SortHelper();
     }
 
     public List<InsiteSearchResultItem> getResultItems() {
@@ -24,7 +22,7 @@ public class InsiteSearchResult {
     }
 
     public void sort(boolean reverse){
-        this.resultItems = sort.sortSearchResultsWithTfIDF(this.getResultItems(), reverse);
+        this.resultItems = SortHelper.sortSearchResultsWithTfIDF(this.getResultItems(), reverse);
     }
 
     public void addResultItem(InsiteSearchResultItem resultItem) {

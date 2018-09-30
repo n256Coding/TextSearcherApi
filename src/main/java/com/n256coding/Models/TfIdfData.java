@@ -1,6 +1,5 @@
 package com.n256coding.Models;
 
-import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.Resource;
 import com.n256coding.Interfaces.DatabaseConnection;
@@ -43,12 +42,12 @@ public class TfIdfData {
         this.tfIdfValue = tfIdfValue;
     }
 
-    public double getWeightedTfIdfValue(){
+    public double getWeightedTfIdfValue() {
         return this.tfIdfValue * this.weightedValue;
     }
 
-    public Resource getDbResource(){
-        database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
+    public Resource getDbResource() {
+        database = new MongoDbConnection();
         return database.getResourceById(this.documentId);
     }
 }

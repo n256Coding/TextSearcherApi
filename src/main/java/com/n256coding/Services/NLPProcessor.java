@@ -12,7 +12,6 @@ import edu.stanford.nlp.util.CoreMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.PatternSyntaxException;
 
 public class NLPProcessor {
 
@@ -24,7 +23,7 @@ public class NLPProcessor {
         QUESTION
     }
 
-    public String getRootWord(String text) {
+    public static String getRootWord(String text) {
         // set up properties
         Properties props = new Properties();
         props.setProperty("ssplit.eolonly", "true");
@@ -44,7 +43,7 @@ public class NLPProcessor {
         return root.toString();
     }
 
-    public List<String> get(WordType type, String text) {
+    public static List<String> get(WordType type, String text) {
         String identifier = "";
         List<String> results = new ArrayList<>();
         Properties props = new Properties();
@@ -89,7 +88,7 @@ public class NLPProcessor {
         return results;
     }
 
-    public String replaceWithLemma(String text) {
+    public static String replaceWithLemma(String text) {
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize,ssplit,pos,lemma");
 
@@ -101,9 +100,9 @@ public class NLPProcessor {
             for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
                 String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
                 if (!token.originalText().equalsIgnoreCase(lemma)) {
-                    try{
-                        text = text.replaceAll("\\b"+token.originalText()+"\\b", lemma);
-                    }catch (IllegalArgumentException ex){
+                    try {
+                        text = text.replaceAll("\\b" + token.originalText() + "\\b", lemma);
+                    } catch (IllegalArgumentException ex) {
                         continue;
                     }
                 }

@@ -1,6 +1,8 @@
+import com.n256coding.Common.Environments;
 import com.n256coding.Dev.ConsineSimilarityTester;
 import com.n256coding.Services.FileHandler;
 import com.n256coding.Services.Recommender;
+import com.n256coding.Services.SafariDownloader;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.ngram.NGramTokenizer;
 import org.apache.lucene.analysis.shingle.ShingleFilter;
@@ -163,9 +165,15 @@ public class Console {
 //        }
 //        String lemmaReplace = new TextFilter().replaceWithLemmas(testss);
 
-        ConsineSimilarityTester tester = new ConsineSimilarityTester();
-        HashMap<String, Double> stringDoubleHashMap = tester.cosineSimilarity("sql database");
-        System.out.println(stringDoubleHashMap);
+        SafariDownloader safariDownloader = new SafariDownloader(Environments.SAFARI_USERNAME, Environments.SAFARI_PASSWORD);
+        safariDownloader.setHeadersForSearching();
+        safariDownloader.login();
+
+        safariDownloader.searchBooks("sql database operations");
+        safariDownloader.setHeaders();
+        String url = safariDownloader.getResultedBookUrls().get(0);
+        String content = safariDownloader.getContentOf(url);
+
 
         String test = "sdfsdf";
     }

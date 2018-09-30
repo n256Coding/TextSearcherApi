@@ -1,6 +1,8 @@
 package com.n256coding.Database;
 
-import com.mongodb.*;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoClient;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCursor;
 import com.n256coding.Common.Environments;
@@ -23,10 +25,8 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 public class MongoDbConnection implements DatabaseConnection {
 
     private MongoOperations mongoOperations;
-//    private static MongoClientURI uri = new MongoClientURI(Environments.MONGO_DB_CONNECTION_STRING);
-//    private static MongoClient mongoClient = new MongoClient(uri);
 
-    private MongoClient getMongoClient(){
+    private MongoClient getMongoClient() {
         return MongoClientSingleton.getInstance().getMongoClient();
     }
 
@@ -34,13 +34,6 @@ public class MongoDbConnection implements DatabaseConnection {
         mongoOperations = new MongoTemplate(getMongoClient(), Environments.MONGO_DB_NAME);
     }
 
-    public MongoDbConnection(String hostname, int port) {
-        mongoOperations = new MongoTemplate(getMongoClient(), Environments.MONGO_DB_NAME);
-    }
-
-    public MongoDbConnection(String hostname, int port, String username, String password) {
-        mongoOperations = new MongoTemplate(getMongoClient(), Environments.MONGO_DB_NAME);
-    }
 
     @Override
     public void connectToDatabase() {
@@ -187,7 +180,13 @@ public class MongoDbConnection implements DatabaseConnection {
 
     @Override
     public List<Resource> getResourcesByUrl(boolean isPdf, String url) {
-        Query query = new Query(where("isPdf").is(false).and("url").is(url));
+        Query query = new Query(where("isPdf").is(isPdf).and("url").is(url));
+        return mongoOperations.find(query, Resource.class);
+    }
+
+    @Override
+    public List<Resource> getResourcesByUrl(String url) {
+        Query query = new Query(where("url").is(url));
         return mongoOperations.find(query, Resource.class);
     }
 
@@ -198,7 +197,7 @@ public class MongoDbConnection implements DatabaseConnection {
     }
 
     @Override
-    public List<ResourceRating> getAllRatings(){
+    public List<ResourceRating> getAllRatings() {
         return mongoOperations.findAll(ResourceRating.class);
     }
 
@@ -213,12 +212,12 @@ public class MongoDbConnection implements DatabaseConnection {
     }
 
     @Override
-    public ResourceRating getRatingOfResourceByUser(String resourceId, String userId){
+    public ResourceRating getRatingOfResourceByUser(String resourceId, String userId) {
         Query query = new Query(where("item_id").is(resourceId).and("user_id").is(userId));
         List<ResourceRating> results = mongoOperations.find(query, ResourceRating.class);
-        if(results.size() == 1){
+        if (results.size() == 1) {
             return results.get(0);
-        }else{
+        } else {
             return null;
         }
     }
@@ -284,7 +283,7 @@ public class MongoDbConnection implements DatabaseConnection {
     }
 
     @Override
-    public void addSearchHistoryOfUser(SearchInfo searchInfo){
+    public void addSearchHistoryOfUser(SearchInfo searchInfo) {
         mongoOperations.insert(searchInfo);
     }
 }

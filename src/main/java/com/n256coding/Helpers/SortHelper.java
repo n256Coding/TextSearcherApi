@@ -7,7 +7,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SortHelper {
-    public List<InsiteSearchResultItem> sortSearchResultsWithTfIDF(List<InsiteSearchResultItem> results, boolean reverse) {
+    private SortHelper(){
+
+    }
+    public static List<InsiteSearchResultItem> sortSearchResultsWithTfIDF(List<InsiteSearchResultItem> results, boolean reverse) {
         Collections.sort(results, new Comparator<InsiteSearchResultItem>() {
             @Override
             public int compare(InsiteSearchResultItem o1, InsiteSearchResultItem o2) {

@@ -33,7 +33,7 @@ public class Recommender {
 
     public Recommender() {
         createDBConnection();
-        database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
+        database = new MongoDbConnection();
     }
 
     public void recommend() throws IOException, TasteException {

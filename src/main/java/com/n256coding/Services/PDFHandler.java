@@ -11,7 +11,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class PDFHandler {
-    public String parseText(File bookFile) throws IOException {
+    private PDFHandler() {
+    }
+
+    public static String parseText(File bookFile) throws IOException {
         PDFTextStripper pdfTextStripper;
         PDDocument pdDocument;
         COSDocument cosDocument;
@@ -30,7 +33,7 @@ public class PDFHandler {
     }
 
     //TODO: Dev method
-    public void convertAllPdfsToTxt(String dir) throws IOException {
+    public static void convertAllPdfsToTxt(String dir) throws IOException {
         File dirs = new File(dir);
         for (File file : dirs.listFiles()) {
             FileHandler.writeStringToFile(parseText(file), FileHandler.TEMP_DOWNLOAD_DIR, file.getName(), FileHandler.FileTypes.TXT);

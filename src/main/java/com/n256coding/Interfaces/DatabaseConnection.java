@@ -33,6 +33,8 @@ public interface DatabaseConnection {
 
     List<Resource> getResourcesByUrl(boolean isPdf, String url);
 
+    List<Resource> getResourcesByUrl(String url);
+
     Resource getResourceById(String resourceId);
 
     List<ResourceRating> getAllRatings();

@@ -32,11 +32,9 @@ import java.util.Map;
 public class Algorithm1 {
     public InsiteSearchResult api(String keywords) throws IOException {
         Trainer trainer = new Trainer();
-        DateEx date = new DateEx();
         StopWordHelper stopWordHelper = new StopWordHelper();
         SearchEngineConnection searchEngine = new GoogleConnection();
         DatabaseConnection database = new MongoDbConnection();
-        PDFHandler pdfHandler = new PDFHandler();
         TextAnalyzer textAnalyzer = new TextAnalyzer();
 
 
@@ -65,7 +63,7 @@ public class Algorithm1 {
                 WebSearchResult result = searchEngine.nextResult();
                 //If search results is not in database or updated date is far than 6 months
                 List<Resource> resources = database.getResourcesByUrl(isPdf, result.getUrl());
-                if (resources.size() == 0 || date.isOlderThanMonths(resources.get(0).getLastModified(), 6)) {
+                if (resources.size() == 0 || DateEx.isOlderThanMonths(resources.get(0).getLastModified(), 6)) {
                     //boolean testWord = resources.get(0).getCreated_at().getTime() > new Date().getTime();
                     //Extract text content from URL or the result.
                     //Look for term frequency of that result.

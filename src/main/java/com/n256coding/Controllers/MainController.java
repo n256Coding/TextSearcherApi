@@ -3,15 +3,11 @@ package com.n256coding.Controllers;
 import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.SearchInfo;
-import com.n256coding.Dev.ApiAlgorithms.Algorithm7;
 import com.n256coding.Dev.ApiAlgorithms.Algorithm8;
 import com.n256coding.Interfaces.DatabaseConnection;
-import com.n256coding.Interfaces.SearchEngineConnection;
 import com.n256coding.Models.InsiteSearchResult;
 import com.n256coding.Models.OperationStatus;
 import com.n256coding.Models.Rating;
-import com.n256coding.Services.GoogleConnection;
-import com.n256coding.Services.TextAnalyzer;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -23,7 +19,7 @@ import java.util.Random;
 @RestController
 @RequestMapping("/api/resource")
 public class MainController {
-    private DatabaseConnection db = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
+    private DatabaseConnection db = new MongoDbConnection();
 
     @GetMapping("/check")
     public String intialMethod() {
@@ -59,7 +55,7 @@ public class MainController {
     public InsiteSearchResult searchResults(@RequestParam("q") String query,
                                             @RequestParam("pdf") String isPdf,
                                             @RequestParam(value = "userId", required = false) String userId) {
-
+        System.out.println("Text------------------------------------------------------------------");
         userId = userId == null ? "" : userId;
         recordSearchResults(userId, query);
         Algorithm8 algorithm = new Algorithm8();

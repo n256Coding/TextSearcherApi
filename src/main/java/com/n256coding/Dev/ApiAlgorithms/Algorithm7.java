@@ -24,7 +24,6 @@ public class Algorithm7 {
     private OntologyHandler ontologyHandler;
     private TextAnalyzer textAnalyzer;
     private DatabaseConnection database;
-    private DateEx date;
     private OnlineDataHandler onlineDataHandler;
     private int dbKeywordMatchCount;
     private Recommender recommender;
@@ -37,8 +36,7 @@ public class Algorithm7 {
                 "http://www.semanticweb.org/nishan/ontologies/2018/5/Programming"
         );
         textAnalyzer = new TextAnalyzer();
-        database = new MongoDbConnection(Environments.MONGO_DB_HOSTNAME, Environments.MONGO_DB_PORT);
-        date = new DateEx();
+        database = new MongoDbConnection();
         onlineDataHandler = new OnlineDataHandler();
         recommender = new Recommender();
     }
@@ -84,7 +82,7 @@ public class Algorithm7 {
 
         //Filter-out old results
         for (Resource localResource : localResources) {
-            if (date.isOlderThanMonths(localResource.getLastModified(), 3)) {
+            if (DateEx.isOlderThanMonths(localResource.getLastModified(), 3)) {
                 localResources.remove(localResource);
             }
         }
