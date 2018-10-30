@@ -62,7 +62,6 @@ public class Console {
 //                //boolean testWord = resources.get(0).getCreated_at().getTime() > new Date().getTime();
 //                //Extract text content from URL or the result.
 //                //Look for term frequency of that result.
-//                //TODO: Needs to handle resources that older more than 6 months in another way. SEE:Reason
 //                //Reason: Does not need to add as a new resources but need to update frequencies and modified date
 //
 //                List<KeywordData> keywordDataList = new ArrayList<>();
@@ -75,19 +74,15 @@ public class Console {
 //                try {
 //                    frequencies = textAnalyzer.getWordFrequency(searchEngine.getResultPageAt(i));
 //                } catch (HttpStatusException httpErr) {
-//                    //TODO: Replace with logger
 //                    System.out.println("Error status: " + httpErr.getStatusCode());
 //                    continue;
 //                } catch (UnknownHostException unkHostErr) {
-//                    //TODO: Replace with logger
 //                    System.out.println("Unknown host at: " + unkHostErr.getMessage());
 //                    continue;
 //                } catch (FileNotFoundException fileNotErr) {
-//                    //TODO: Replace with logger
 //                    System.out.println("File not found: " + fileNotErr.getMessage());
 //                    continue;
 //                } catch (IOException unknownErr) {
-//                    //TODO: Replace with logger
 //                    System.out.println("Invalid File: " + unknownErr.getMessage());
 //                }
 //

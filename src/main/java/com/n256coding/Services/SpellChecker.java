@@ -122,7 +122,7 @@
 //            } catch (ParseException e) {
 //                System.out.println("Best alternative not valid query.");
 //                System.out.println("Alternative=" + bestAlternative);
-//                //TODO: Check this
+
 //                correction = "#"+bestAlternative;
 //            }
 //        }

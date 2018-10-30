@@ -59,7 +59,6 @@ public class Algorithm8 {
         //List: Get nGram of user query and filter out tokens which not important     -> OriginalTokens:List
         List<String> originalTokens;
         originalTokens = TextAnalyzer.getNGramOf(query, 1, 3);
-        //TODO: Remove this
         originalTokens = TextAnalyzer.getLuceneTokenizedList(query);
         System.out.println("query analyzed with NGram");
         System.out.println(originalTokens);
@@ -155,7 +154,6 @@ public class Algorithm8 {
 //        }
 
         //calculate tf-idf value
-        //TODO: rating algorithm changed
 //        Map<String, Double> weightedTfIdf = textAnalyzer.calculateWeightedTfIdf(allTokens, originalTokens, localResources);
         Map<String, Double> weightedTfIdf = new ConsineSimilarityTester().rankResults(allTokens, originalTokens, localResources);
         System.out.println("Results ranked successfully");

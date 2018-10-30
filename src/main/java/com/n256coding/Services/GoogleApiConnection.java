@@ -126,7 +126,6 @@ public class GoogleApiConnection implements SearchEngineConnection {
 
     @Override
     public boolean hasMoreResults() {
-        //TODO: Temporary changes paginationIndex to 2, Use 10 instead in production
         if (resultCursor < 9 && paginationIndex < 2)
             return true;
         else

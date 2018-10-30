@@ -19,8 +19,13 @@ public interface Environments {
     String SAFARI_PASSWORD = "123456789987654321#$adc";
 
 
+    //fudevobat@spindl-e.com
+    //987654321@#abcd
+
+
     //xayesetev@1blackmoon.com
     //123456789987654321#$adc
+
 
     //Old safari credentials
     //meyexisife@xgmaioo.com

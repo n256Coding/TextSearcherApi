@@ -22,15 +22,12 @@ public class OntologyTester {
             }
             catch (Exception e)
             {
-                //TODO: Replace with logger
                 e.printStackTrace();
             }
-            //TODO: Replace with logger
             System.out.println("Ontology " + ontoFile + " loaded.");
         }
         catch (JenaException je)
         {
-            //TODO: Replace with logger
             System.err.println("ERROR" + je.getMessage());
             je.printStackTrace();
             System.exit(0);

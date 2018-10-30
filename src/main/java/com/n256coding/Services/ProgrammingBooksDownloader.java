@@ -147,7 +147,6 @@ public class ProgrammingBooksDownloader implements BookDownloader {
         try {
             return searchResult.getUrlContent();
         } catch (BoilerpipeProcessingException | SAXException e) {
-            //TODO: Add logger
             e.printStackTrace();
         }
 

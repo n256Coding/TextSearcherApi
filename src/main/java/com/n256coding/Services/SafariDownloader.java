@@ -161,6 +161,7 @@ public class SafariDownloader implements BookDownloader {
         return Jsoup.connect(url)
                 .cookies(this.browserCookies)
                 .headers(this.headersForBookInfo)
+                .timeout(0)
                 .get()
                 .text();
     }

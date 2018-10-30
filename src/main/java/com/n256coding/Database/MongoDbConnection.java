@@ -104,9 +104,6 @@ public class MongoDbConnection implements DatabaseConnection {
 
     @Override
     public List<Resource> getResourcesByKeywords(boolean isPdf, String... keywords) {
-        //TODO: Could be better to replace with like operator, See other relevant places also
-        //TODO: Match elements
-//        List<Resource> result = mongoOperations.find(query(where("keywords.word").all(keywords)), Resource.class);
         Query query = new Query();
         query.addCriteria(where("keywords.word")
                 .in(keywords).and("isPdf").is(isPdf)

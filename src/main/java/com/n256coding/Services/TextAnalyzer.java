@@ -57,7 +57,6 @@ public class TextAnalyzer {
         File word2vecFile = new File(FileHandler.WORD2VEC_MODEL_PATH);
         String tempFilePath = FileHandler.createNewCorpusFile(textCorpus);
         SentenceIterator iterator = new BasicLineIterator(tempFilePath);
-        //TODO: fileHandler.removeCorpusFile(tempFilePath);
         TokenizerFactory tokenizerFactory = new DefaultTokenizerFactory();
         tokenizerFactory.setTokenPreProcessor(new CommonPreprocessor());
 
@@ -93,7 +92,6 @@ public class TextAnalyzer {
     @SuppressWarnings("Duplicates")
     public static List<Map.Entry<String, Integer>> getWordFrequency(String corpus) {
         List<String> tokenizedList = getLuceneTokenizedList(corpus.toLowerCase());
-//        TODO: Check nGram removed
 //        tokenizedList = getNGramOf(tokenizedList, 1, 3);
         HashMap<String, Integer> dictionary = new HashMap<>();
         for (String token : tokenizedList) {
@@ -124,8 +122,6 @@ public class TextAnalyzer {
 
     @SuppressWarnings("Duplicates")
     public static List<Map.Entry<String, Integer>> getWordFrequency(List<String> tokenizedList) {
-//        TODO: Check nGram removed
-//        tokenizedList = getNGramOf(tokenizedList, 1, 3);
         HashMap<String, Integer> dictionary = new HashMap<>();
         for (String token : tokenizedList) {
             if (dictionary.containsKey(token)) {
@@ -225,7 +221,6 @@ public class TextAnalyzer {
                 tokenList.add(word);
             }
         } catch (IOException e) {
-            //TODO: Replace with logger
             e.printStackTrace();
         }
         return tokenList;

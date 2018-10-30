@@ -99,16 +99,15 @@ public class GoogleConnection implements SearchEngineConnection {
                 description = descriptionElements.get(0).ownText();
             }catch (IndexOutOfBoundsException ex){
                 description = "";
-                //TODO: Replace with logger
                 System.out.println(ex.getMessage());
             }
 
-            //TODO: Newly added part. Needs a review. SEE: Reason
+
             //Reason: not all urls directs to pdf documents
             if (isPdf && !url.endsWith(".pdf")) {
                 continue;
             }
-            //TODO: Newly added part. Needs to enhance the filter. SEE: Reason
+
             //Reason: Some search queries provide non web content like pdf, ppt, doc like things.
             //Needs to understand them and filter out them.
             if (!isPdf && url.endsWith(".pdf")) {
@@ -189,7 +188,6 @@ public class GoogleConnection implements SearchEngineConnection {
         searchResults.clear();
         googlePage = Jsoup.connect(paginationUrl)
                 .userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
-//                .ignoreHttpErrors(true)
                 .timeout(5000)
                 .get();
         setResults();
@@ -205,8 +203,6 @@ public class GoogleConnection implements SearchEngineConnection {
 
     @Override
     public boolean hasMoreResults() {
-        //TODO: Change commented code
-//        if (((currentPaginationIndex + 1) >= paginationUrls.size()) && ((resultCursor + 1) >= searchResults.size())) {
         if (((currentPaginationIndex + 1) >= 2) && ((resultCursor + 1) >= searchResults.size())) {
             return false;
         } else {

@@ -2,7 +2,6 @@ package com.n256coding.Services;
 
 public class OrailyDownloader {
     public void download() {
-        //TODO: oraily has disabled
 //        for (FreeEbook ebook : ebooksResult) {
 //            WebSearchResult searchResult = new WebSearchResult();
 //            if (ebook.getPdf() == null)

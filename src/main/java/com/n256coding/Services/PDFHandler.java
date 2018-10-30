@@ -32,7 +32,6 @@ public class PDFHandler {
         return parsedText;
     }
 
-    //TODO: Dev method
     public static void convertAllPdfsToTxt(String dir) throws IOException {
         File dirs = new File(dir);
         for (File file : dirs.listFiles()) {
