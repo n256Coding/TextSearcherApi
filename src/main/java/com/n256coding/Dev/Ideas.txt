@@ -1,0 +1,2 @@
+Lemma replacing of internet documents can be done after frequency reduction.    -   done
+When adding new resource, system can suggest some related identifiers on given subject.

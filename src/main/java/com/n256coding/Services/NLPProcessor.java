@@ -110,4 +110,15 @@ public class NLPProcessor {
         }
         return text;
     }
+
+    public static String replaceEachWithLemma(String text){
+        List<String> tokenizedList = TextAnalyzer.getTokenizedList(text, " ", true);
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < tokenizedList.size(); i++) {
+            if(i != 0)
+                builder.append(" ");
+            builder.append(replaceWithLemma(tokenizedList.get(i)));
+        }
+        return builder.toString();
+    }
 }

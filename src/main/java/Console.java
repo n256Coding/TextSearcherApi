@@ -1,5 +1,9 @@
 import com.n256coding.Common.Environments;
+import com.n256coding.Database.MongoDbConnection;
+import com.n256coding.DatabaseModels.Resource;
+import com.n256coding.DatabaseModels.TrustedSites;
 import com.n256coding.Dev.ConsineSimilarityTester;
+import com.n256coding.Interfaces.DatabaseConnection;
 import com.n256coding.Services.FileHandler;
 import com.n256coding.Services.Recommender;
 import com.n256coding.Services.SafariDownloader;
@@ -16,6 +20,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 
 public class Console {
 
@@ -165,14 +170,25 @@ public class Console {
 //        }
 //        String lemmaReplace = new TextFilter().replaceWithLemmas(testss);
 
-        SafariDownloader safariDownloader = new SafariDownloader(Environments.SAFARI_USERNAME, Environments.SAFARI_PASSWORD);
-        safariDownloader.setHeadersForSearching();
-        safariDownloader.login();
 
-        safariDownloader.searchBooks("sql database operations");
-        safariDownloader.setHeaders();
-        String url = safariDownloader.getResultedBookUrls().get(0);
-        String content = safariDownloader.getContentOf(url);
+//        ------Safari Books Test-----------------------------------------------------------------------------------
+//        SafariDownloader safariDownloader = new SafariDownloader(Environments.SAFARI_USERNAME, Environments.SAFARI_PASSWORD);
+//        safariDownloader.setHeadersForSearching();
+//        safariDownloader.login();
+//
+//        safariDownloader.searchBooks("sql database operations");
+//        safariDownloader.setHeaders();
+//        String url = safariDownloader.getResultedBookUrls().get(0);
+//        String content = safariDownloader.getContentOf(url);
+
+
+//      ------MongoDB Tutorial Sites Test----------------------------------------------------------------------------
+//        DatabaseConnection database = new MongoDbConnection();
+//        String keywords = "c# and python tutorials";
+//        List<TrustedSites> java = database.getTutorialSites(keywords.toLowerCase().split(" "));
+
+        DatabaseConnection database = new MongoDbConnection();
+        List<Resource> resources = database.getScoredResourcesByKeywords(true, 1, "java", "thread");
 
 
         String test = "sdfsdf";

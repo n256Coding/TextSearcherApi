@@ -9,10 +9,14 @@ import com.n256coding.Common.Environments;
 import com.n256coding.DatabaseModels.*;
 import com.n256coding.Interfaces.DatabaseConnection;
 import org.bson.Document;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +26,7 @@ import java.util.List;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+@Service
 public class MongoDbConnection implements DatabaseConnection {
 
     private MongoOperations mongoOperations;
@@ -48,6 +53,33 @@ public class MongoDbConnection implements DatabaseConnection {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<TrustedSites> getTutorialSites(){
+        return mongoOperations.findAll(TrustedSites.class);
+    }
+
+    @Override
+    public List<TrustedSites> getTutorialSites(String... keywords){
+        Query query = new Query(where("synons").in(keywords));
+        return mongoOperations.find(query, TrustedSites.class);
+    }
+
+    @Override
+    public long addOrUpdateTutorialSites(TrustedSites trustedSites){
+        Query query = new Query(where("keyword").is(trustedSites.getKeyword()));
+        Update update = new Update();
+        update.set("keyword", trustedSites.getKeyword());
+        update.set("synons", trustedSites.getSynons());
+        update.set("sites", trustedSites.getSites());
+        return mongoOperations.upsert(query, update, TrustedSites.class).getModifiedCount();
+    }
+
+    @Override
+    public long deleteTutorialSitesByKeyword(String keyword){
+        Query query = new Query(where("keyword").is(keyword));
+        return mongoOperations.remove(query, TrustedSites.class).getDeletedCount();
     }
 
 
@@ -104,9 +136,6 @@ public class MongoDbConnection implements DatabaseConnection {
 
     @Override
     public List<Resource> getResourcesByKeywords(boolean isPdf, String... keywords) {
-        //TODO: Could be better to replace with like operator, See other relevant places also
-        //TODO: Match elements
-//        List<Resource> result = mongoOperations.find(query(where("keywords.word").all(keywords)), Resource.class);
         Query query = new Query();
         query.addCriteria(where("keywords.word")
                 .in(keywords).and("isPdf").is(isPdf)
@@ -165,6 +194,17 @@ public class MongoDbConnection implements DatabaseConnection {
             ));
         }
         return resources;
+    }
+
+    @Override
+    public List<Resource> getScoredResourcesByKeywords(boolean isPdf, int numberOfMatches, String... keywords){
+        TextCriteria criteria = TextCriteria.forDefaultLanguage().matchingAny(keywords);
+        Query query = TextQuery
+                .queryText(criteria)
+                .sortByScore();
+        query.addCriteria(where("isPdf").is(isPdf));
+
+        return mongoOperations.find(query, Resource.class);
     }
 
     @Override

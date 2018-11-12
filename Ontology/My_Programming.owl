@@ -21,12 +21,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming"/>
-    
-
-
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#String -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#String">
@@ -35,10 +29,18 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#a -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#a">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#abstraction -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#abstraction">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient_concept"/>
     </owl:Class>
     
 
@@ -60,6 +62,54 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#acid_property -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#acid_property">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#principle"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#android -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#android">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#mobile"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#angular -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#angular">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#web"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#angular_component -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#angular_component">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#angular"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#angular_service -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#angular_service">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#angular"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#app -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#app">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#mobile"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#array -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#array">
@@ -76,10 +126,50 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#atomicity -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#atomicity">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#acid_property"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#availability -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#availability">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cap_theorem"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#base_method -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#base_method">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#principle"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#basic_available -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#basic_available">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#base_method"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#boolean -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#boolean">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#primitive_data_type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#button -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#button">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag"/>
     </owl:Class>
     
 
@@ -95,7 +185,7 @@
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#functional"/>
     </owl:Class>
     
 
@@ -104,7 +194,7 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c-sharp">
         <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c_sharp"/>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient"/>
     </owl:Class>
     
 
@@ -113,7 +203,7 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c_plus_plus">
         <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c++"/>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#hybrid"/>
     </owl:Class>
     
 
@@ -121,7 +211,15 @@
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c_sharp -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c_sharp">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cap_theorem -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cap_theorem">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#principle"/>
     </owl:Class>
     
 
@@ -158,10 +256,75 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#computer_programming -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#computer_programming"/>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#consistency -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#consistency">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#acid_property"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cap_theorem"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cordova -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cordova">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#app"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cross-platform_app -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cross-platform_app">
+        <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cross_platform_app"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#app"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cross_platform_app -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cross_platform_app">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#app"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#css -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#css">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#style"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#web"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#data_type -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#data_type">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#term"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#database -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#database">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#computer_programming"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#dbms -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#dbms">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#database"/>
     </owl:Class>
     
 
@@ -182,6 +345,22 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#delete -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#delete">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#operation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#div -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#div">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#do_while_loop -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#do_while_loop">
@@ -198,10 +377,26 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#durability -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#durability">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#acid_property"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#encapsulation -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#encapsulation">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient_concept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#eventual_consistency -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#eventual_consistency">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#base_method"/>
     </owl:Class>
     
 
@@ -222,6 +417,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#flutter -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#flutter">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#app"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#for_each_loop -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#for_each_loop">
@@ -234,6 +437,14 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#for_loop">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#loop"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#functional -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#functional">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
     </owl:Class>
     
 
@@ -255,10 +466,26 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#html -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#html">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#web"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#hybrid -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#hybrid">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#inheritance -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#inheritance">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient_concept"/>
     </owl:Class>
     
 
@@ -267,6 +494,22 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#initialization">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#input -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#input">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#insert -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#insert">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#operation"/>
     </owl:Class>
     
 
@@ -295,10 +538,26 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#ios -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#ios">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#mobile"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#isolation -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#isolation">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#acid_property"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#java -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#java">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient"/>
     </owl:Class>
     
 
@@ -307,6 +566,15 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#javascript">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#web"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#li -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#li">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag"/>
     </owl:Class>
     
 
@@ -343,10 +611,27 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#maria_db -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#maria_db">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#dbms"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#sql"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#method -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#method">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#syntax"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#mobile -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#mobile">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#computer_programming"/>
     </owl:Class>
     
 
@@ -359,10 +644,19 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#mongodb -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#mongodb">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#dbms"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#nosql"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#multi-threading -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#multi-threading">
-        <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#multithreading"/>
+        <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#multithread"/>
         <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#thread"/>
         <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#threading"/>
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#term"/>
@@ -370,12 +664,38 @@
     
 
 
-    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#multithreading -->
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#multithread -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#multithreading">
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#multithread">
         <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#thread"/>
         <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#threading"/>
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#term"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#mysql -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#mysql">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#dbms"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#sql"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#native_app -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#native_app">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#app"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#neo4j -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#neo4j">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#dbms"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#nosql"/>
     </owl:Class>
     
 
@@ -384,6 +704,14 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#non-access_modifier">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#modifier_type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#nosql -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#nosql">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#database"/>
     </owl:Class>
     
 
@@ -405,9 +733,17 @@
     
 
 
-    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept -->
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept">
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient_concept -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient_concept">
         <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#oop_concept"/>
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept"/>
     </owl:Class>
@@ -419,6 +755,14 @@
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_programming">
         <owl:equivalentClass rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#oop"/>
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#ol -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#ol">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag"/>
     </owl:Class>
     
 
@@ -439,6 +783,23 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#operation -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#operation">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#database"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#oracle -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#oracle">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#dbms"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#sql"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#overloading -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#overloading">
@@ -455,10 +816,18 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#partition_tolerance -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#partition_tolerance">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#cap_theorem"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#polymorphism -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#polymorphism">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_oriented_concept"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#object_orient_concept"/>
     </owl:Class>
     
 
@@ -467,6 +836,14 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#primitive_data_type">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#data_type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#principle -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#principle">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#database"/>
     </owl:Class>
     
 
@@ -490,7 +867,7 @@
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_concept">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#computer_programming"/>
     </owl:Class>
     
 
@@ -498,7 +875,7 @@
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#computer_programming"/>
     </owl:Class>
     
 
@@ -527,6 +904,22 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#react -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#react">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#web"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#react_native -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#react_native">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#app"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#reference_data_type -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#reference_data_type">
@@ -539,6 +932,31 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#short">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#primitive_data_type"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#soft_state -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#soft_state">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#base_method"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#sql -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#sql">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#database"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#sql_server -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#sql_server">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#dbms"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#sql"/>
     </owl:Class>
     
 
@@ -559,6 +977,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#style -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#style">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#html"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#syntax -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#syntax">
@@ -567,12 +993,36 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#table -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#table">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#html"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#term -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#term">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming"/>
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c-sharp"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#computer_programming"/>
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#java"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#textarea -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#textarea">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag"/>
     </owl:Class>
     
 
@@ -597,7 +1047,23 @@
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#type -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#type">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#Computer_Programming"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#computer_programming"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#ul -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#ul">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#tag"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#update -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#update">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#operation"/>
     </owl:Class>
     
 
@@ -610,6 +1076,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#web -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#web">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#computer_programming"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#while_loop -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#while_loop">
@@ -618,10 +1092,18 @@
     
 
 
+    <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#xamarin -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#xamarin">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#app"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c++ -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#c++">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#programming_language"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/nishan/ontologies/2018/5/Programming#hybrid"/>
     </owl:Class>
     
 

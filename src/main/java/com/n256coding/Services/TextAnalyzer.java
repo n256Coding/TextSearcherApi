@@ -189,7 +189,7 @@ public class TextAnalyzer {
     }
 
     public static int getWordCount(String document) {
-        return getTokenizedList(document, " ").size();
+        return getTokenizedList(document, " ", false).size();
     }
 
     public static double getTFIDFWeightOfWords(long totalNumberOfDocuments,
@@ -205,11 +205,20 @@ public class TextAnalyzer {
         return termFrequency * Math.log(((double) totalNumberOfDocuments) / ((double) matchingNoOfDocuments));
     }
 
-    public static List<String> getTokenizedList(String sentence, String delim) {
+    public static List<String> getTokenizedList(String sentence, String delim, boolean skipStopwords) {
         List<String> tokens = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(sentence, delim);
+        StopWordHelper stopWordHelper = new StopWordHelper();
+
         while (tokenizer.hasMoreTokens()) {
-            tokens.add(tokenizer.nextToken());
+            String token = tokenizer.nextToken();
+            if(skipStopwords){
+                if (!stopWordHelper.isStopWord(token))
+                    tokens.add(token);
+            }
+            else{
+                tokens.add(token);
+            }
         }
         return tokens;
     }

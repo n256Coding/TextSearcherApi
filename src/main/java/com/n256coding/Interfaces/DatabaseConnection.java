@@ -1,9 +1,6 @@
 package com.n256coding.Interfaces;
 
-import com.n256coding.DatabaseModels.Resource;
-import com.n256coding.DatabaseModels.ResourceRating;
-import com.n256coding.DatabaseModels.SearchInfo;
-import com.n256coding.DatabaseModels.User;
+import com.n256coding.DatabaseModels.*;
 
 import java.util.Date;
 import java.util.List;
@@ -12,6 +9,14 @@ public interface DatabaseConnection {
     void connectToDatabase();
 
     boolean checkIsDatabaseWorking();
+
+    List<TrustedSites> getTutorialSites();
+
+    List<TrustedSites> getTutorialSites(String... keywords);
+
+    long addOrUpdateTutorialSites(TrustedSites trustedSites);
+
+    long deleteTutorialSitesByKeyword(String keyword);
 
     String addResource(Resource resource);
 
@@ -28,6 +33,8 @@ public interface DatabaseConnection {
     List<Resource> getResourcesByKeywords(boolean isPdf, String... keywords);
 
     List<Resource> getPriorityResourcesByKeywords(boolean isPdf, int numberOfMatches, String... keywords);
+
+    List<Resource> getScoredResourcesByKeywords(boolean isPdf, int numberOfMatches, String... keywords);
 
     List<Resource> getResourcesWhereTitleContains(boolean isPdf, String... keywords);
 

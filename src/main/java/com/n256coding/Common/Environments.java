@@ -15,8 +15,8 @@ public interface Environments {
     String SEARCH_ENGINE_ID = "000091703355649038529:airvt_vszyo";
 
     //Safari books login credentials
-    String SAFARI_USERNAME = "xayesetev@1blackmoon.com";
-    String SAFARI_PASSWORD = "123456789987654321#$adc";
+    String SAFARI_USERNAME = "tuvaja@mailhex.com";
+    String SAFARI_PASSWORD = "123456789987654321$abcd";
 
 
     //xayesetev@1blackmoon.com

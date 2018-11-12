@@ -1,6 +1,5 @@
 package com.n256coding.Services.Filters;
 
-import com.n256coding.Services.NLPProcessor;
 import com.n256coding.Services.TextAnalyzer;
 
 import java.util.ArrayList;
@@ -31,10 +30,6 @@ public class TextFilter {
             return false;
         }
         return true;
-    }
-
-    public String replaceWithLemmas(String pageContent) {
-        return NLPProcessor.replaceWithLemma(pageContent);
     }
 
     public String joinListToString(List<String> wordList, String joiner) {

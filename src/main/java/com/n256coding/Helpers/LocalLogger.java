@@ -4,10 +4,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.util.logging.*;
 
 public class LocalLogger {
     public Logger logger;
@@ -31,6 +28,7 @@ public class LocalLogger {
         }
         logger = Logger.getLogger("textAnalyserLogging");
         logger.addHandler(fh);
+        logger.addHandler(new StreamHandler(System.out, new SimpleFormatter()));
         fh.setFormatter(new SimpleFormatter());
         logger.setLevel(Level.ALL);
     }

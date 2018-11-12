@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @version 1.4
+ * @version 1.8
  * @author Nishan
  */
 public class OntologyHandler {
@@ -46,7 +46,7 @@ public class OntologyHandler {
                 "select (str(?subclass) as ?output) where {\n" +
                 "  ?subclass rdfs:subClassOf* progonto:" + word + "\n" +
                 "}";
-        return executeRequest(queryString, resultLimit);
+        return executeRequest(queryString, resultLimit, word);
     }
 
 
@@ -63,16 +63,17 @@ public class OntologyHandler {
                 "select (str(?word) as ?output) where {\n" +
                 "  ?word owl:equivalentClass progonto:" + word + " .\n" +
                 "}";
-        return executeRequest(queryString, 99999);
+        return executeRequest(queryString, 99999, word);
     }
 
 
     /**
      * @apiNote Executes the query to read ontology
      * @param queryString query to read ontology
+     * @param originalWord original word or phrase that was input into the ontology
      * @return
      */
-    private List<String> executeRequest(String queryString, int resultLimit){
+    private List<String> executeRequest(String queryString, int resultLimit, String originalWord){
         List<String> outputWords = new ArrayList<>();
         Query query = QueryFactory.create(queryString);
         QueryExecution queryExecution = QueryExecutionFactory.create(query, ontoModel);
@@ -84,7 +85,9 @@ public class OntologyHandler {
                     .getLiteral("output")
                     .getString()
                     .replace(ontologyBaseUrl.concat("#"), "");
-            outputWords.add(result);
+            if(!result.equalsIgnoreCase(originalWord)){
+                outputWords.add(result.replace("_", " "));
+            }
         }
         return outputWords;
     }

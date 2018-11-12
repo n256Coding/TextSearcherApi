@@ -131,7 +131,7 @@ public class SafariDownloader implements BookDownloader {
 
             //Even in some book results, does not contains chapters. So they needs to retrieve
             if(resultJson.get("chapters") == null && resultJson.get("url") != null){
-                resultJson = getJsonFrom(resultJson.get("url").getAsString());
+                resultJson = getJsonFrom(resultJson.get("id").getAsString());
             }
 
             bookInfo.put("description", parseHtml(resultJson.get("description").getAsString()));

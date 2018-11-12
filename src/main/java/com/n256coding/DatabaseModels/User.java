@@ -11,30 +11,33 @@ import java.util.List;
 @Document(collection = "User")
 public class User {
     @Id
-    public String id;
-    public String userName;
-    public String password;
+    private String id;
+    private String userName;
+    private String password;
+    private String email;
 
-    public String firstName;
-    public String lastName;
-    public List<String> subjects;
+    private String firstName;
+    private String lastName;
+    private List<String> subjects;
 
     @PersistenceConstructor
-    public User(String id, String userName, String password, String firstName, String lastName, List<String> subjects) {
+    public User(String id, String userName, String password, String firstName, String lastName, List<String> subjects, String email) {
         this.id = id;
         this.userName = userName;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.subjects = subjects;
+        this.email = email;
     }
 
     @JsonCreator
-    public User(@JsonProperty("userName") String userName, @JsonProperty("password") String password, @JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName) {
+    public User(@JsonProperty("userName") String userName, @JsonProperty("password") String password, @JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName, @JsonProperty("email") String email) {
         this.userName = userName;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
     }
 
     public String getId() {
@@ -84,4 +87,13 @@ public class User {
     public void setSubjects(List<String> subjects) {
         this.subjects = subjects;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
+

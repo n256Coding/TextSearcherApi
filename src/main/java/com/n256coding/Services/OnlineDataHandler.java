@@ -4,7 +4,9 @@ import com.n256coding.Common.Environments;
 import com.n256coding.Database.MongoDbConnection;
 import com.n256coding.DatabaseModels.KeywordData;
 import com.n256coding.DatabaseModels.Resource;
+import com.n256coding.DatabaseModels.TrustedSites;
 import com.n256coding.Helpers.DateEx;
+import com.n256coding.Helpers.LocalLogger;
 import com.n256coding.Helpers.StopWordHelper;
 import com.n256coding.Interfaces.BookDownloader;
 import com.n256coding.Interfaces.DatabaseConnection;
@@ -20,18 +22,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class OnlineDataHandler {
     private TextFilter textFilter;
     private SearchEngineConnection searchEngine;
     private DatabaseConnection database;
     private StopWordHelper stopWordHelper;
+    private Logger logger;
 
     public OnlineDataHandler() {
+        this.logger = LocalLogger.getInstance().logger;
         this.textFilter = new TextFilter();
         this.searchEngine = new GoogleConnection();
         this.database = new MongoDbConnection();
@@ -40,13 +43,13 @@ public class OnlineDataHandler {
 
     @SuppressWarnings("Duplicates")
     public void refreshLocalData_Webpage(boolean isPdf, String query) {
-        for (String tutorialSite : UrlFilter.getTutorialSites(query)) {
+        for (String tutorialSite : getTutorialSites(query)) {
 
             try {
                 searchEngine.searchOnline(tutorialSite, isPdf, query);
             } catch (HttpStatusException ex) {
                 if (ex.getStatusCode() == 503) {
-                    //TODO: Replace with logger
+                    logger.warning("Google blocked detected");
                     System.out.println("Google block detected!");
                 }
             } catch (IOException e) {
@@ -81,8 +84,13 @@ public class OnlineDataHandler {
                     resource.setDescription(result.getDescription());
                     try {
                         resource.setTitle(result.getPageTitle());
-                    } catch (IOException e) {
-                        //TODO: Replace with logger
+                    }
+                    catch (HttpStatusException e){
+                        logger.log(Level.INFO, result.getUrl() + " returned "+e.getStatusCode()+". Skipping page", e);
+                        continue;
+                    }
+                    catch (IOException e) {
+                        logger.log(Level.WARNING, "Unknown error occurred", e);
                         e.printStackTrace();
                     }
 
@@ -90,34 +98,32 @@ public class OnlineDataHandler {
                     int wordCount = 0;
                     try {
                         String tempPage = result.getUrlContent();
-                        tempPage = textFilter.replaceWithLemmas(tempPage);
+                        //TODO: Test the function
+                        tempPage = NLPProcessor.replaceEachWithLemma(tempPage);
                         wordCount = TextAnalyzer.getWordCount(tempPage);
                         frequencies = TextAnalyzer.getWordFrequency(tempPage);
 
-                        //Skip web pages that not qualify with given conditions
-                        if (!textFilter.isValidWebPage(tempPage, frequencies)) {
-                            continue;
-                        }
+
                     } catch (HttpStatusException httpErr) {
-                        //TODO: Replace with logger
+                        logger.log(Level.INFO, "Error status: " + httpErr.getStatusCode(), httpErr);
                         System.out.println("Error status: " + httpErr.getStatusCode());
                         continue;
                     } catch (UnknownHostException | MalformedURLException unkHostErr) {
-                        //TODO: Replace with logger
+                        logger.log(Level.INFO, "", unkHostErr);
                         System.out.println("Unknown host at: " + unkHostErr.getMessage());
                         continue;
                     } catch (FileNotFoundException fileNotErr) {
-                        //TODO: Replace with logger
+                        logger.log(Level.INFO, "File not found: " + fileNotErr.getMessage(), fileNotErr);
                         System.out.println("File not found: " + fileNotErr.getMessage());
                         continue;
                     } catch (IOException unknownErr) {
-                        //TODO: Replace with logger
+                        logger.log(Level.INFO, "Unknown Error: " + unknownErr.getMessage(), unknownErr);
                         System.out.println("Unknown Error: " + unknownErr.getMessage());
                     } catch (BoilerpipeProcessingException e) {
-                        //TODO: Replace with logger
+                        logger.log(Level.WARNING, "Page gives error while extracting the important context", e);
                         continue;
                     } catch (SAXException e) {
-                        //TODO: Replace with logger
+                        logger.log(Level.WARNING, "Page cannot parse by SAX parser", e);
                         e.printStackTrace();
                     }
 
@@ -132,7 +138,7 @@ public class OnlineDataHandler {
 //                            continue;
 //                        }
 
-                        KeywordData keywordData = new KeywordData(frequency.getKey(),
+                        KeywordData keywordData = new KeywordData(NLPProcessor.replaceWithLemma(frequency.getKey()),
                                 frequency.getValue(),
                                 ((double) frequency.getValue() / (double) wordCount));
                         keywordDataList.add(keywordData);
@@ -195,9 +201,9 @@ public class OnlineDataHandler {
                 continue;
             }
 
-            analyzerThread[i] = new Thread(() -> analyzeBookUrlContent(url, safari.clone()));
-            analyzerThread[i].start();
-//            analyzeBookUrlContent(url, safari);
+//            analyzerThread[i] = new Thread(() -> analyzeBookUrlContent(url, safari.clone()));
+//            analyzerThread[i].start();
+            analyzeBookUrlContent(url, safari);
         }
 
         for (int j = 0; j < programmingBooks.getResultedBookUrls().size(); i++, j++) {
@@ -215,7 +221,8 @@ public class OnlineDataHandler {
 
         for (int j = 0; j < analyzerThread.length; j++) {
             try {
-                analyzerThread[j].join();
+                if(analyzerThread[j] != null)
+                    analyzerThread[j].join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -224,6 +231,7 @@ public class OnlineDataHandler {
 
     public void analyzeBookUrlContent(String bookUrl, BookDownloader bookDownloader) {
         System.out.println("Working on " + bookUrl + "-------------------------------------------------");
+        if(bookDownloader instanceof SafariDownloader)
         ((SafariDownloader) bookDownloader).setHeaders();
 
 
@@ -271,5 +279,14 @@ public class OnlineDataHandler {
         database.addResource(resource);
     }
 
+    public static Set<String> getTutorialSites(String query) {
+        DatabaseConnection database = new MongoDbConnection();
+        List<TrustedSites> trustedSites = database.getTutorialSites(query.toLowerCase().concat(" common").split(" "));
+        Set<String> siteList = new HashSet<>();
+        for (TrustedSites trustedSite : trustedSites) {
+            siteList.addAll(trustedSite.getSites());
+        }
 
+        return siteList;
+    }
 }

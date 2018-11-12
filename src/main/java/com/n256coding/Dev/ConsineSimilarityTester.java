@@ -148,6 +148,13 @@ public class ConsineSimilarityTester {
         return results;
     }
 
+    /**
+     *
+     * @param allTokens list of tokens that contains keywords in search query and identified relative keywords
+     * @param originalTokens list of tokens that contains keywords in search query
+     * @param localResources list of resources that matched with search query
+     * @return ranking value of each search result
+     */
     public HashMap<String, Double> rankResults(List<String> allTokens, List<String> originalTokens, List<Resource> localResources) {
         HashMap<String, Double> results = new HashMap<>();
         HashMap<String, Double> queryTfIdf = getQueryTfIdf(originalTokens);
