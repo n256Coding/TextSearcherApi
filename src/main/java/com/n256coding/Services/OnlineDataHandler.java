@@ -73,8 +73,6 @@ public class OnlineDataHandler {
                     //boolean testWord = resources.get(0).getCreated_at().getTime() > new Date().getTime();
                     //Extract text content from URL or the result.
                     //Look for term frequency of that result.
-                    //TODO: Needs to handle resources that older more than 6 months in another way. SEE:Reason
-                    //Reason: Does not need to add as a new resources but need to update frequencies and modified date
 
                     List<KeywordData> keywordDataList = new ArrayList<>();
                     Resource resource = new Resource();
